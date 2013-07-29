@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <!-- Black background -->
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/black" />
+
+    <!-- Video -->
+
+    <VideoView
+        android:id="@+id/player"
+        android:layout_width="@dimen/player_w"
+        android:layout_height="@dimen/player_h"
+        android:layout_marginLeft="@dimen/player_x"
+        android:layout_marginTop="@dimen/player_y"
+        android:focusable="false" />
+
+</RelativeLayout>

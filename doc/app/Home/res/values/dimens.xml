@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>	
+
+	<dimen name="player_x">400dip</dimen>
+	<dimen name="player_y">185dip</dimen>
+	<dimen name="player_w">480dip</dimen>
+	<dimen name="player_h">270dip</dimen>
+		
+</resources>
