@@ -64,6 +64,15 @@ public class Param
 		 */
 		UPGRADE_BRAND,
 
+		/**
+		 * Registered RayV user account name
+		 */
+		RAYV_USER,
+
+		/**
+		 * Registered RayV account password
+		 */
+		RAYV_PASS
 	}
 
 	public static enum System

@@ -10,68 +10,110 @@
 
 package com.aviq.tv.android.home.player;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import android.os.Bundle;
+
 /**
  * Defines abstract player
  *
  */
-public class BasePlayer implements IPlayer
+public abstract class BasePlayer implements IPlayer
 {
+	private List<EventListener> _eventListeners = new ArrayList<EventListener>();
+	private boolean _isPause = false;
 
 	/**
+	 * Starts playing URL and triggers EventEnum.PLAY with param URL=url
 	 *
-	 */
-	public BasePlayer()
-	{
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
 	 * @see com.aviq.tv.android.home.player.IPlayer#play(java.lang.String)
 	 */
 	@Override
 	public void play(String url)
 	{
-		// TODO Auto-generated method stub
-
+		Bundle playBundle = new Bundle();
+		playBundle.putString("URL", url);
+		triggerEvent(EventEnum.PLAY, playBundle);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Stops playing and triggers EventEnum.STOP
+	 *
 	 * @see com.aviq.tv.android.home.player.IPlayer#stop()
 	 */
 	@Override
 	public void stop()
 	{
-		// TODO Auto-generated method stub
-
+		if (isPlaying())
+		{
+			triggerEvent(EventEnum.STOP, null);
+		}
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Pause/Resume media playback
+	 *
 	 * @see com.aviq.tv.android.home.player.IPlayer#pause()
 	 */
 	@Override
 	public void pause()
 	{
-		// TODO Auto-generated method stub
-
+		if (isPlaying())
+		{
+			_isPause = !_isPause;
+			Bundle pauseParams = new Bundle();
+			pauseParams.putBoolean(EventEnum.PAUSE.name(), _isPause);
+			triggerEvent(EventEnum.PAUSE, pauseParams);
+		}
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Return player's playback status. This method must be implemented by player backend
+	 *
+	 * @see com.aviq.tv.android.home.player.IPlayer#isPlaying()
+	 */
+	@Override
+    public abstract boolean isPlaying();
+
+	/**
+	 * @see com.aviq.tv.android.home.player.IPlayer#isPaused()
+	 */
+	@Override
+    public boolean isPaused()
+    {
+	    return _isPause;
+    }
+
+	/**
 	 * @see com.aviq.tv.android.home.player.IPlayer#addEventListener(com.aviq.tv.android.home.player.IPlayer.EventListener)
 	 */
 	@Override
 	public void addEventListener(EventListener eventListener)
 	{
-		// TODO Auto-generated method stub
-
+		_eventListeners.add(eventListener);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see com.aviq.tv.android.home.player.IPlayer#removeEventListener(com.aviq.tv.android.home.player.IPlayer.EventListener)
 	 */
 	@Override
 	public void removeEventListener(EventListener eventListener)
 	{
-		// TODO Auto-generated method stub
+		_eventListeners.remove(eventListener);
+	}
 
+	/**
+	 * notify player event listeners
+	 *
+	 * @param eventEnum the player event enum
+	 * @param params event specific params bundle
+	 */
+	private void triggerEvent(EventEnum eventEnum, Bundle params)
+	{
+		for (EventListener eventListener: _eventListeners)
+		{
+			eventListener.onEvent(this, eventEnum, params);
+		}
 	}
 }

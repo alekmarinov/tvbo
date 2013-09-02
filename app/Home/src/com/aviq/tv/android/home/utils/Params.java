@@ -42,6 +42,8 @@ public class Params
 		User.strings.put(Param.User.ABMP_URL, "http://bg.aviq.com:9090");
 		User.strings.put(Param.User.CURRENT_CHANNEL, "");
 		User.strings.put(Param.User.LANGUAGE, "de");
+		User.strings.put(Param.User.RAYV_USER, "1C6F65F9DE76");
+		User.strings.put(Param.User.RAYV_PASS, "1C6F65F9DE76");
 
 		// system settings
 		System.bools.put(Param.System.IS_STUB, Boolean.parseBoolean("@IS_STUB@"));
@@ -92,7 +94,7 @@ public class Params
 		// They will be always removed by automatic build
 
 		// @TESTCODE_BEGIN
-		User.strings.put(Param.User.BRAND, "mobiletv");
+		User.strings.put(Param.User.BRAND, "aviqtv");
 		System.bools.put(Param.System.IS_STUB, false);
 		User.bools.put(Param.User.IS_FIRST_TIME, false);
 		System.ints.put(Param.System.EPG_DAYS_PAST, 1); // days

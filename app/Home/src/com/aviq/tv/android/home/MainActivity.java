@@ -11,11 +11,11 @@
 package com.aviq.tv.android.home;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.VideoView;
 
+import com.aviq.tv.android.home.player.AndroidPlayer;
 import com.aviq.tv.android.home.utils.Param;
 import com.aviq.tv.android.home.utils.Prefs;
 
@@ -35,18 +35,16 @@ public class MainActivity extends Activity
 		setContentView(R.layout.home_layout);
 
 		Prefs prefs = getApp().getPrefs();
-		Bundle bundle = new Bundle();
 
-		bundle.putString("USER", "1C6F65F9DE76");
-		bundle.putString("PASS", "1C6F65F9DE76");
+		Bundle bundle = new Bundle();
+		bundle.putString("USER", prefs.getString(Param.User.RAYV_USER));
+		bundle.putString("PASS", prefs.getString(Param.User.RAYV_PASS));
 		bundle.putString("STREAM_ID", "vtx_sf1");
 		bundle.putInt("BITRATE", 1200);
-
 		String url = prefs.getString(Param.System.RAYV_STREAM_URL_PATTERN, bundle);
-		VideoView videoView = (VideoView)findViewById(R.id.player);
-		videoView.setVideoURI(Uri.parse(url));
-		videoView.start();
-		Log.i(TAG, "play " + url);
+
+		AndroidPlayer androidPlayer = new AndroidPlayer((VideoView)findViewById(R.id.player));
+		androidPlayer.play(url);
 	}
 
 	@Override

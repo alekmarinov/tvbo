@@ -49,6 +49,16 @@ public interface IPlayer
 	void pause();
 
 	/**
+	 * Returns true if player is currently playing media
+	 */
+	boolean isPlaying();
+
+	/**
+	 * Returns true if player pauses playback
+	 */
+	boolean isPaused();
+
+	/**
 	 * Register event listener called on player event
 	 * @param eventListener the event listener to be registered
 	 */
