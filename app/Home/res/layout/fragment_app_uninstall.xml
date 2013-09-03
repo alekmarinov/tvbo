@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/applications_screen"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/spash_1" >
+    
+    <LinearLayout
+    android:id="@+id/application_info"
+    android:layout_width="match_parent"
+    android:layout_height="235dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginTop="20dp"
+    android:background="@color/transparent"
+    android:orientation="horizontal" >
+
+
+    <ImageView
+        android:id="@+id/program_preview_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/nova_tv" />
+
+    <TextView
+        android:id="@+id/program_preview_text"
+        style="@style/ProgramText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="30dp"
+        android:text="Monsters generate their city&apos;s power by scaring children, but they are terribly afraid themselves of being contaminated by children, so when one enters Monstropolis, top scarer Sulley finds his world disrupted. "
+        android:textColor="@color/white" />
+
+</LinearLayout>
+    
+    
+
+</RelativeLayout>

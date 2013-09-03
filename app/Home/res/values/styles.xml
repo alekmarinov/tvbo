@@ -1,18 +1,37 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="AppTheme" parent="android:Theme.DeviceDefault.NoActionBar.Fullscreen" />
-    
+
     <style name="ProgramText">
         <item name="android:textColor">@color/programs_program_text</item>
         <item name="android:textSize">@dimen/programs_text_size</item>
         <item name="android:gravity">center_vertical</item>
     </style>
-    
+
     <style name="ProgramTextHighlight">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/programs_highlight_text_size</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ProgramInfo">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ProgramInfoTitle">
+        <item name="android:textSize">35sp</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    
+    <style name="WizardInfo">
+        <item name="android:textSize">@dimen/wizard_infotext_fontsize</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:paddingLeft">0dip</item>
     </style>
 
 </resources>

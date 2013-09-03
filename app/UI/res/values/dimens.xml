@@ -15,11 +15,5 @@
 	
 	<dimen name="program_info_width">1100dip</dimen>
 	<dimen name="program_info_height">600dip</dimen>
-	<dimen name="details_area_width">540dip</dimen>
-	
-	<dimen name="program_info_option_width">210dip</dimen>
-	<dimen name="program_info_option_height">70dip</dimen>
-	
-	<dimen name="wizard_infotext_fontsize">36sp</dimen>
 		
 </resources>

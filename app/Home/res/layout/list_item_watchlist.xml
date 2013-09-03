@@ -1,0 +1,45 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="130dp"
+    android:layout_height="180dp"
+    android:id="@+id/watchlist_item"
+    >
+    
+    <RelativeLayout 
+        android:id="@+id/watchlist_program_item"
+        android:layout_width="wrap_content"
+        android:layout_height="160dp"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/ipad_background"
+        >
+       <!-- set background... -->
+        
+        <ImageView 
+            android:id="@+id/watchlist_item_channel_icon"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/nova_tv"
+            android:layout_marginTop="5dp"/>
+        
+        <ImageView 
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/watchlist_item_channel_icon"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/play_btn"
+            android:layout_centerHorizontal="true"/>
+        
+    </RelativeLayout>
+    
+    <TextView 
+        android:id="@+id/watchlist_item_program_name"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@id/watchlist_program_item"
+        android:text="Wheeler Dealers"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"/>
+    
+    
+    
+    </RelativeLayout>
