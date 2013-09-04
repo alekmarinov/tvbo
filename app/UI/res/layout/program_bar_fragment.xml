@@ -1,0 +1,101 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true" >
+
+    <RelativeLayout
+        android:id="@+id/program_bar"
+        android:layout_width="@dimen/program_bar_width"
+        android:layout_height="@dimen/program_bar_height"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="100dip" >
+
+        <RelativeLayout
+            android:id="@+id/program_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/program_bar_details_height"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/plate_blue" >
+
+            <!-- include channel details -->
+
+            <ImageView
+                android:id="@+id/program_image"
+                android:layout_width="200dip"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:id="@+id/previous_program_time"
+                style="@style/ProgramText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="24dip"
+                android:layout_marginRight="17dip"
+                android:text="13:30"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/previous_title"
+                style="@style/ProgramText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@id/previous_program_time"
+                android:text="Past Program"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/next_program_time"
+                style="@style/ProgramText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="24dip"
+                android:layout_marginRight="17dip"
+                android:text="15:30"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/next_program_title"
+                style="@style/ProgramText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@id/next_program_time"
+                android:text="Next Program"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/current_program_time"
+                style="@style/ProgramTextHighlight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dip"
+                android:layout_marginRight="15dip"
+                android:text="14:30"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/current_program_title"
+                style="@style/ProgramTextHighlight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/current_program_time"
+                android:ellipsize="marquee"
+                android:text="Current Program"
+                android:singleLine="true" />
+
+        </RelativeLayout>
+
+        <!-- need to include timebar -->
+
+    </RelativeLayout>
+
+</RelativeLayout>
