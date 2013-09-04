@@ -135,7 +135,6 @@
             android:layout_width="@dimen/details_area_width"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_below="@id/program_info_arrow_up"
             android:layout_marginLeft="120dip"
             android:layout_marginRight="47dip"
             android:layout_marginTop="47dip"
