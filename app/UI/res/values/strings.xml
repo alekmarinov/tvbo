@@ -1,4 +1,3 @@
 <resources>
     <string name="app_name">Home</string>
-    <string name="player_error">Connection Lost</string>
 </resources>

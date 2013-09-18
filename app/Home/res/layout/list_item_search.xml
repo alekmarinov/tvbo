@@ -1,0 +1,38 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/search_item"
+    android:layout_width="330dp"
+    android:layout_height="80dp"
+    android:background="@color/transparent"
+>
+    <ImageView
+        android:id="@+id/search_item_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/nova_tv" />
+    
+    <TextView 
+        android:id="@+id/search_item_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/search_item_icon"
+        android:layout_centerHorizontal="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="10dp"
+        android:text="17.00"/>
+
+    <TextView
+        android:id="@+id/search_item_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_item_time"
+        android:layout_toRightOf="@id/search_item_icon"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_centerHorizontal="true"
+        android:text="Tennis - US Open"
+         />
+
+</RelativeLayout>
