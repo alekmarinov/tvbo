@@ -28,11 +28,11 @@ public class Strings
 	 *            Bundle with <i>key</i> -> <i>value</i> pairs
 	 * @return the result string after all substitutions applied
 	 */
-	public static String substitude(String input, Bundle bundle)
+	public static String substitute(String input, Bundle bundle)
 	{
 		for (String key : bundle.keySet())
 		{
-			input = input.replace("${" + key + "}", String.valueOf(bundle.get(key)));
+			input = input.replaceAll("\\$\\{" + key + "\\}", String.valueOf(bundle.get(key)));
 		}
 		return input;
 	}

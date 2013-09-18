@@ -37,7 +37,7 @@ public class StateManager
 {
 	private static final String TAG = StateManager.class.getSimpleName();
 	private final Map<StateEnum, BaseState> _states = new HashMap<StateEnum, BaseState>();
-	private Stack<BaseState> _activeStates = new Stack<BaseState>();
+	private final Stack<BaseState> _activeStates = new Stack<BaseState>();
 	private final MainActivity _mainActivity;
 
 	/**
@@ -216,6 +216,9 @@ public class StateManager
 
 		return false;
 	}
+
+	// TODO: Add onLongKeyDown() method
+	// TODO: Add onLongKeyUp() method
 
 	/**
 	 * Gets owner MainActivity

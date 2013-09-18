@@ -21,7 +21,7 @@ import android.os.Bundle;
  */
 public abstract class BasePlayer implements IPlayer
 {
-	private List<EventListener> _eventListeners = new ArrayList<EventListener>();
+	private final List<EventListener> _eventListeners = new ArrayList<EventListener>();
 	private boolean _isPause = false;
 
 	/**
@@ -111,6 +111,9 @@ public abstract class BasePlayer implements IPlayer
 	 */
 	private void triggerEvent(EventEnum eventEnum, Bundle params)
 	{
+		// TODO: Consider using a LocalBroadcastManager
+		// (http://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html)
+
 		for (EventListener eventListener: _eventListeners)
 		{
 			eventListener.onEvent(this, eventEnum, params);

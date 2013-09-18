@@ -62,7 +62,7 @@ public class Prefs
 	 */
 	public String getString(Param.User key, Bundle bundle)
 	{
-		return Strings.substitude(getString(key), bundle);
+		return Strings.substitute(getString(key), bundle);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class Prefs
 	 */
 	public String getString(Param.System key, Bundle bundle)
 	{
-		return Strings.substitude(getString(key), bundle);
+		return Strings.substitute(getString(key), bundle);
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class Prefs
 	 * @param key parameter defined in Param.System enum
 	 * @param value
 	 */
-	private void put(Param.System key, String value)
+	private void put(Param.System key, String value) // TODO Consider removing
 	{
 		Log.d(TAG, "Set " + key + " = " + value);
 		Editor edit = _systemPrefs.edit();
@@ -180,7 +180,7 @@ public class Prefs
 	 * @param key parameter defined in Param.System enum
 	 * @param value
 	 */
-	private void put(Param.System key, int value)
+	private void put(Param.System key, int value) // TODO Consider removing
 	{
 		Log.d(TAG, "Set " + key + " = " + value);
 		Editor edit = _systemPrefs.edit();
@@ -208,7 +208,7 @@ public class Prefs
 	 * @param key parameter defined in Param.System enum
 	 * @param value
 	 */
-	private void put(Param.System key, boolean value)
+	private void put(Param.System key, boolean value) // TODO Consider removing
 	{
 		Log.d(TAG, "Set " + key + " = " + value);
 		Editor edit = _systemPrefs.edit();

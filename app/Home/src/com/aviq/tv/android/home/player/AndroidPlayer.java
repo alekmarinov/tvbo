@@ -21,7 +21,7 @@ import com.aviq.tv.android.home.utils.Log;
 public class AndroidPlayer extends BasePlayer
 {
 	public static final String TAG = AndroidPlayer.class.getSimpleName();
-	private VideoView _videoView;
+	private final VideoView _videoView;
 
 	/**
 	 * AndroidPlayer constructor
@@ -32,6 +32,8 @@ public class AndroidPlayer extends BasePlayer
 	{
 		_videoView = videoView;
 		Log.i(TAG, "constructed");
+
+		// TODO: Attach listeners for VideoView and MediaPlayer
 	}
 
 	/**
