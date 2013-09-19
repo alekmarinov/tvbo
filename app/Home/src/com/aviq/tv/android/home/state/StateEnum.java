@@ -15,5 +15,5 @@ package com.aviq.tv.android.home.state;
  */
 public enum StateEnum
 {
-	MENU, TV, EPG, INFO, SETTINGS, WATCHLIST
+	MENU, TV, EPG, INFO, SETTINGS, WATCHLIST, OVERLAY
 }

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    
+
     <!-- Black background -->
+
     <ImageView
         android:id="@+id/background"
         android:layout_width="match_parent"
@@ -20,5 +22,19 @@
         android:layout_marginLeft="@dimen/player_x"
         android:layout_marginTop="@dimen/player_y"
         android:focusable="false" />
+
+    <!-- Fragment(s) -->
+
+    <FrameLayout
+        android:id="@+id/fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/overlay_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </RelativeLayout>

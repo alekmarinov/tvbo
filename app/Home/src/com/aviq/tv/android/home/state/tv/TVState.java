@@ -10,8 +10,11 @@
 
 package com.aviq.tv.android.home.state.tv;
 
+import android.os.Bundle;
+
 import com.aviq.tv.android.home.state.BaseState;
 import com.aviq.tv.android.home.state.StateManager;
+import com.aviq.tv.android.home.utils.Log;
 
 /**
  * Defines the fullscreen TV state
@@ -19,6 +22,8 @@ import com.aviq.tv.android.home.state.StateManager;
  */
 public class TVState extends BaseState
 {
+	private static final String TAG = TVState.class.getSimpleName();
+	
 	/**
 	 * @param stateManager
 	 */
@@ -27,4 +32,15 @@ public class TVState extends BaseState
 		super(stateManager);
 	}
 
+	@Override
+	public void show(Bundle params)
+	{
+		Log.i(TAG, ".show");
+	}
+	
+	@Override 
+	public void hide()
+	{
+		Log.i(TAG, ".hide");
+	}
 }

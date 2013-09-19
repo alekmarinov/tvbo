@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Home</string>
-    <string name="player_error">Connection Lost</string>
+    <string name="connection_lost">Connection lost</string>
+    <string name="internet_check_service">Internet Check Service</string>
 </resources>
