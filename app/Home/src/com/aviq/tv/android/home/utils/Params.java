@@ -49,7 +49,7 @@ public class Params
 		System.bools.put(Param.System.IS_STUB, Boolean.parseBoolean("@IS_STUB@"));
 		System.bools.put(Param.System.IS_DEVEL, false);
 		System.ints.put(Param.System.ABMP_REGISTER_INTERVAL, 30 * 60); // seconds
-		System.ints.put(Param.System.INTERNET_CHECK_INTERVAL, 1 * 20); // seconds
+		System.ints.put(Param.System.INTERNET_CHECK_INTERVAL, 1 * 60); // seconds
 		System.ints.put(Param.System.ALERT_TIMEOUT, 5); // seconds
 		System.ints.put(Param.System.OSD_CHANNELS_TIMEOUT, 2); // seconds
 		System.ints.put(Param.System.OSD_VOLUME_BAR_TIMEOUT, 3); // seconds

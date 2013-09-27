@@ -60,6 +60,9 @@ public class BaseState
 	 */
 	public void show(Bundle params)
 	{
+		if (_fragment == null)
+			return;
+		
 		_shown = true;
 
 		FrameLayout view = _overlay ? _overlayFragmentView : _mainFragmentView;
@@ -78,6 +81,9 @@ public class BaseState
 	 */
 	public void hide()
 	{
+		if (_fragment == null)
+			return;
+		
 		_shown = false;
 		
 		FragmentTransaction ft = _stateManager.getMainActivity().getFragmentManager().beginTransaction();

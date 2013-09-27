@@ -10,6 +10,7 @@
 
 package com.aviq.tv.android.home;
 
+import java.lang.ref.WeakReference;
 import java.util.Calendar;
 
 import android.app.Activity;
@@ -19,7 +20,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.ResultReceiver;
+import android.os.Message;
+import android.os.Messenger;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.VideoView;
@@ -30,6 +32,7 @@ import com.aviq.tv.android.home.state.BaseState;
 import com.aviq.tv.android.home.state.StateEnum;
 import com.aviq.tv.android.home.state.StateException;
 import com.aviq.tv.android.home.state.StateManager;
+import com.aviq.tv.android.home.state.overlay.NoInternetState;
 import com.aviq.tv.android.home.utils.Param;
 import com.aviq.tv.android.home.utils.Params;
 import com.aviq.tv.android.home.utils.Prefs;
@@ -45,6 +48,7 @@ public class MainActivity extends Activity
 	private StateManager _stateManager;
 	private ViewGroup _rootLayout;
 	private Handler _handler;
+	private InternetCheckHandler _internetCheckHandler;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -58,6 +62,7 @@ public class MainActivity extends Activity
 		
 		_mainApplication = (MainApplication) getApplication();
 		_stateManager = new StateManager(this);
+		_internetCheckHandler = new InternetCheckHandler(this);
 		
 		Prefs prefs = _mainApplication.getPrefs();
 		
@@ -106,7 +111,7 @@ public class MainActivity extends Activity
 				try
 				{
 					Bundle params = new Bundle();
-					params.putInt(Constants.PARAM_MESSAGE_RES_ID, R.string.connection_lost);
+					params.putInt(Constants.PARAM_MESSAGE_RES_ID, R.string.app_name);
 					params.putInt(Constants.PARAM_BACKGROUND_RES_ID, R.drawable.problem);
 					_stateManager.setState(StateEnum.OVERLAY, params, true);
 				}
@@ -138,11 +143,57 @@ public class MainActivity extends Activity
 	}
 	
 	/**
+	 * Handler method when Internet connectivity is OK.
+	 */
+	private void processInternetOkEvent()
+	{
+		BaseState overlayState = _stateManager.getCurrentOverlay();
+		
+		// If this is the same overlay, hide it.
+		if (overlayState != null && overlayState.getClass().equals(NoInternetState.class))
+			overlayState.hide();
+	}
+	
+	/**
+	 * Handler method when Internet connectivity is NOK.
+	 */
+	private void processInternetNokEvent()
+	{
+		BaseState overlayState = _stateManager.getCurrentOverlay();
+
+		if (overlayState != null)
+		{
+			// If this is the same overlay, do nothing; else hide it.
+			if (overlayState.getClass().equals(NoInternetState.class))
+				return;
+			else
+				overlayState.hide();
+		}
+		
+		try 
+		{
+			_stateManager.setState(StateEnum.NO_INTERNET, null, true);
+		}
+		catch (StateException e)
+		{
+			Log.e(TAG, "Error", e);
+		}
+	}
+	
+	/**
 	 * @return the main application owning this activity
 	 */
 	public MainApplication getApp()
 	{
 		return _mainApplication;
+	}
+	
+	/**
+	 * @return the state manager handling the states of this activity
+	 */
+	public StateManager getStateManager()
+	{
+		return _stateManager;
 	}
 	
 	public void initAlarms()
@@ -164,7 +215,7 @@ public class MainActivity extends Activity
 		Calendar cal = Calendar.getInstance();
 		
 		Intent intent = new Intent(this, InternetCheckService.class);
-		intent.putExtra(Constants.EXTRA_RESULT_RECEIVER, new InternetCheckResultReceiver(_handler));
+		intent.putExtra(Constants.EXTRA_RESULT_RECEIVER, new Messenger(_internetCheckHandler));
 		
 		PendingIntent pintent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 		
@@ -172,17 +223,44 @@ public class MainActivity extends Activity
 		alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), repeatingInterval, pintent);
 	}
 	
-	private class InternetCheckResultReceiver extends ResultReceiver
+	/**
+	 * This class receives and processes messages from InternetCheckService. 
+	 */
+	private static class InternetCheckHandler extends Handler
 	{
-		public InternetCheckResultReceiver(Handler handler)
-        {
-	        super(handler);
-        }
+		private final WeakReference<MainActivity> _activityRef;
+		
+		InternetCheckHandler(MainActivity mainActivity)
+		{
+			_activityRef = new WeakReference<MainActivity>(mainActivity);
+		}
 		
 		@Override
-		protected void onReceiveResult(int resultCode, Bundle resultData)
+		public void handleMessage(Message msg)
 		{
-			Log.i(TAG, ".onReceiveResult: resultCode = " + resultCode);
+			Log.v(TAG, "InternetCheckHandler.handleMessage(): msg = " + msg.what);
+			
+			MainActivity mainActivity = _activityRef.get();
+			if (mainActivity == null)
+			{
+				Log.w(TAG, "InternetCheckHandler.handleMessage(): loungeActivity is null.");
+				return;
+			}
+			
+			switch (msg.what)
+			{
+				case InternetCheckService.INTERNET_OK:
+					mainActivity.processInternetOkEvent();
+					break;
+			
+				case InternetCheckService.INTERNET_NOK:
+					mainActivity.processInternetNokEvent();
+					break;
+					
+				default:
+					Log.e(TAG, "Ignoring unknown result code from " + InternetCheckService.TAG);
+					break;
+			}
 		}
-	};
+	}
 }

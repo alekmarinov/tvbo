@@ -22,6 +22,7 @@ import com.aviq.tv.android.home.MainActivity;
 import com.aviq.tv.android.home.state.epg.EPGState;
 import com.aviq.tv.android.home.state.info.InfoState;
 import com.aviq.tv.android.home.state.menu.MenuState;
+import com.aviq.tv.android.home.state.overlay.NoInternetState;
 import com.aviq.tv.android.home.state.overlay.OverlayState;
 import com.aviq.tv.android.home.state.settings.SettingsState;
 import com.aviq.tv.android.home.state.tv.TVState;
@@ -58,6 +59,7 @@ public class StateManager
 		_states.put(StateEnum.SETTINGS, new SettingsState(this));
 		_states.put(StateEnum.WATCHLIST, new WatchlistState(this));
 		_states.put(StateEnum.OVERLAY, new OverlayState(this));
+		_states.put(StateEnum.NO_INTERNET, new NoInternetState(this));
 	}
 
 	/**
