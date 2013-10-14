@@ -18,8 +18,25 @@ import android.os.Bundle;
 
 public class Strings
 {
+	public static StringBuffer implodeBundle(StringBuffer buffer, Bundle bundle, char sepKey, char sepVal)
+	{
+		boolean isSepVal = false;
+		if (bundle != null)
+			for (String key : bundle.keySet())
+			{
+				if (isSepVal)
+					buffer.append(sepVal);
+				buffer.append(key).append(sepKey).append(bundle.get(key));
+				isSepVal = true;
+			}
+		if (isSepVal)
+			buffer.append(sepVal);
+		return buffer;
+	}
+
 	/**
-	 * Substitutes all occurrences of ${<i>key</i>} with bundle.get(<i>key</i>) in the
+	 * Substitutes all occurrences of ${<i>key</i>} with bundle.get(<i>key</i>)
+	 * in the
 	 * input string, for all <i>key</i> in bundle's key set
 	 *
 	 * @param input

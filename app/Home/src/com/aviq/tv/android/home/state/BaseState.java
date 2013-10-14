@@ -10,30 +10,25 @@
 
 package com.aviq.tv.android.home.state;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.View;
-import android.widget.FrameLayout;
 
-import com.aviq.tv.android.home.R;
+import com.aviq.tv.android.home.utils.Log;
 
 /**
  * Base class of all application visible states.
  * A state may be set as background or overlay. A state is active if appears on
  * top of the States stack.
  */
-public class BaseState
+@SuppressLint({ "ValidFragment", "ValidFragment" })
+public class BaseState extends Fragment
 {
+	private static final String TAG = BaseState.class.getSimpleName();
 	protected StateManager _stateManager;
-	protected FrameLayout _mainFragmentView;
-	protected FrameLayout _overlayFragmentView;
-	protected Fragment _fragment;
-	protected boolean _overlay;
 	private boolean _shown;
-	private int _openingTransition;
-	private int _closingTransition;
+	private StateEnum _stateEnum;
 
 	/**
 	 * Initialize State instance.
@@ -41,65 +36,50 @@ public class BaseState
 	 * @param stateManager
 	 *            The owner of this State instance.
 	 */
-	public BaseState(StateManager stateManager)
+    public BaseState(StateManager stateManager, StateEnum stateEnum)
 	{
 		_stateManager = stateManager;
-		
-		_mainFragmentView = (FrameLayout) _stateManager.getMainActivity().findViewById(R.id.fragment);
-		_overlayFragmentView = (FrameLayout) _stateManager.getMainActivity().findViewById(R.id.overlay_fragment);
-		_openingTransition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
-		_closingTransition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
+		_stateEnum = stateEnum;
+		Log.i(TAG, getClass().getSimpleName() + " created");
 	}
-	
+
+    /**
+     * @return State identifier as StateEnum
+     */
+    public StateEnum getStateEnum()
+    {
+    	return _stateEnum;
+    }
+
 	/**
-	 * Called when a State is about to appear on the screen. The method can be
-	 * overwritten in order to initialize visualization.
+	 * Shows State on screen. The method can be overwritten in order to initialize visualization.
 	 *
 	 * @param params
 	 *            The params set to this State when showing
+	 * @throws StateException
 	 */
-	public void show(Bundle params)
+    public void show(Bundle params) throws StateException
 	{
 		_shown = true;
-
-		FrameLayout view = _overlay ? _overlayFragmentView : _mainFragmentView;
-		view.setVisibility(View.VISIBLE);
-
-		int fragmentId = _overlay ? R.id.overlay_fragment : R.id.fragment;
-		
-		FragmentTransaction ft = _stateManager.getMainActivity().getFragmentManager().beginTransaction();
-		ft.replace(fragmentId, _fragment);
-		ft.setTransition(_openingTransition);
-		ft.commit();
+		_stateManager.setState(getStateEnum(), params);
 	}
 
 	/**
-	 * Called when a State is about to disappear from the screen.
+	 * Hides State from screen
 	 */
-	public void hide()
+    public void hide()
 	{
 		_shown = false;
-		
-		FragmentTransaction ft = _stateManager.getMainActivity().getFragmentManager().beginTransaction();
-		ft.remove(_fragment);
-		ft.setTransition(_closingTransition);
-		ft.commit();
-		
-		_fragment = null;
-	
-		FrameLayout view = _overlay ? _overlayFragmentView : _mainFragmentView;
-		view.setVisibility(View.INVISIBLE);
+		_stateManager.hideState(this);
 	}
 
 	/**
-	 * Check if this State is visible on the screen
-	 *
-	 * @return true if this State is visible on the screen
+	 * Returns true if the current state is visible on screen
 	 */
-	public boolean isShown()
-	{
-		return _shown;
-	}
+    public boolean isShown()
+    {
+	    return _shown;
+    }
 
 	/**
 	 * Method consuming key down event if the State is currently active
@@ -113,14 +93,8 @@ public class BaseState
 	 *         should continue to be propagated.
 	 * @throws StateException
 	 */
-	public boolean onKeyDown(int keyCode, KeyEvent event) throws StateException
+    public boolean onKeyDown(int keyCode, KeyEvent event) throws StateException
 	{
-		if (keyCode == KeyEvent.KEYCODE_F2)
-		{
-			_stateManager.setState(StateEnum.MENU, null);
-			return true;
-		}
-
 		return false;
 	}
 
@@ -136,38 +110,8 @@ public class BaseState
 	 *         should continue to be propagated.
 	 * @throws StateException
 	 */
-	public boolean onKeyUp(int keyCode, KeyEvent event) throws StateException
+    public boolean onKeyUp(int keyCode, KeyEvent event) throws StateException
 	{
 		return false;
-	}
-	
-	public void setOverlay(boolean overlay)
-	{
-		_overlay = overlay;
-	}
-	
-	public boolean isOverlay()
-	{
-		return _overlay;
-	}
-	
-	public void setFragment(Fragment fragment)
-	{
-		_fragment = fragment;
-	}
-	
-	public Fragment setFragment()
-	{
-		return _fragment;
-	}
-	
-	public void setOpeningTransition(int transition)
-	{
-		_openingTransition = transition;
-	}
-	
-	public void setClosingTransition(int transition)
-	{
-		_closingTransition = transition;
 	}
 }
