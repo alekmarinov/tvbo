@@ -30,20 +30,20 @@
         android:id="@+id/main_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+    />
 
     <!-- Overlay Fragment -->
     <FrameLayout
         android:id="@+id/overlay_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+    />
 
-    <!-- Message Box Fragment -->
+    <!-- Message Fragment -->
     <FrameLayout
-        android:id="@+id/messagebox_fragment"
+        android:id="@+id/message_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+     />
 
 </RelativeLayout>

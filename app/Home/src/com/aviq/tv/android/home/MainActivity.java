@@ -26,6 +26,7 @@ import android.widget.VideoView;
 
 import com.aviq.tv.android.home.player.AndroidPlayer;
 import com.aviq.tv.android.home.service.InternetCheckService;
+import com.aviq.tv.android.home.service.ServiceController;
 import com.aviq.tv.android.home.state.MessageBox;
 import com.aviq.tv.android.home.state.StateEnum;
 import com.aviq.tv.android.home.state.StateException;
@@ -33,6 +34,7 @@ import com.aviq.tv.android.home.state.StateManager;
 import com.aviq.tv.android.home.utils.Param;
 import com.aviq.tv.android.home.utils.Params;
 import com.aviq.tv.android.home.utils.Prefs;
+import com.aviq.tv.android.home.utils.Strings;
 
 /**
  * The main activity managing all application screens
@@ -43,6 +45,7 @@ public class MainActivity extends Activity
 
 	private MainApplication _mainApplication;
 	private StateManager _stateManager;
+	private ServiceController _serviceController;
 	private ViewGroup _rootLayout;
 	private Handler _handler;
 
@@ -58,6 +61,7 @@ public class MainActivity extends Activity
 
 		_mainApplication = (MainApplication) getApplication();
 		_stateManager = new StateManager(this);
+		_serviceController  = new ServiceController(this);
 
 		Prefs prefs = _mainApplication.getPrefs();
 
@@ -71,7 +75,24 @@ public class MainActivity extends Activity
 		AndroidPlayer androidPlayer = new AndroidPlayer((VideoView) findViewById(R.id.player));
 		androidPlayer.play(url);
 
-		initAlarms();
+		// initAlarms();
+		_serviceController.startService(InternetCheckService.class).then(new ServiceController.OnResultReceived()
+		{
+			@Override
+			public void onReceiveResult(int resultCode, Bundle resultData)
+			{
+				Log.i(TAG, ".onReceiveResult: resultCode = " + resultCode + ", resultData= " + Strings.implodeBundle(resultData));
+			}
+		});
+
+		_serviceController.startService(InternetCheckService.class).every(10, new ServiceController.OnResultReceived()
+		{
+			@Override
+			public void onReceiveResult(int resultCode, Bundle resultData)
+			{
+				Log.i(TAG, ".onReceiveResult: resultCode = " + resultCode + ", resultData= " + Strings.implodeBundle(resultData));
+			}
+		});
 	}
 
 	@Override
@@ -90,7 +111,7 @@ public class MainActivity extends Activity
 		// Set TV state as initial state
 		try
 		{
-			_stateManager.setState(StateEnum.TV, null);
+			_stateManager.setStateMain(StateEnum.TV, null);
 		}
 		catch (StateException e)
 		{
@@ -106,6 +127,16 @@ public class MainActivity extends Activity
 				_stateManager.showMessage(MessageBox.Type.ERROR, R.string.connection_lost);
 			}
 		}, 3000);
+
+		// Add a test overlay state
+		_rootLayout.postDelayed(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				_stateManager.showMessage(MessageBox.Type.WARN, R.string.contentDescription);
+			}
+		}, 5000);
 
 		// Hide the test overlay state
 		_rootLayout.postDelayed(new Runnable()

@@ -27,7 +27,6 @@ public class BaseState extends Fragment
 {
 	private static final String TAG = BaseState.class.getSimpleName();
 	protected StateManager _stateManager;
-	private boolean _shown;
 	private StateEnum _stateEnum;
 
 	/**
@@ -60,8 +59,19 @@ public class BaseState extends Fragment
 	 */
     public void show(Bundle params) throws StateException
 	{
-		_shown = true;
-		_stateManager.setState(getStateEnum(), params);
+		_stateManager.setStateMain(getStateEnum(), params);
+	}
+
+	/**
+	 * Shows State on screen. The method can be overwritten in order to initialize visualization.
+	 *
+	 * @param params
+	 *            The params set to this State when showing
+	 * @throws StateException
+	 */
+    public void showOverlay(Bundle params) throws StateException
+	{
+		_stateManager.setStateOverlay(getStateEnum(), params);
 	}
 
 	/**
@@ -69,7 +79,6 @@ public class BaseState extends Fragment
 	 */
     public void hide()
 	{
-		_shown = false;
 		_stateManager.hideState(this);
 	}
 
@@ -78,7 +87,7 @@ public class BaseState extends Fragment
 	 */
     public boolean isShown()
     {
-	    return _shown;
+	    return isAdded();
     }
 
 	/**
