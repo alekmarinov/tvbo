@@ -30,7 +30,7 @@ public class BaseService extends IntentService
 	@Override
 	protected void onHandleIntent(Intent intent)
 	{
-		ResultReceiver resultReceiver = (ResultReceiver) intent.getExtra(EXTRA_RESULT_RECEIVER);
+		ResultReceiver resultReceiver = (ResultReceiver) intent.getParcelableExtra(EXTRA_RESULT_RECEIVER);
 		int resultCode = 0;
 		Bundle resultData = new Bundle();
 

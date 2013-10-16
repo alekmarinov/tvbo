@@ -41,7 +41,7 @@ public class InternetCheckService extends IntentService
 		if (intent == null)
 			return;
 
-		_resultReceiver = (ResultReceiver) intent.getExtra(Constants.EXTRA_RESULT_RECEIVER);
+		_resultReceiver = (ResultReceiver) intent.getParcelableExtra(Constants.EXTRA_RESULT_RECEIVER);
 
 		// If there is no one to notify about the Internet connectivity, then
 		// there is no point in running this service.
