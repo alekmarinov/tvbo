@@ -10,7 +10,6 @@
 
 package com.aviq.tv.android.home.state;
 
-import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -22,7 +21,6 @@ import com.aviq.tv.android.home.utils.Log;
  * A state may be set as background or overlay. A state is active if appears on
  * top of the States stack.
  */
-@SuppressLint({ "ValidFragment", "ValidFragment" })
 public class BaseState extends Fragment
 {
 	private static final String TAG = BaseState.class.getSimpleName();

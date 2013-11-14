@@ -12,6 +12,10 @@ package com.aviq.tv.android.home;
 
 import java.util.Calendar;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -24,6 +28,12 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.VideoView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.aviq.tv.android.home.player.AndroidPlayer;
 import com.aviq.tv.android.home.service.InternetCheckService;
 import com.aviq.tv.android.home.service.ServiceController;
@@ -61,7 +71,7 @@ public class MainActivity extends Activity
 
 		_mainApplication = (MainApplication) getApplication();
 		_stateManager = new StateManager(this);
-		_serviceController  = new ServiceController(this);
+		_serviceController = new ServiceController(this);
 
 		Prefs prefs = _mainApplication.getPrefs();
 
@@ -81,7 +91,9 @@ public class MainActivity extends Activity
 			@Override
 			public void onReceiveResult(int resultCode, Bundle resultData)
 			{
-				Log.i(TAG, ".onReceiveResult: resultCode = " + resultCode + ", resultData= " + Strings.implodeBundle(resultData));
+				Log.i(TAG,
+				        ".onReceiveResult: resultCode = " + resultCode + ", resultData= "
+				                + Strings.implodeBundle(resultData));
 			}
 		});
 
@@ -90,9 +102,60 @@ public class MainActivity extends Activity
 			@Override
 			public void onReceiveResult(int resultCode, Bundle resultData)
 			{
-				Log.i(TAG, ".onReceiveResult: resultCode = " + resultCode + ", resultData= " + Strings.implodeBundle(resultData));
+				Log.i(TAG,
+				        ".onReceiveResult: resultCode = " + resultCode + ", resultData= "
+				                + Strings.implodeBundle(resultData));
 			}
 		});
+
+		testVolley();
+	}
+
+	private void testVolley()
+	{
+		RequestQueue queue = Volley.newRequestQueue(this);
+		String url = "http://192.168.1.17:9090/v1/channels/rayv";
+
+		JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+		        new Response.Listener<JSONObject>()
+		        {
+			        @Override
+			        public void onResponse(JSONObject response)
+			        {
+			        	Log.i(TAG, "Response => " + response.toString());
+			        	try
+                        {
+			        		JSONArray meta = response.getJSONArray("meta");
+			        		JSONArray data = response.getJSONArray("data");
+
+			        		for (int i=0; i<data.length(); i++)
+			        		{
+			        			JSONArray row = data.getJSONArray(i);
+			        			StringBuffer buffer = new StringBuffer();
+			        			buffer.append("{");
+			        			for (int j=0; j<meta.length(); j++)
+			        			{
+			        				buffer.append(meta.getString(j) + ": " + row.getString(j) + ", ");
+			        			}
+			        			buffer.append("},\n");
+			        			Log.i(TAG, buffer.toString());
+			        		}
+                        }
+                        catch (JSONException e)
+                        {
+    			        	Log.i(TAG, e.getMessage(), e);
+                        }
+			        }
+		        }, new Response.ErrorListener()
+		        {
+			        @Override
+			        public void onErrorResponse(VolleyError error)
+			        {
+			        	Log.i(TAG, "VolleyError: " + error);
+			        }
+		        });
+		queue.add(jsObjRequest);
+
 	}
 
 	@Override
@@ -194,9 +257,9 @@ public class MainActivity extends Activity
 	private class InternetCheckResultReceiver extends ResultReceiver
 	{
 		public InternetCheckResultReceiver(Handler handler)
-        {
-	        super(handler);
-        }
+		{
+			super(handler);
+		}
 
 		@Override
 		protected void onReceiveResult(int resultCode, Bundle resultData)
