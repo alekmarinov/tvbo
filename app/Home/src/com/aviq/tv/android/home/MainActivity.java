@@ -10,7 +10,9 @@
 
 package com.aviq.tv.android.home;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +23,8 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -32,6 +36,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.aviq.tv.android.home.player.AndroidPlayer;
@@ -55,7 +60,6 @@ public class MainActivity extends Activity
 
 	private MainApplication _mainApplication;
 	private StateManager _stateManager;
-	private ServiceController _serviceController;
 	private ViewGroup _rootLayout;
 	private Handler _handler;
 
@@ -71,7 +75,6 @@ public class MainActivity extends Activity
 
 		_mainApplication = (MainApplication) getApplication();
 		_stateManager = new StateManager(this);
-		_serviceController = new ServiceController(this);
 
 		Prefs prefs = _mainApplication.getPrefs();
 
@@ -85,8 +88,7 @@ public class MainActivity extends Activity
 		AndroidPlayer androidPlayer = new AndroidPlayer((VideoView) findViewById(R.id.player));
 		androidPlayer.play(url);
 
-		// initAlarms();
-		_serviceController.startService(InternetCheckService.class).then(new ServiceController.OnResultReceived()
+		_mainApplication.getServiceController().startService(InternetCheckService.class).then(new ServiceController.OnResultReceived()
 		{
 			@Override
 			public void onReceiveResult(int resultCode, Bundle resultData)
@@ -97,7 +99,7 @@ public class MainActivity extends Activity
 			}
 		});
 
-		_serviceController.startService(InternetCheckService.class).every(10, new ServiceController.OnResultReceived()
+		_mainApplication.getServiceController().startService(InternetCheckService.class).every(10, new ServiceController.OnResultReceived()
 		{
 			@Override
 			public void onReceiveResult(int resultCode, Bundle resultData)
@@ -113,8 +115,11 @@ public class MainActivity extends Activity
 
 	private void testVolley()
 	{
-		RequestQueue queue = Volley.newRequestQueue(this);
-		String url = "http://192.168.1.17:9090/v1/channels/rayv";
+		final RequestQueue queue = Volley.newRequestQueue(this);
+		String url = "http://epg.aviq.bg/v1/channels/rayv";
+		final String urlLogo = "http://epg.aviq.bg/static/rayv";
+
+		final long started = System.currentTimeMillis();
 
 		JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, null,
 		        new Response.Listener<JSONObject>()
@@ -122,7 +127,10 @@ public class MainActivity extends Activity
 			        @Override
 			        public void onResponse(JSONObject response)
 			        {
-			        	Log.i(TAG, "Response => " + response.toString());
+			        	List<String> channelIds = new ArrayList<String>();
+			    		long received = System.currentTimeMillis() - started;
+
+			        	Log.i(TAG, "Response in " + received + " ms => " + response.toString());
 			        	try
                         {
 			        		JSONArray meta = response.getJSONArray("meta");
@@ -135,7 +143,13 @@ public class MainActivity extends Activity
 			        			buffer.append("{");
 			        			for (int j=0; j<meta.length(); j++)
 			        			{
-			        				buffer.append(meta.getString(j) + ": " + row.getString(j) + ", ");
+			        				String key = meta.getString(j);
+			        				String val = row.getString(j);
+			        				buffer.append(key + ": " + val + ", ");
+			        				if ("id".equals(key))
+			        				{
+			        					channelIds.add(val);
+			        				}
 			        			}
 			        			buffer.append("},\n");
 			        			Log.i(TAG, buffer.toString());
@@ -145,6 +159,34 @@ public class MainActivity extends Activity
                         {
     			        	Log.i(TAG, e.getMessage(), e);
                         }
+
+			        	// Load channel icons
+			        	for (String channelId: channelIds)
+			        	{
+			        		String channelLogoUrl = urlLogo + "/" + channelId + "/logo.png";
+    						Log.i(TAG, "Loading bitmap " + channelLogoUrl);
+			        		ImageRequest imageRequest = new ImageRequest(channelLogoUrl,
+			        				new Response.Listener<Bitmap>()
+			        				{
+			        					@Override
+                                        public void onResponse(Bitmap response)
+			        					{
+			        						Log.i(TAG, "Received bitmap " + response.getWidth() + "x" + response.getHeight());
+			        					}
+			        				},
+			        				320, 240,
+			        				Config.ARGB_8888,
+			        				new Response.ErrorListener()
+									{
+										@Override
+                                        public void onErrorResponse(VolleyError error)
+                                        {
+								        	Log.i(TAG, "VolleyError: " + error);
+                                        }
+									}
+			        		);
+			        		queue.add(imageRequest);
+			        	}
 			        }
 		        }, new Response.ErrorListener()
 		        {
@@ -155,7 +197,6 @@ public class MainActivity extends Activity
 			        }
 		        });
 		queue.add(jsObjRequest);
-
 	}
 
 	@Override

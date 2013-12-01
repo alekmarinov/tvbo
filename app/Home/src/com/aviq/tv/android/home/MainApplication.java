@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.util.Log;
 
+import com.aviq.tv.android.home.service.ServiceController;
 import com.aviq.tv.android.home.utils.HttpServer;
 import com.aviq.tv.android.home.utils.Prefs;
 import com.aviq.tv.android.home.utils.TextUtils;
@@ -27,7 +28,8 @@ public class MainApplication extends Application
 	public static final String TAG = MainApplication.class.getSimpleName();
 	private HttpServer _httpServer;
 	private Prefs _prefs;
-	
+	private ServiceController _serviceController;
+
 	@Override
 	public void onCreate()
 	{
@@ -35,11 +37,12 @@ public class MainApplication extends Application
 		try
 		{
 			Log.i(TAG, ".onCreate: " + getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
-			
+			_serviceController = new ServiceController(this);
+
 			// Start streaming agent
 			Log.i(TAG, "Start streaming agent");
 			final String streamerIni = TextUtils.inputSteamToString(getResources().openRawResource(R.raw.streamer));
-			
+
 			new Thread(new Runnable()
 			{
 				@Override
@@ -48,12 +51,12 @@ public class MainApplication extends Application
 					Loader.startStreamer(streamerIni);
 				}
 			}).start();
-			
+
 			// Start HTTP server
 			Log.i(TAG, "Start HTTP server");
 			HttpServer httpServer = new HttpServer(this);
 			httpServer.create();
-			
+
 			// Initialize preferences
 			_prefs = new Prefs(getSharedPreferences("user", Activity.MODE_PRIVATE), getSharedPreferences("system",
 			        Activity.MODE_PRIVATE));
@@ -63,24 +66,34 @@ public class MainApplication extends Application
 			Log.e(TAG, e.getMessage(), e);
 		}
 	}
-	
+
 	/**
 	 * Returns global initialized HttpServer instance
-	 * 
+	 *
 	 * @return HttpServer
 	 */
 	public HttpServer getHttpServer()
 	{
 		return _httpServer;
 	}
-	
+
 	/**
 	 * Returns global preferences manager
-	 * 
+	 *
 	 * @return Prefs
 	 */
 	public Prefs getPrefs()
 	{
 		return _prefs;
+	}
+
+	/**
+	 * Returns global services controller
+	 *
+	 * @return ServiceController
+	 */
+	public ServiceController getServiceController()
+	{
+		return _serviceController;
 	}
 }
