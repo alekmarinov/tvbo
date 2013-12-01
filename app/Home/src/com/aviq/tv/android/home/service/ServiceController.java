@@ -10,15 +10,22 @@
 
 package com.aviq.tv.android.home.service;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.support.v4.util.LruCache;
 
-import com.aviq.tv.android.home.MainActivity;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.ImageLoader.ImageCache;
+import com.android.volley.toolbox.Volley;
+import com.aviq.tv.android.home.MainApplication;
 
 /**
  * Controls service starting and result handling
@@ -26,8 +33,10 @@ import com.aviq.tv.android.home.MainActivity;
 public class ServiceController
 {
 	private static final String TAG = ServiceController.class.getSimpleName();
-	private final MainActivity _mainActivity;
+	private final MainApplication _mainApplication;
 	private Handler _handler = new Handler();
+	private RequestQueue _requestQueue;
+	private ImageLoader _imageLoader;
 
 	/**
 	 * Interface to be implemented by service caller when the service execution
@@ -72,7 +81,7 @@ public class ServiceController
 		public void then(OnResultReceived then)
 		{
 			_then = then;
-			_mainActivity.startService(_intentService);
+			_mainApplication.startService(_intentService);
 		}
 
 		/**
@@ -92,9 +101,9 @@ public class ServiceController
 		public void every(int delaySecs, int intervalSecs, OnResultReceived then)
 		{
 			_then = then;
-			PendingIntent pintent = PendingIntent.getService(_mainActivity, 0, _intentService,
+			PendingIntent pintent = PendingIntent.getService(_mainApplication, 0, _intentService,
 			        PendingIntent.FLAG_UPDATE_CURRENT);
-			AlarmManager alarm = (AlarmManager) _mainActivity.getSystemService(Context.ALARM_SERVICE);
+			AlarmManager alarm = (AlarmManager) _mainApplication.getSystemService(Context.ALARM_SERVICE);
 			alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delaySecs * 1000,
 			        intervalSecs * 1000, pintent);
 		}
@@ -154,12 +163,18 @@ public class ServiceController
 	/**
 	 * Initialize ServiceManager instance.
 	 *
-	 * @param mainActivity
-	 *            The owner MainActivity of this ServiceManager
+	 * @param mainApplication
+	 *            The owner MainApplication of this ServiceManager
 	 */
-	public ServiceController(MainActivity mainActivity)
+	public ServiceController(MainApplication mainApplication)
 	{
-		_mainActivity = mainActivity;
+		_mainApplication = mainApplication;
+		_requestQueue = Volley.newRequestQueue(mainApplication);
+
+		int memClass = ((ActivityManager) mainApplication.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
+		// Use 1/8th of the available memory for this memory cache.
+		int cacheSize = 1024 * 1024 * memClass / 8;
+		_imageLoader = new ImageLoader(_requestQueue, new BitmapLruCache(cacheSize));
 	}
 
 	/**
@@ -173,7 +188,7 @@ public class ServiceController
 	 */
 	public Promise startService(Class<?> serviceClass, Bundle params)
 	{
-		Intent intent = new Intent(_mainActivity, serviceClass);
+		Intent intent = new Intent(_mainApplication, serviceClass);
 		Promise onServiceComplete = new Promise(intent, _handler);
 		intent.putExtra(BaseService.EXTRA_RESULT_RECEIVER, onServiceComplete);
 		if (params != null)
@@ -191,5 +206,34 @@ public class ServiceController
 	public Promise startService(Class<?> serviceClass)
 	{
 		return startService(serviceClass, null);
+	}
+
+	/**
+	 * Least recently used cache
+	 */
+	private class BitmapLruCache extends LruCache<String, Bitmap> implements ImageCache
+	{
+		public BitmapLruCache(int maxSize)
+		{
+			super(maxSize);
+		}
+
+		@Override
+		protected int sizeOf(String key, Bitmap value)
+		{
+			return value.getRowBytes() * value.getHeight();
+		}
+
+		@Override
+		public Bitmap getBitmap(String url)
+		{
+			return get(url);
+		}
+
+		@Override
+		public void putBitmap(String url, Bitmap bitmap)
+		{
+			put(url, bitmap);
+		}
 	}
 }
