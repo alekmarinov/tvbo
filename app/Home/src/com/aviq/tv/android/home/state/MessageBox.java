@@ -61,6 +61,8 @@ public class MessageBox extends BaseState
 			case WARN:
 				// FIXME: Change background image for WARN
 				break;
+			default:
+				break;
 		}
 		messageText.setText(textId);
 		messageContainer.setBackgroundResource(resId);
