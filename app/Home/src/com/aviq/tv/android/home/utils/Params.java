@@ -76,6 +76,11 @@ public class Params
 		System.ints.put(Param.System.LOG_LEVEL, Log.INFO);
 		System.strings.put(Param.System.RAYV_STREAM_URL_PATTERN,
 		        "http://localhost:1234/RayVAgent/v1/RAYV/${USER}:${PASS}@${STREAM_ID}?streams=${STREAM_ID}:${BITRATE}");
+		System.strings.put(Param.System.EPG_VERSION, "1");
+		System.strings.put(Param.System.EPG_SERVER, "http://epg.aviq.bg");
+		System.strings.put(Param.System.EPG_PROVIDER, "rayv");
+		System.strings.put(Param.System.EPG_CHANNELS_URL, "${SERVER}/v${VERSION}/channels/${PROVIDER}");
+		System.strings.put(Param.System.EPG_CHANNEL_LOGO_URL, "${SERVER}/static/${PROVIDER}/${CHANNEL}/${LOGO}");
 
 		/*
 		 * emulate pre-processor during build time

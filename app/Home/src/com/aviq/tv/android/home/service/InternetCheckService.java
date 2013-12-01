@@ -39,20 +39,27 @@ public class InternetCheckService extends IntentService
 		Log.i(TAG, ".onHandleIntent");
 
 		if (intent == null)
+		{
+			Log.e(TAG, ".onHandleIntent: Can't start without intent");
 			return;
+		}
 
 		_resultReceiver = (ResultReceiver) intent.getParcelableExtra(Constants.EXTRA_RESULT_RECEIVER);
 
 		// If there is no one to notify about the Internet connectivity, then
 		// there is no point in running this service.
 		if (_resultReceiver == null)
+		{
+			Log.e(TAG, ".onHandleIntent: Undefined result receiver");
 			return;
+		}
 
 		// Check for network connectivity
 		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		if (activeNetworkInfo == null || !activeNetworkInfo.isConnected())
 		{
+			Log.e(TAG, ".onHandleIntent: No network connected. Notify failure");
 			_numSuccessful = 0;
 			notifyInterestedParty();
 			return;

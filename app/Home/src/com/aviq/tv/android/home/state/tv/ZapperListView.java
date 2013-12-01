@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2007-2013, AVIQ Bulgaria Ltd
  *
- * Project:     Test
+ * Project:     AVIQTV
  * Filename:    ZapperListView.java
  * Author:      alek
  * Date:        18 Nov 2013
- * Description:
+ * Description: Channel bar widget
  */
 
-package com.aviq.tv.android.test.zapperlist;
+package com.aviq.tv.android.home.state.tv;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -24,12 +24,16 @@ import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.OverScroller;
 import android.widget.ScrollView;
 
+import com.aviq.tv.android.home.utils.Log;
+
+/**
+ * Channel bar widget
+ */
 public class ZapperListView extends ScrollView
 {
 	private static final String TAG = ZapperListView.class.getSimpleName();
@@ -38,6 +42,9 @@ public class ZapperListView extends ScrollView
 	private int _position = 0;
 	private int _activeItemIndex = 7;
 
+	/**
+	 * View defining the content area to be scrolled by the encapsulating ScrollView
+	 */
 	private class ScrollItem extends View
 	{
 		private Paint _backPaint = new Paint();
@@ -194,6 +201,11 @@ public class ZapperListView extends ScrollView
 	{
 		Bitmap bmp = BitmapFactory.decodeResource(getResources(), resId);
 		_scrollItem.addBitmap(bmp);
+	}
+
+	public void addBitmap(Bitmap bitmap)
+	{
+		_scrollItem.addBitmap(bitmap);
 	}
 
 	public void selectIndex(int index)
