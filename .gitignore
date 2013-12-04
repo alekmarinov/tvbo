@@ -4,3 +4,5 @@
 /app/Test/gen
 /app/Test/.settings
 /app/Test/bin
+.classpath
+project.properties
