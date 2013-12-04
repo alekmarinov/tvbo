@@ -115,6 +115,36 @@ public class Param
 		EPG_DAYS_AHEAD,
 
 		/**
+		 * The name of the EPG provider, e.g. rayv, wilmaa, generic
+		 */
+		EPG_PROVIDER,
+
+		/**
+		 * The main url to the EPG server
+		 */
+		EPG_SERVER,
+
+		/**
+		 * The EPG service version
+		 */
+		EPG_VERSION,
+
+		/**
+		 * EPG channels url format
+		 */
+		EPG_CHANNELS_URL,
+
+		/**
+		 * EPG channel logo url format
+		 */
+		EPG_CHANNEL_LOGO_URL,
+
+		/**
+		 * EPG programs url format
+		 */
+		EPG_PROGRAMS_URL,
+		
+		/**
 		 * Timeout in seconds for OSD to stay on screen
 		 */
 		OSD_CHANNELS_TIMEOUT,

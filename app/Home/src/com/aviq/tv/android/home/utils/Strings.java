@@ -19,7 +19,60 @@ import android.os.Bundle;
 public class Strings
 {
 	/**
-	 * Substitutes all occurrences of ${<i>key</i>} with bundle.get(<i>key</i>) in the
+	 * Implodes bundle into StringBuffer
+	 *
+	 * @param buffer the StringBuffer to append into
+	 * @param bundle the bundle to be imploded
+	 * @param sepKey key from value character separator
+	 * @param sepVal key/value pairs separator
+	 * @return the same specified buffer
+	 */
+	public static StringBuffer implodeBundle(StringBuffer buffer, Bundle bundle, char sepKey, char sepVal)
+	{
+		boolean isSepVal = false;
+		if (bundle != null)
+			for (String key : bundle.keySet())
+			{
+				if (isSepVal)
+					buffer.append(sepVal);
+				buffer.append(key).append(sepKey).append(bundle.get(key));
+				isSepVal = true;
+			}
+		if (isSepVal)
+			buffer.append(sepVal);
+		return buffer;
+	}
+
+	/**
+	 * Implodes bundle to string
+	 *
+	 * @param bundle
+	 * @return String with formatted bundle
+	 */
+	public static String implodeBundle(Bundle bundle, char sepKey, char sepVal)
+	{
+		StringBuffer buffer = new StringBuffer();
+		implodeBundle(buffer, bundle, sepKey, sepVal);
+		return buffer.toString();
+	}
+
+	/**
+	 * Implodes bundle to string formatted as (key1:val1,key2:val2)
+	 * @param bundle
+	 * @return String with formatted bundle
+	 */
+	public static String implodeBundle(Bundle bundle)
+	{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append('(');
+		implodeBundle(buffer, bundle, ':', ',');
+		buffer.append(')');
+		return buffer.toString();
+	}
+
+	/**
+	 * Substitutes all occurrences of ${<i>key</i>} with bundle.get(<i>key</i>)
+	 * in the
 	 * input string, for all <i>key</i> in bundle's key set
 	 *
 	 * @param input

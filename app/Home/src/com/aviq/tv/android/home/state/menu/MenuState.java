@@ -11,6 +11,7 @@
 package com.aviq.tv.android.home.state.menu;
 
 import com.aviq.tv.android.home.state.BaseState;
+import com.aviq.tv.android.home.state.StateEnum;
 import com.aviq.tv.android.home.state.StateManager;
 
 /**
@@ -24,8 +25,7 @@ public class MenuState extends BaseState
 	 */
 	public MenuState(StateManager stateManager)
 	{
-		super(stateManager);
-		// TODO Auto-generated constructor stub
+		super(stateManager, StateEnum.MENU);
 	}
 
 }

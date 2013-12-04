@@ -14,26 +14,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 
 import com.aviq.tv.android.home.MainActivity;
+import com.aviq.tv.android.home.R;
 import com.aviq.tv.android.home.state.epg.EPGState;
 import com.aviq.tv.android.home.state.info.InfoState;
 import com.aviq.tv.android.home.state.menu.MenuState;
-import com.aviq.tv.android.home.state.overlay.NoInternetState;
-import com.aviq.tv.android.home.state.overlay.OverlayState;
 import com.aviq.tv.android.home.state.settings.SettingsState;
 import com.aviq.tv.android.home.state.tv.TVState;
 import com.aviq.tv.android.home.state.watchlist.WatchlistState;
+import com.aviq.tv.android.home.utils.Strings;
 
 /**
- * Control visibility of one or two States on the screen.
- * The current states are represented as a stack of size limit 2.
- * The top state on the stack is the current active state.
- * The state at position 0 at the stack is called background State, the state at
- * position 1 is Overlay
+ * Control visibility of one or two States on the screen and optional message
+ * box state on the top. The current states are represented as a stack of size
+ * limit 2 occupying layers MAIN and OVERLAY (StateLayer)
  */
 public class StateManager
 {
@@ -41,6 +41,12 @@ public class StateManager
 	private final Map<StateEnum, BaseState> _states = new HashMap<StateEnum, BaseState>();
 	private final Stack<BaseState> _activeStates = new Stack<BaseState>();
 	private final MainActivity _mainActivity;
+	private final Handler _handler = new Handler();
+
+	public enum StateLayer
+	{
+		MAIN, OVERLAY, MESSAGE
+	}
 
 	/**
 	 * Initialize StateManager instance.
@@ -52,19 +58,31 @@ public class StateManager
 	{
 		_mainActivity = mainActivity;
 
-		_states.put(StateEnum.MENU, new MenuState(this));
-		_states.put(StateEnum.TV, new TVState(this));
-		_states.put(StateEnum.EPG, new EPGState(this));
-		_states.put(StateEnum.INFO, new InfoState(this));
-		_states.put(StateEnum.SETTINGS, new SettingsState(this));
-		_states.put(StateEnum.WATCHLIST, new WatchlistState(this));
-		_states.put(StateEnum.OVERLAY, new OverlayState(this));
-		_states.put(StateEnum.NO_INTERNET, new NoInternetState(this));
+		// Register application states
+		registerState(new MenuState(this));
+		registerState(new TVState(this));
+		registerState(new EPGState(this));
+		registerState(new InfoState(this));
+		registerState(new SettingsState(this));
+		registerState(new WatchlistState(this));
+		registerState(new MessageBox(this));
+
+		Log.i(TAG, "StateManager initialized");
+	}
+
+	/**
+	 * Register state to manager
+	 *
+	 * @param state
+	 */
+	private void registerState(BaseState state)
+	{
+		_states.put(state.getStateEnum(), state);
 	}
 
 	/**
 	 * Sets new State as active. If isOverlay is true than the new State appears
-	 * over the current State.
+	 * over the current main State.
 	 *
 	 * @param state
 	 *            The new State to activate
@@ -73,8 +91,13 @@ public class StateManager
 	 * @param isOverlay
 	 *            If this State overlays the current
 	 */
-	public void setState(StateEnum stateEnum, Bundle params, boolean isOverlay) throws StateException
+	private void setState(StateEnum stateEnum, Bundle params, boolean isOverlay) throws StateException
 	{
+		StringBuffer logMsg = new StringBuffer();
+		logMsg.append(".setState: ").append(stateEnum.toString()).append('(');
+		Strings.implodeBundle(logMsg, params, '=', ',').append("), overlay=").append(isOverlay);
+		Log.i(TAG, logMsg.toString());
+
 		BaseState newState = _states.get(stateEnum);
 
 		if (newState == null)
@@ -94,34 +117,34 @@ public class StateManager
 					else
 					{
 						_activeStates.add(newState);
-						newState.show(params);
+						showState(newState, StateLayer.MAIN, params);
 					}
 				case 1:
 					if (isOverlay)
 					{
 						_activeStates.add(newState);
-						newState.show(params);
+						showState(newState, StateLayer.OVERLAY, params);
 					}
 					else
 					{
-						_activeStates.pop().hide();
+						hideState(_activeStates.pop());
 						_activeStates.add(newState);
-						newState.show(params);
+						showState(newState, StateLayer.MAIN, params);
 					}
 				break;
 				case 2:
 					if (isOverlay)
 					{
-						_activeStates.pop().hide();
+						hideState(_activeStates.pop());
 						_activeStates.add(newState);
-						newState.show(params);
+						showState(newState, StateLayer.OVERLAY, params);
 					}
 					else
 					{
-						_activeStates.pop().hide();
-						_activeStates.pop().hide();
+						hideState(_activeStates.pop());
+						hideState(_activeStates.pop());
 						_activeStates.add(newState);
-						newState.show(params);
+						showState(newState, StateLayer.MAIN, params);
 					}
 				break;
 			}
@@ -129,17 +152,82 @@ public class StateManager
 	}
 
 	/**
-	 * Sets new State as active. If isOverlay is true than the new State appears
-	 * over the current State.
+	 * Sets new main State as active.
 	 *
 	 * @param state
 	 *            The new State to activate
 	 * @param params
 	 *            Bundle holding params to be sent to the State when showing
 	 */
-	public void setState(StateEnum stateEnum, Bundle params) throws StateException
+	public void setStateMain(StateEnum stateEnum, Bundle params) throws StateException
 	{
 		setState(stateEnum, params, false);
+	}
+
+	/**
+	 * Sets new State as active overlay.
+	 *
+	 * @param state
+	 *            The new State to activate
+	 * @param params
+	 *            Bundle holding params to be sent to the State when showing
+	 */
+	public void setStateOverlay(StateEnum stateEnum, Bundle params) throws StateException
+	{
+		setState(stateEnum, params, true);
+	}
+
+	/**
+	 * Displays state on screen at specified state layer (see StateLayer)
+	 *
+	 * @param state to be shown
+	 * @param stateLayer the layer which this state will occupy
+	 * @param params Bundle with State params
+	 */
+	/* package */ void showState(final BaseState state, final StateLayer stateLayer, final Bundle params)
+	{
+		StringBuffer logMsg = new StringBuffer();
+		logMsg.append(".showState: ").append(state.getClass().getSimpleName()).append('(');
+		Strings.implodeBundle(logMsg, params, '=', ',').append("), layer=").append(stateLayer.name());
+		Log.i(TAG, logMsg.toString());
+
+		// Workaround of setting fragment arguments when the fragment is already
+		// added
+		Runnable showFragmentChunk = new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				state.setArguments(params);
+				FragmentTransaction ft = getMainActivity().getFragmentManager().beginTransaction();
+				int fragmentId = 0;
+				switch (stateLayer)
+				{
+					case MAIN:
+						fragmentId = R.id.main_fragment;
+					break;
+					case OVERLAY:
+						fragmentId = R.id.overlay_fragment;
+					break;
+					case MESSAGE:
+						fragmentId = R.id.message_fragment;
+					break;
+				}
+				ft.add(fragmentId, state);
+				// FIXME: make transition effect depending on state's StateLayer
+				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+				ft.commit();
+			}
+		};
+		if (state.isAdded())
+		{
+			hideState(state);
+			_handler.post(showFragmentChunk);
+		}
+		else
+		{
+			showFragmentChunk.run();
+		}
 	}
 
 	/**
@@ -154,11 +242,11 @@ public class StateManager
 	}
 
 	/**
-	 * Gets current active state instance
+	 * Gets current active main state instance
 	 *
 	 * @return current state instance
 	 */
-	public BaseState getCurrentState()
+	public BaseState getMainState()
 	{
 		if (_activeStates.size() > 0)
 			return _activeStates.get(0);
@@ -166,11 +254,11 @@ public class StateManager
 	}
 
 	/**
-	 * Gets current active overlay instance
+	 * Gets current active overlay state instance
 	 *
 	 * @return current overlay instance
 	 */
-	public BaseState getCurrentOverlay()
+	public BaseState getOverlayState()
 	{
 		if (_activeStates.size() > 1)
 			return _activeStates.get(1);
@@ -191,8 +279,8 @@ public class StateManager
 	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) throws StateException
 	{
-		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode + ", state = " + getCurrentState() + ", overlay = "
-		        + getCurrentOverlay());
+		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode + ", state = " + getMainState() + ", overlay = "
+		        + getOverlayState());
 		if (_activeStates.size() > 0)
 			return _activeStates.get(_activeStates.size() - 1).onKeyDown(keyCode, event);
 
@@ -213,8 +301,8 @@ public class StateManager
 	 */
 	public boolean onKeyUp(int keyCode, KeyEvent event) throws StateException
 	{
-		Log.i(TAG, ".onKeyUp: keyCode = " + keyCode + ", state = " + getCurrentState() + ", overlay = "
-		        + getCurrentOverlay());
+		Log.i(TAG, ".onKeyUp: keyCode = " + keyCode + ", state = " + getMainState() + ", overlay = "
+		        + getOverlayState());
 		if (_activeStates.size() > 0)
 			return _activeStates.get(_activeStates.size() - 1).onKeyUp(keyCode, event);
 
@@ -233,5 +321,46 @@ public class StateManager
 	public MainActivity getMainActivity()
 	{
 		return _mainActivity;
+	}
+
+	/**
+	 * Show message box
+	 *
+	 * @param msgType determine the kind of message (see MessageBox.Type)
+	 * @param stringId string resource identifier for the message text
+	 */
+	public void showMessage(MessageBox.Type msgType, int stringId)
+	{
+		final MessageBox messageBox = (MessageBox) getState(StateEnum.MESSAGEBOX);
+		final Bundle params = new Bundle();
+		params.putString(MessageBox.PARAM_TYPE, msgType.name());
+		params.putInt(MessageBox.PARAM_TEXT_ID, stringId);
+		showState(messageBox, StateLayer.MESSAGE, params);
+	}
+
+	/**
+	 * Hides message box
+	 */
+	public void hideMessage()
+	{
+		hideState(getState(StateEnum.MESSAGEBOX));
+	}
+
+	/**
+	 * Removes state fragment from screen
+	 *
+	 * @param state
+	 *            to be removed from screen
+	 */
+	/* package */ void hideState(BaseState state)
+	{
+		Log.i(TAG, ".hideState: " + state.getClass().getSimpleName());
+
+		if (state.isAdded())
+		{
+			FragmentTransaction ft = getMainActivity().getFragmentManager().beginTransaction();
+			ft.remove(state);
+			ft.commit();
+		}
 	}
 }
