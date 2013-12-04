@@ -21,7 +21,6 @@ import android.os.Handler;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.aviq.tv.android.home.MainActivity;
 import com.aviq.tv.android.home.service.ServiceController;
 import com.aviq.tv.android.home.state.StateManager;
 import com.aviq.tv.android.home.utils.HttpServer;
@@ -34,7 +33,7 @@ import com.aviq.tv.android.home.utils.Prefs;
 public class Environment
 {
 	public static final String TAG = Environment.class.getSimpleName();
-	private MainActivity _mainActivity;
+	private Activity _activity;
 	private Application _context;
 	private StateManager _stateManager;
 	private ServiceController _serviceController;
@@ -47,11 +46,11 @@ public class Environment
 	/**
 	 * Environment constructor method
 	 */
-	public Environment(MainActivity mainActivity)
+	public Environment(Activity activity)
 	{
-		_mainActivity = mainActivity;
-		_context = mainActivity.getApplication();
-		_stateManager = new StateManager(mainActivity);
+		_activity = activity;
+		_context = activity.getApplication();
+		_stateManager = new StateManager(activity);
 		_serviceController = new ServiceController(_context);
 		_prefs = new Prefs(_context.getSharedPreferences("user", Activity.MODE_PRIVATE),
 				_context.getSharedPreferences("system", Activity.MODE_PRIVATE));
@@ -106,9 +105,9 @@ public class Environment
 	/**
 	 * @return the only application activity
 	 */
-	public MainActivity getMainActivity()
+	public Activity getActivity()
 	{
-		return _mainActivity;
+		return _activity;
 	}
 
 	/**

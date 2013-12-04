@@ -32,7 +32,7 @@ public class FeaturePlayer extends FeatureComponent
 	{
 		super(environment);
 
-		VideoView videoView = (VideoView) environment.getMainActivity().findViewById(R.id.player);
+		VideoView videoView = (VideoView) environment.getActivity().findViewById(R.id.player);
 		_player = new AndroidPlayer(videoView);
 
 		_dependencies.Components.add(FeatureName.Component.EPG);

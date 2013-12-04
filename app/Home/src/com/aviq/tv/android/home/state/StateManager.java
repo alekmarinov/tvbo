@@ -14,13 +14,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import com.aviq.tv.android.home.MainActivity;
 import com.aviq.tv.android.home.R;
 import com.aviq.tv.android.home.state.epg.EPGState;
 import com.aviq.tv.android.home.state.info.InfoState;
@@ -40,7 +40,7 @@ public class StateManager
 	private static final String TAG = StateManager.class.getSimpleName();
 	private final Map<StateEnum, BaseState> _states = new HashMap<StateEnum, BaseState>();
 	private final Stack<BaseState> _activeStates = new Stack<BaseState>();
-	private final MainActivity _mainActivity;
+	private final Activity _activity;
 	private final Handler _handler = new Handler();
 
 	public enum StateLayer
@@ -54,9 +54,9 @@ public class StateManager
 	 * @param mainActivity
 	 *            The owner MainActivity of this StateManager
 	 */
-	public StateManager(MainActivity mainActivity)
+	public StateManager(Activity activity)
 	{
-		_mainActivity = mainActivity;
+		_activity = activity;
 
 		// Register application states
 		registerState(new MenuState(this));
@@ -199,7 +199,7 @@ public class StateManager
 			public void run()
 			{
 				state.setArguments(params);
-				FragmentTransaction ft = getMainActivity().getFragmentManager().beginTransaction();
+				FragmentTransaction ft = _activity.getFragmentManager().beginTransaction();
 				int fragmentId = 0;
 				switch (stateLayer)
 				{
@@ -313,17 +313,6 @@ public class StateManager
 	// TODO: Add onLongKeyUp() method
 
 	/**
-	 * Gets owner MainActivity
-	 *
-	 * @return The owner MainActivity of this StateManager
-	 * @throws StateException
-	 */
-	public MainActivity getMainActivity()
-	{
-		return _mainActivity;
-	}
-
-	/**
 	 * Show message box
 	 *
 	 * @param msgType determine the kind of message (see MessageBox.Type)
@@ -358,7 +347,7 @@ public class StateManager
 
 		if (state.isAdded())
 		{
-			FragmentTransaction ft = getMainActivity().getFragmentManager().beginTransaction();
+			FragmentTransaction ft = _activity.getFragmentManager().beginTransaction();
 			ft.remove(state);
 			ft.commit();
 		}

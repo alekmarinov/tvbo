@@ -29,7 +29,7 @@ public class FeatureFactory
 	{
 	}
 
-	public static FeatureFactory getInstance()
+	public static synchronized FeatureFactory getInstance()
 	{
 		if (_instance == null)
 		{
