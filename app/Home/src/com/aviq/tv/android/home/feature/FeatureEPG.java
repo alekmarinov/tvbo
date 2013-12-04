@@ -281,6 +281,7 @@ public class FeatureEPG extends FeatureComponent
 		bundle.putString("SERVER", _epgServer);
 		bundle.putString("CHANNEL", channelId);
 		bundle.putString("PROVIDER", _epgProvider);
+		bundle.putString("CHANNEL", channelId);
 		bundle.putString("LOGO", channelLogo);
 
 		String channelLogoUrl = _prefs.getString(Param.System.EPG_CHANNEL_LOGO_URL, bundle);
