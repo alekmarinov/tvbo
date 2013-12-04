@@ -20,14 +20,17 @@ public class FeatureName
 	{
 		EPG,
 		PLAYER,
-		HTTP_SERVER
+		HTTP_SERVER,
+		REGISTER
 	}
 
 	public static enum Scheduler
 	{
+		INTERNET
 	}
 
 	public static enum State
 	{
+		TV
 	}
 }

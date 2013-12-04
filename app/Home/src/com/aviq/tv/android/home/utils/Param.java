@@ -27,7 +27,7 @@ public class Param
 		/**
 		 * ABMP Base URL
 		 */
-		ABMP_URL,
+		ABMP_SERVER,
 
 		/**
 		 * Brand name to represent the box on ABMP
@@ -138,6 +138,11 @@ public class Param
 		 * EPG channel logo url format
 		 */
 		EPG_CHANNEL_LOGO_URL,
+
+		/**
+		 * ABMP registration URL format
+		 */
+		ABMP_REGISTER_URL,
 
 		/**
 		 * Timeout in seconds for OSD to stay on screen

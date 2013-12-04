@@ -25,12 +25,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.aviq.tv.android.home.ResultCode;
 import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.FeatureComponent;
 import com.aviq.tv.android.home.core.FeatureName;
+import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.FeatureName.Component;
-import com.aviq.tv.android.home.core.FeatureSet;
 import com.aviq.tv.android.home.utils.Param;
 import com.aviq.tv.android.home.utils.Prefs;
 
@@ -41,7 +40,6 @@ import com.aviq.tv.android.home.utils.Prefs;
 public class FeatureEPG extends FeatureComponent
 {
 	public static final String TAG = FeatureEPG.class.getSimpleName();
-	private FeatureSet _dependencies = new FeatureSet();
 	private JSONArray _channelsMeta;
 	private JSONArray _channelsData;
 	private int _metaChannelId;
@@ -185,12 +183,6 @@ public class FeatureEPG extends FeatureComponent
 			}
         }
 	};
-
-	@Override
-	public FeatureSet dependencies()
-	{
-		return _dependencies;
-	}
 
 	@Override
     public Component getId()

@@ -25,7 +25,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageLoader.ImageCache;
 import com.android.volley.toolbox.Volley;
-import com.aviq.tv.android.home.MainApplication;
 
 /**
  * Controls service starting and result handling
@@ -33,7 +32,7 @@ import com.aviq.tv.android.home.MainApplication;
 public class ServiceController
 {
 	private static final String TAG = ServiceController.class.getSimpleName();
-	private final MainApplication _mainApplication;
+	private final Context _context;
 	private Handler _handler = new Handler();
 	private RequestQueue _requestQueue;
 	private ImageLoader _imageLoader;
@@ -81,7 +80,7 @@ public class ServiceController
 		public void then(OnResultReceived then)
 		{
 			_then = then;
-			_mainApplication.startService(_intentService);
+			_context.startService(_intentService);
 		}
 
 		/**
@@ -101,9 +100,9 @@ public class ServiceController
 		public void every(int delaySecs, int intervalSecs, OnResultReceived then)
 		{
 			_then = then;
-			PendingIntent pintent = PendingIntent.getService(_mainApplication, 0, _intentService,
+			PendingIntent pintent = PendingIntent.getService(_context, 0, _intentService,
 			        PendingIntent.FLAG_UPDATE_CURRENT);
-			AlarmManager alarm = (AlarmManager) _mainApplication.getSystemService(Context.ALARM_SERVICE);
+			AlarmManager alarm = (AlarmManager) _context.getSystemService(Context.ALARM_SERVICE);
 			alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delaySecs * 1000,
 			        intervalSecs * 1000, pintent);
 		}
@@ -163,15 +162,15 @@ public class ServiceController
 	/**
 	 * Initialize ServiceManager instance.
 	 *
-	 * @param mainApplication
-	 *            The owner MainApplication of this ServiceManager
+	 * @param Context
+	 *            The owner application context of this ServiceManager
 	 */
-	public ServiceController(MainApplication mainApplication)
+	public ServiceController(Context context)
 	{
-		_mainApplication = mainApplication;
-		_requestQueue = Volley.newRequestQueue(mainApplication);
+		_context = context;
+		_requestQueue = Volley.newRequestQueue(context);
 
-		int memClass = ((ActivityManager) mainApplication.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
+		int memClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
 		// Use 1/8th of the available memory for this memory cache.
 		int cacheSize = 1024 * 1024 * memClass / 8;
 		_imageLoader = new ImageLoader(_requestQueue, new BitmapLruCache(cacheSize));
@@ -188,7 +187,7 @@ public class ServiceController
 	 */
 	public Promise startService(Class<?> serviceClass, Bundle params)
 	{
-		Intent intent = new Intent(_mainApplication, serviceClass);
+		Intent intent = new Intent(_context, serviceClass);
 		Promise onServiceComplete = new Promise(intent, _handler);
 		intent.putExtra(BaseService.EXTRA_RESULT_RECEIVER, onServiceComplete);
 		if (params != null)

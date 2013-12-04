@@ -11,7 +11,6 @@
 package com.aviq.tv.android.home.core;
 
 
-
 /**
  * Defines the base class for scheduler feature type
  *
@@ -49,5 +48,5 @@ public abstract class FeatureScheduler implements IFeature
 		return getId().toString();
 	}
 
-	public abstract FeatureName.Component getId();
+	public abstract FeatureName.Scheduler getId();
 }

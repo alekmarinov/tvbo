@@ -49,5 +49,5 @@ public abstract class FeatureState implements IFeature
 		return getId().toString();
 	}
 
-	public abstract FeatureName.Component getId();
+	public abstract FeatureName.State getId();
 }

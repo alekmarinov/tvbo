@@ -39,7 +39,7 @@ public class Params
 		User.strings.put(Param.User.MAC, "000000000000");
 		User.bools.put(Param.User.IS_FIRST_TIME, true);
 		User.bools.put(Param.User.IS_AFTER_UPDATE, false);
-		User.strings.put(Param.User.ABMP_URL, "http://bg.aviq.com:9090");
+		User.strings.put(Param.User.ABMP_SERVER, "http://abmp.aviq.bg");
 		User.strings.put(Param.User.CURRENT_CHANNEL, "");
 		User.strings.put(Param.User.LANGUAGE, "de");
 		User.strings.put(Param.User.RAYV_USER, "1C6F65F9DE76");
@@ -48,7 +48,7 @@ public class Params
 		// system settings
 		System.bools.put(Param.System.IS_STUB, Boolean.parseBoolean("@IS_STUB@"));
 		System.bools.put(Param.System.IS_DEVEL, false);
-		System.ints.put(Param.System.ABMP_REGISTER_INTERVAL, 30 * 60); // seconds
+		System.ints.put(Param.System.ABMP_REGISTER_INTERVAL, 60); // seconds
 		System.ints.put(Param.System.INTERNET_CHECK_INTERVAL, 1 * 20); // seconds
 		System.ints.put(Param.System.ALERT_TIMEOUT, 5); // seconds
 		System.ints.put(Param.System.OSD_CHANNELS_TIMEOUT, 2); // seconds
@@ -81,6 +81,8 @@ public class Params
 		System.strings.put(Param.System.EPG_PROVIDER, "rayv");
 		System.strings.put(Param.System.EPG_CHANNELS_URL, "${SERVER}/v${VERSION}/channels/${PROVIDER}");
 		System.strings.put(Param.System.EPG_CHANNEL_LOGO_URL, "${SERVER}/static/${PROVIDER}/${CHANNEL}/${LOGO}");
+		System.strings.put(Param.System.ABMP_REGISTER_URL,
+		        "${SERVER}/Box/Register.aspx?boxID=${BOX_ID}&version=${VERSION}&brand=${BRAND}&network=${NETWORK}");
 
 		/*
 		 * emulate pre-processor during build time
