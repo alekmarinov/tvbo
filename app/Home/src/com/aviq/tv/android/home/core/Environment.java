@@ -14,12 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.content.res.Resources;
+import android.os.Handler;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.aviq.tv.android.home.MainActivity;
-import com.aviq.tv.android.home.MainApplication;
 import com.aviq.tv.android.home.service.ServiceController;
 import com.aviq.tv.android.home.state.StateManager;
 import com.aviq.tv.android.home.utils.HttpServer;
@@ -33,13 +35,14 @@ public class Environment
 {
 	public static final String TAG = Environment.class.getSimpleName();
 	private MainActivity _mainActivity;
-	private MainApplication _mainApplication;
+	private Application _context;
 	private StateManager _stateManager;
 	private ServiceController _serviceController;
 	private HttpServer _httpServer;
 	private Prefs _prefs;
 	private RequestQueue _requestQueue;
 	private List<IFeature> _features = new ArrayList<IFeature>();
+	private Handler _handler = new Handler();
 
 	/**
 	 * Environment constructor method
@@ -47,12 +50,12 @@ public class Environment
 	public Environment(MainActivity mainActivity)
 	{
 		_mainActivity = mainActivity;
-		_mainApplication = (MainApplication) mainActivity.getApplication();
+		_context = mainActivity.getApplication();
 		_stateManager = new StateManager(mainActivity);
-		_serviceController = new ServiceController(_mainApplication);
-		_prefs = new Prefs(_mainApplication.getSharedPreferences("user", Activity.MODE_PRIVATE),
-		        _mainApplication.getSharedPreferences("system", Activity.MODE_PRIVATE));
-		_requestQueue = Volley.newRequestQueue(_mainApplication);
+		_serviceController = new ServiceController(_context);
+		_prefs = new Prefs(_context.getSharedPreferences("user", Activity.MODE_PRIVATE),
+				_context.getSharedPreferences("system", Activity.MODE_PRIVATE));
+		_requestQueue = Volley.newRequestQueue(_context);
 	}
 
 	/**
@@ -73,23 +76,23 @@ public class Environment
 		private int _nFeature = 0;
 
 		@Override
-        public void onInitialized(IFeature feature, int resultCode)
-        {
+		public void onInitialized(IFeature feature, int resultCode)
+		{
 			Log.i(TAG, ".initialize " + _nFeature + ": " + feature.getName() + " results " + resultCode);
 			if ((_nFeature + 1) < _features.size())
 			{
 				_nFeature++;
 				_features.get(_nFeature).initialize(this);
 			}
-        }
+		}
 	};
 
 	/**
 	 * @return main application context
 	 */
-	public MainApplication getMainApplication()
+	public Context getContext()
 	{
-		return _mainApplication;
+		return _context;
 	}
 
 	/**
@@ -97,7 +100,7 @@ public class Environment
 	 */
 	public Resources getResources()
 	{
-		return _mainApplication.getResources();
+		return _context.getResources();
 	}
 
 	/**
@@ -159,6 +162,16 @@ public class Environment
 	}
 
 	/**
+	 * Returns handler
+	 *
+	 * @return Handler
+	 */
+	public Handler getHandler()
+	{
+		return _handler;
+	}
+
+	/**
 	 * @param featureName
 	 * @throws FeatureNotFoundException
 	 */
@@ -186,6 +199,63 @@ public class Environment
 	{
 		IFeature feature = FeatureFactory.getInstance().createState(featureName, this);
 		_features.add(feature);
+	}
+
+	/**
+	 * @param featureId
+	 * @return FeatureComponent
+	 * @throws FeatureNotFoundException
+	 */
+	public FeatureComponent getComponent(FeatureName.Component featureId) throws FeatureNotFoundException
+	{
+		for (IFeature feature : _features)
+		{
+			if (IFeature.Type.COMPONENT.equals(feature.getType()))
+			{
+				FeatureComponent component = (FeatureComponent) feature;
+				if (featureId.equals(component.getId()))
+					return component;
+			}
+		}
+		throw new FeatureNotFoundException(featureId);
+	}
+
+	/**
+	 * @param featureId
+	 * @return FeatureScheduler
+	 * @throws FeatureNotFoundException
+	 */
+	public FeatureScheduler getScheduler(FeatureName.Scheduler featureId) throws FeatureNotFoundException
+	{
+		for (IFeature feature : _features)
+		{
+			if (IFeature.Type.SCHEDULER.equals(feature.getType()))
+			{
+				FeatureScheduler scheduler = (FeatureScheduler) feature;
+				if (featureId.equals(scheduler.getId()))
+					return scheduler;
+			}
+		}
+		throw new FeatureNotFoundException(featureId);
+	}
+
+	/**
+	 * @param featureId
+	 * @return FeatureState
+	 * @throws FeatureNotFoundException
+	 */
+	public FeatureState getState(FeatureName.State featureId) throws FeatureNotFoundException
+	{
+		for (IFeature feature : _features)
+		{
+			if (IFeature.Type.STATE.equals(feature.getType()))
+			{
+				FeatureState state = (FeatureState) feature;
+				if (featureId.equals(state.getId()))
+					return state;
+			}
+		}
+		throw new FeatureNotFoundException(featureId);
 	}
 
 	private List<IFeature> topologicalSort(List<IFeature> features)

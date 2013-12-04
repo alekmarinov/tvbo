@@ -14,10 +14,10 @@ import java.io.IOException;
 
 import android.util.Log;
 
-import com.aviq.tv.android.home.ResultCode;
 import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.FeatureComponent;
 import com.aviq.tv.android.home.core.FeatureName;
+import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.FeatureName.Component;
 import com.aviq.tv.android.home.utils.HttpServer;
 
@@ -44,7 +44,7 @@ public class FeatureHttpServer extends FeatureComponent
 
 		// Start HTTP server
 		Log.i(TAG, "Start HTTP server");
-		HttpServer httpServer = new HttpServer(_environment.getMainApplication());
+		HttpServer httpServer = new HttpServer(_environment.getContext());
 		try
 		{
 			httpServer.create();

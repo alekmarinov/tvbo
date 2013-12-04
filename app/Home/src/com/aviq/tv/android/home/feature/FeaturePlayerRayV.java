@@ -14,8 +14,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.aviq.tv.android.home.R;
-import com.aviq.tv.android.home.ResultCode;
 import com.aviq.tv.android.home.core.Environment;
+import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.utils.Param;
 import com.aviq.tv.android.home.utils.Prefs;
 import com.aviq.tv.android.home.utils.TextUtils;

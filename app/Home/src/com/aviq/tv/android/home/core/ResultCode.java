@@ -8,7 +8,7 @@
  * Description: Defines various results codes
  */
 
-package com.aviq.tv.android.home;
+package com.aviq.tv.android.home.core;
 
 /**
  * Defines various results codes

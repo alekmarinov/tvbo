@@ -11,7 +11,7 @@
 package com.aviq.tv.android.home.core;
 
 /**
- * Throw when requested feature is not defined
+ * Throw when requested feature is not found
  *
  */
 @SuppressWarnings("serial")
@@ -19,6 +19,30 @@ public class FeatureNotFoundException extends Exception
 {
 	public FeatureNotFoundException()
 	{
+	}
+
+	/**
+	 * @param FeatureName.Component
+	 */
+	public FeatureNotFoundException(FeatureName.Component featureId)
+	{
+		super("Component feature " + featureId + " is not found");
+	}
+
+	/**
+	 * @param FeatureName.Scheduler
+	 */
+	public FeatureNotFoundException(FeatureName.Scheduler featureId)
+	{
+		super("Scheduler feature " + featureId + " is not found");
+	}
+
+	/**
+	 * @param FeatureName.State
+	 */
+	public FeatureNotFoundException(FeatureName.State featureId)
+	{
+		super("State feature " + featureId + " is not found");
 	}
 
 	/**
@@ -45,5 +69,4 @@ public class FeatureNotFoundException extends Exception
 	{
 		super(detailMessage, throwable);
 	}
-
 }
