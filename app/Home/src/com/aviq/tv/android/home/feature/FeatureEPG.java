@@ -55,7 +55,7 @@ public class FeatureEPG extends FeatureComponent
 	private int _metaProgramStart;
 	private int _metaProgramStop;
 	private int _metaProgramTitle;
-	
+
 	public FeatureEPG(Environment environment)
 	{
 		super(environment);
@@ -65,26 +65,26 @@ public class FeatureEPG extends FeatureComponent
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		super.initialize(onFeatureInitialized);
-		
+
 		_onFeatureInitialized = onFeatureInitialized;
 
 		_prefs = _environment.getPrefs();
 		_epgVersion = _prefs.getString(Param.System.EPG_VERSION);
 		_epgServer = _prefs.getString(Param.System.EPG_SERVER);
 		_epgProvider = _prefs.getString(Param.System.EPG_PROVIDER);
-		
+
 		final RequestQueue queue = _environment.getRequestQueue();
-		
+
 		// Retrieve EPG channels
-		
+
 		String channelsUrl = getChannelsUrl();
 		GsonRequest<ChannelListResponse> channelListRequest = new GsonRequest<ChannelListResponse>(Request.Method.GET,
 		        channelsUrl, ChannelListResponse.class, new ChannelListResponseCallback(),
 		        new ChannelListResponseErrorCallback());
 		queue.add(channelListRequest);
-		
+
 		// Retrieve EPG programs
-		
+
 		String programsUrl = getChannelsUrl();
 		GsonRequest<ProgramsResponse> programsRequest = new GsonRequest<ProgramsResponse>(Request.Method.GET,
 		        programsUrl, ProgramsResponse.class, new ProgramsResponseCallback(),
@@ -105,14 +105,14 @@ public class FeatureEPG extends FeatureComponent
 	        final int nChannels = getChannelCount();
 	        _channelLogos = new Bitmap[nChannels];
 	        _retrievedLogos = 0;
-	        
+
 	        for (int i = 0; i < nChannels; i++)
 	        {
 		        final String channelId = getChannelId(i);
 		        String channelLogo = getChannelLogoName(i);
 		        String channelLogoUrl = getChannelsLogoUrl(channelLogo);
 		        Log.i(TAG, "Retrieving channel logo " + channelLogoUrl);
-		        
+
 		        // FIXME: Move image size (320x240) to constants
 		        ImageRequest imageRequest = new ImageRequest(channelLogoUrl,
 		                new LogoResponseCallback(channelId, i), 320, 240, Config.ARGB_8888, new LogoResponseErrorCallback(
@@ -121,7 +121,7 @@ public class FeatureEPG extends FeatureComponent
 	        }
         }
     }
-	
+
 	private class ChannelListResponseErrorCallback implements Response.ErrorListener
     {
         @Override
@@ -130,7 +130,7 @@ public class FeatureEPG extends FeatureComponent
 	        _onFeatureInitialized.onInitialized(FeatureEPG.this, error.networkResponse.statusCode);
         }
     }
-	
+
 	private class LogoResponseCallback implements Response.Listener<Bitmap>
 	{
 		private int _index;
@@ -164,13 +164,13 @@ public class FeatureEPG extends FeatureComponent
 	{
 		private String _channelId;
 		private int _totalChannels;
-		
+
 		LogoResponseErrorCallback(String channelId, int totalChannels)
 		{
 			_channelId = channelId;
 			_totalChannels = totalChannels;
 		}
-		
+
 		@Override
         public void onErrorResponse(VolleyError error)
         {
@@ -186,7 +186,7 @@ public class FeatureEPG extends FeatureComponent
 			}
         }
 	}
-	
+
 	private class ProgramsResponseCallback implements Response.Listener<ProgramsResponse>
     {
         @Override
@@ -196,7 +196,7 @@ public class FeatureEPG extends FeatureComponent
         	parseProgramsData(response.data);
         }
     }
-	
+
 	private class ProgramsResponseErrorCallback implements Response.ErrorListener
     {
         @Override
@@ -205,7 +205,7 @@ public class FeatureEPG extends FeatureComponent
 	        _onFeatureInitialized.onInitialized(FeatureEPG.this, error.networkResponse.statusCode);
         }
     }
-	
+
 	private void parseChannelListMetaData(String[] meta)
 	{
 		if (meta == null)
@@ -213,11 +213,11 @@ public class FeatureEPG extends FeatureComponent
 			Log.e(TAG, "Channel meta data is NULL.");
 			return;
 		}
-		
+
 		for (int j = 0; j < meta.length; j++)
         {
 	        String key = meta[j];
-	        
+
 	        if ("id".equals(key))
 		        _metaChannelId = j;
 	        else if ("title".equals(key))
@@ -228,12 +228,12 @@ public class FeatureEPG extends FeatureComponent
 		        Log.w(TAG, "Unknown channel column `" + key + "`");
         }
 	}
-	
+
 	private void parseChannelData(String[][] data)
 	{
 		_channelsData = data;
 	}
-	
+
 	private void parseProgramsMetaData(String[] meta)
 	{
 		if (meta == null)
@@ -241,11 +241,11 @@ public class FeatureEPG extends FeatureComponent
 			Log.e(TAG, "Programs meta data is NULL.");
 			return;
 		}
-		
+
 		for (int j = 0; j < meta.length; j++)
         {
 	        String key = meta[j];
-	        
+
 	        if ("start".equals(key))
 		        _metaProgramStart = j;
 	        else if ("stop".equals(key))
@@ -256,25 +256,25 @@ public class FeatureEPG extends FeatureComponent
 		        Log.w(TAG, "Unknown program column `" + key + "`");
         }
 	}
-	
+
 	private void parseProgramsData(String[][] data)
 	{
 		_programsData = data;
 	}
-	
+
 	private String getChannelsUrl()
 	{
 		Bundle bundle = new Bundle();
 		bundle.putString("SERVER", _epgServer);
 		bundle.putString("VERSION", _epgVersion);
 		bundle.putString("PROVIDER", _epgProvider);
-		
+
 		String channelsUrl = _prefs.getString(Param.System.EPG_CHANNELS_URL, bundle);
 		Log.i(TAG, "Retrieving EPG channels from " + channelsUrl);
-		
+
 		return channelsUrl;
 	}
-	
+
 	private String getChannelsLogoUrl(String channelLogo)
 	{
 		Bundle bundle = new Bundle();
@@ -282,13 +282,13 @@ public class FeatureEPG extends FeatureComponent
 		bundle.putString("VERSION", _epgVersion);
 		bundle.putString("PROVIDER", _epgProvider);
 		bundle.putString("LOGO", channelLogo);
-        
+
 		String channelLogoUrl = _prefs.getString(Param.System.EPG_CHANNEL_LOGO_URL, bundle);
         Log.i(TAG, "Retrieving channel logo from " + channelLogoUrl);
-		
+
 		return channelLogoUrl;
 	}
-	
+
 	private String getProgramsUrl(String channelId)
 	{
 		Bundle bundle = new Bundle();
@@ -296,13 +296,13 @@ public class FeatureEPG extends FeatureComponent
 		bundle.putString("VERSION", _epgVersion);
 		bundle.putString("PROVIDER", _epgProvider);
 		bundle.putString("CHANNEL", channelId);
-        
+
 		String programsUrl = _prefs.getString(Param.System.EPG_PROGRAMS_URL, bundle);
         Log.i(TAG, "Retrieving programs from " + programsUrl);
-		
+
 		return programsUrl;
 	}
-	
+
 	@Override
 	public FeatureSet dependencies()
 	{
