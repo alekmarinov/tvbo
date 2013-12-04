@@ -110,7 +110,7 @@ public class FeatureEPG extends FeatureComponent
 	        {
 		        final String channelId = getChannelId(i);
 		        String channelLogo = getChannelLogoName(i);
-		        String channelLogoUrl = getChannelsLogoUrl(channelLogo);
+		        String channelLogoUrl = getChannelsLogoUrl(channelId, channelLogo);
 		        Log.i(TAG, "Retrieving channel logo " + channelLogoUrl);
 
 		        // FIXME: Move image size (320x240) to constants
@@ -275,12 +275,13 @@ public class FeatureEPG extends FeatureComponent
 		return channelsUrl;
 	}
 
-	private String getChannelsLogoUrl(String channelLogo)
+	private String getChannelsLogoUrl(String channelId, String channelLogo)
 	{
 		Bundle bundle = new Bundle();
 		bundle.putString("SERVER", _epgServer);
 		bundle.putString("VERSION", _epgVersion);
 		bundle.putString("PROVIDER", _epgProvider);
+		bundle.putString("CHANNEL", channelId);
 		bundle.putString("LOGO", channelLogo);
 
 		String channelLogoUrl = _prefs.getString(Param.System.EPG_CHANNEL_LOGO_URL, bundle);
