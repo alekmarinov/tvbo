@@ -2,30 +2,30 @@
  * Copyright (c) 2007-2013, AVIQ Bulgaria Ltd
  *
  * Project:     AVIQTV
- * Filename:    MenuState.java
+ * Filename:    StateMenu.java
  * Author:      alek
  * Date:        16 Jul 2013
- * Description:
+ * Description: Defines Main Menu state
  */
 
 package com.aviq.tv.android.home.state.menu;
 
+import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.state.BaseState;
 import com.aviq.tv.android.home.state.StateEnum;
-import com.aviq.tv.android.home.state.StateManager;
 
 /**
- * @author alek
+ * Defines Main Menu state
  *
  */
-public class MenuState extends BaseState
+public class StateMenu extends BaseState
 {
 	/**
-	 * @param stateManager
+	 * @param Environment
 	 */
-	public MenuState(StateManager stateManager)
+	public StateMenu(Environment environment)
 	{
-		super(stateManager, StateEnum.MENU);
+		super(environment, StateEnum.MENU);
 	}
 
 }

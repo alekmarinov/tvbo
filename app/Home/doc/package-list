@@ -1,5 +1,13 @@
 com.aviq.tv.android.home
+com.aviq.tv.android.home.app.aviqtv
+com.aviq.tv.android.home.core
+com.aviq.tv.android.home.feature
+com.aviq.tv.android.home.feature.epg.api
+com.aviq.tv.android.home.feature.register
+com.aviq.tv.android.home.feature.scheduler.internet
+com.aviq.tv.android.home.feature.state.tv
 com.aviq.tv.android.home.player
+com.aviq.tv.android.home.service
 com.aviq.tv.android.home.state
 com.aviq.tv.android.home.state.epg
 com.aviq.tv.android.home.state.info

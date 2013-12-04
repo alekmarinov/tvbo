@@ -47,12 +47,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name="com.aviq.tv.android.home.service.InternetCheckService"
-            android:icon="@drawable/ic_launcher"
-            android:label="@string/internet_check_service" >
-        </service>
     </application>
 
 </manifest>

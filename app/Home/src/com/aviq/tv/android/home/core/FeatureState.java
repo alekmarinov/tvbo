@@ -10,6 +10,8 @@
 
 package com.aviq.tv.android.home.core;
 
+import com.aviq.tv.android.home.state.BaseState;
+
 
 
 /**
@@ -40,7 +42,7 @@ public abstract class FeatureState implements IFeature
 	@Override
 	public Type getType()
 	{
-		return IFeature.Type.SCHEDULER;
+		return IFeature.Type.STATE;
 	}
 
 	@Override
@@ -48,6 +50,8 @@ public abstract class FeatureState implements IFeature
 	{
 		return getId().toString();
 	}
+
+	public abstract BaseState getState();
 
 	public abstract FeatureName.State getId();
 }

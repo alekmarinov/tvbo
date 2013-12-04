@@ -14,6 +14,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.view.KeyEvent;
 
+import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.utils.Log;
 
 /**
@@ -24,7 +25,7 @@ import com.aviq.tv.android.home.utils.Log;
 public class BaseState extends Fragment
 {
 	private static final String TAG = BaseState.class.getSimpleName();
-	protected StateManager _stateManager;
+	protected Environment _environment;
 	private StateEnum _stateEnum;
 
 	/**
@@ -33,10 +34,11 @@ public class BaseState extends Fragment
 	 * @param stateManager
 	 *            The owner of this State instance.
 	 */
-    public BaseState(StateManager stateManager, StateEnum stateEnum)
+    public BaseState(Environment environment, StateEnum stateEnum)
 	{
-		_stateManager = stateManager;
+		_environment = environment;
 		_stateEnum = stateEnum;
+		_environment.getStateManager().registerState(this);
 		Log.i(TAG, getClass().getSimpleName() + " created");
 	}
 
@@ -57,7 +59,7 @@ public class BaseState extends Fragment
 	 */
     public void show(Bundle params) throws StateException
 	{
-		_stateManager.setStateMain(getStateEnum(), params);
+		_environment.getStateManager().setStateMain(getStateEnum(), params);
 	}
 
 	/**
@@ -69,7 +71,7 @@ public class BaseState extends Fragment
 	 */
     public void showOverlay(Bundle params) throws StateException
 	{
-		_stateManager.setStateOverlay(getStateEnum(), params);
+    	_environment.getStateManager().setStateOverlay(getStateEnum(), params);
 	}
 
 	/**
@@ -77,7 +79,7 @@ public class BaseState extends Fragment
 	 */
     public void hide()
 	{
-		_stateManager.hideState(this);
+    	_environment.getStateManager().hideState(this);
 	}
 
 	/**

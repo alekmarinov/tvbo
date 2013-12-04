@@ -22,6 +22,7 @@ import android.os.Handler;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.aviq.tv.android.home.service.ServiceController;
+import com.aviq.tv.android.home.state.StateException;
 import com.aviq.tv.android.home.state.StateManager;
 import com.aviq.tv.android.home.utils.HttpServer;
 import com.aviq.tv.android.home.utils.Log;
@@ -42,6 +43,7 @@ public class Environment
 	private RequestQueue _requestQueue;
 	private List<IFeature> _features = new ArrayList<IFeature>();
 	private Handler _handler = new Handler();
+	private FeatureName.State _homeFeatureState;
 
 	/**
 	 * Environment constructor method
@@ -52,8 +54,8 @@ public class Environment
 		_context = activity.getApplication();
 		_stateManager = new StateManager(activity);
 		_serviceController = new ServiceController(_context);
-		_prefs = new Prefs(_context.getSharedPreferences("user", Activity.MODE_PRIVATE),
-				_context.getSharedPreferences("system", Activity.MODE_PRIVATE));
+		_prefs = new Prefs(_context.getSharedPreferences("user", Activity.MODE_PRIVATE), _context.getSharedPreferences(
+		        "system", Activity.MODE_PRIVATE));
 		_requestQueue = Volley.newRequestQueue(_context);
 	}
 
@@ -82,6 +84,33 @@ public class Environment
 			{
 				_nFeature++;
 				_features.get(_nFeature).initialize(this);
+			}
+			else
+			{
+				// all features initialized, display home state feature
+				if (_homeFeatureState == null)
+				{
+					Log.e(TAG, "No home state feature defined! First used state feature will be used as home. "
+					        + "Check your environment for missing use declarations");
+				}
+				else
+				{
+					Log.i(TAG, "Setting main feature state " + _homeFeatureState);
+                    try
+                    {
+                    	FeatureState featureState = getFeatureState(_homeFeatureState);
+						_stateManager.setStateMain(featureState.getState().getStateEnum(), null);
+                    }
+                    catch (FeatureNotFoundException e)
+                    {
+                    	Log.e(TAG, e.getMessage(), e);
+                    }
+                    catch (StateException e)
+                    {
+                    	Log.e(TAG, e.getMessage(), e);
+                    }
+				}
+
 			}
 		}
 	};
@@ -171,33 +200,47 @@ public class Environment
 	}
 
 	/**
+	 * Declare component feature to be used
+	 *
 	 * @param featureName
 	 * @throws FeatureNotFoundException
 	 */
 	public void use(FeatureName.Component featureName) throws FeatureNotFoundException
 	{
+		Log.i(TAG, ".use: Component " + featureName);
 		IFeature feature = FeatureFactory.getInstance().createComponent(featureName, this);
 		_features.add(feature);
 	}
 
 	/**
+	 * Declare scheduler feature to be used
+	 *
 	 * @param featureName
 	 * @throws FeatureNotFoundException
 	 */
 	public void use(FeatureName.Scheduler featureName) throws FeatureNotFoundException
 	{
+		Log.i(TAG, ".use: Scheduler " + featureName);
 		IFeature feature = FeatureFactory.getInstance().createScheduler(featureName, this);
 		_features.add(feature);
 	}
 
 	/**
+	 * Declare state feature to be used. The first used state feature will be
+	 * used as home.
+	 *
 	 * @param featureName
 	 * @throws FeatureNotFoundException
 	 */
 	public void use(FeatureName.State featureName) throws FeatureNotFoundException
 	{
+		Log.i(TAG, ".use: State " + featureName);
 		IFeature feature = FeatureFactory.getInstance().createState(featureName, this);
 		_features.add(feature);
+
+		// Sets first used feature as home feature
+		if (_homeFeatureState == null)
+			_homeFeatureState = featureName;
 	}
 
 	/**
@@ -205,7 +248,7 @@ public class Environment
 	 * @return FeatureComponent
 	 * @throws FeatureNotFoundException
 	 */
-	public FeatureComponent getComponent(FeatureName.Component featureId) throws FeatureNotFoundException
+	public FeatureComponent getFeatureComponent(FeatureName.Component featureId) throws FeatureNotFoundException
 	{
 		for (IFeature feature : _features)
 		{
@@ -224,7 +267,7 @@ public class Environment
 	 * @return FeatureScheduler
 	 * @throws FeatureNotFoundException
 	 */
-	public FeatureScheduler getScheduler(FeatureName.Scheduler featureId) throws FeatureNotFoundException
+	public FeatureScheduler getFeatureScheduler(FeatureName.Scheduler featureId) throws FeatureNotFoundException
 	{
 		for (IFeature feature : _features)
 		{
@@ -243,7 +286,7 @@ public class Environment
 	 * @return FeatureState
 	 * @throws FeatureNotFoundException
 	 */
-	public FeatureState getState(FeatureName.State featureId) throws FeatureNotFoundException
+	public FeatureState getFeatureState(FeatureName.State featureId) throws FeatureNotFoundException
 	{
 		for (IFeature feature : _features)
 		{

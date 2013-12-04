@@ -22,12 +22,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 
 import com.aviq.tv.android.home.R;
-import com.aviq.tv.android.home.state.epg.EPGState;
-import com.aviq.tv.android.home.state.info.InfoState;
-import com.aviq.tv.android.home.state.menu.MenuState;
-import com.aviq.tv.android.home.state.settings.SettingsState;
-import com.aviq.tv.android.home.state.tv.TVState;
-import com.aviq.tv.android.home.state.watchlist.WatchlistState;
 import com.aviq.tv.android.home.utils.Strings;
 
 /**
@@ -59,13 +53,13 @@ public class StateManager
 		_activity = activity;
 
 		// Register application states
-		registerState(new MenuState(this));
-		registerState(new TVState(this));
-		registerState(new EPGState(this));
-		registerState(new InfoState(this));
-		registerState(new SettingsState(this));
-		registerState(new WatchlistState(this));
-		registerState(new MessageBox(this));
+		// registerState(new StateMenu(this));
+		// registerState(new StateTV(this));
+		// registerState(new StateEPG(this));
+		// registerState(new StateEPGInfo(this));
+		// registerState(new StateSettings(this));
+		// registerState(new WatchlistState(this));
+		// registerState(new MessageBox(this));
 
 		Log.i(TAG, "StateManager initialized");
 	}
@@ -75,8 +69,9 @@ public class StateManager
 	 *
 	 * @param state
 	 */
-	private void registerState(BaseState state)
+	public void registerState(BaseState state)
 	{
+		Log.i(TAG, ".registerState: " + state.getStateEnum());
 		_states.put(state.getStateEnum(), state);
 	}
 
@@ -119,6 +114,7 @@ public class StateManager
 						_activeStates.add(newState);
 						showState(newState, StateLayer.MAIN, params);
 					}
+				break;
 				case 1:
 					if (isOverlay)
 					{
@@ -180,11 +176,14 @@ public class StateManager
 	/**
 	 * Displays state on screen at specified state layer (see StateLayer)
 	 *
-	 * @param state to be shown
-	 * @param stateLayer the layer which this state will occupy
-	 * @param params Bundle with State params
+	 * @param state
+	 *            to be shown
+	 * @param stateLayer
+	 *            the layer which this state will occupy
+	 * @param params
+	 *            Bundle with State params
 	 */
-	/* package */ void showState(final BaseState state, final StateLayer stateLayer, final Bundle params)
+	/* package */void showState(final BaseState state, final StateLayer stateLayer, final Bundle params)
 	{
 		StringBuffer logMsg = new StringBuffer();
 		logMsg.append(".showState: ").append(state.getClass().getSimpleName()).append('(');
@@ -315,8 +314,10 @@ public class StateManager
 	/**
 	 * Show message box
 	 *
-	 * @param msgType determine the kind of message (see MessageBox.Type)
-	 * @param stringId string resource identifier for the message text
+	 * @param msgType
+	 *            determine the kind of message (see MessageBox.Type)
+	 * @param stringId
+	 *            string resource identifier for the message text
 	 */
 	public void showMessage(MessageBox.Type msgType, int stringId)
 	{
@@ -341,7 +342,7 @@ public class StateManager
 	 * @param state
 	 *            to be removed from screen
 	 */
-	/* package */ void hideState(BaseState state)
+	/* package */void hideState(BaseState state)
 	{
 		Log.i(TAG, ".hideState: " + state.getClass().getSimpleName());
 

@@ -5,7 +5,7 @@
  * Filename:    ApplicationFactory.java
  * Author:      alek
  * Date:        4 Dec 2013
- * Description: Singleton with factory methods to create application by id
+ * Description: Singleton with factory method to create application by id
  */
 
 package com.aviq.tv.android.home.core;
@@ -13,7 +13,7 @@ package com.aviq.tv.android.home.core;
 import com.aviq.tv.android.home.app.aviqtv.ApplicationAVIQTV;
 
 /**
- * Singleton with factory methods to create application by id
+ * Singleton with factory method to create application by id
  */
 public class ApplicationFactory
 {

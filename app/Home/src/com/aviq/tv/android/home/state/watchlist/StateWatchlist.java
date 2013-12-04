@@ -2,31 +2,31 @@
  * Copyright (c) 2007-2013, AVIQ Bulgaria Ltd
  *
  * Project:     AVIQTV
- * Filename:    WatchlistState.java
+ * Filename:    StateWatchlist.java
  * Author:      alek
  * Date:        16 Jul 2013
- * Description:
+ * Description: Defines Settings state
  */
 
 package com.aviq.tv.android.home.state.watchlist;
 
+import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.state.BaseState;
 import com.aviq.tv.android.home.state.StateEnum;
-import com.aviq.tv.android.home.state.StateManager;
 
 /**
- * @author alek
+ * Defines Settings state
  *
  */
-public class WatchlistState extends BaseState
+public class StateWatchlist extends BaseState
 {
 
 	/**
-	 * @param stateManager
+	 * @param Environment
 	 */
-	public WatchlistState(StateManager stateManager)
+	public StateWatchlist(Environment environment)
 	{
-		super(stateManager, StateEnum.WATCHLIST);
+		super(environment, StateEnum.WATCHLIST);
 	}
 
 }

@@ -2,31 +2,31 @@
  * Copyright (c) 2007-2013, AVIQ Bulgaria Ltd
  *
  * Project:     AVIQTV
- * Filename:    SettingsState.java
+ * Filename:    StateSettings.java
  * Author:      alek
  * Date:        16 Jul 2013
- * Description:
+ * Description: Defines Settings state
  */
 
 package com.aviq.tv.android.home.state.settings;
 
+import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.state.BaseState;
 import com.aviq.tv.android.home.state.StateEnum;
-import com.aviq.tv.android.home.state.StateManager;
 
 /**
- * @author alek
+ * Defines Settings state
  *
  */
-public class SettingsState extends BaseState
+public class StateSettings extends BaseState
 {
 
 	/**
-	 * @param stateManager
+	 * @param Environment
 	 */
-	public SettingsState(StateManager stateManager)
+	public StateSettings(Environment environment)
 	{
-		super(stateManager, StateEnum.SETTINGS);
+		super(environment, StateEnum.SETTINGS);
 	}
 
 }

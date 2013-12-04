@@ -13,6 +13,7 @@ package com.aviq.tv.android.home;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 
 import com.aviq.tv.android.home.core.ApplicationFactory;
 import com.aviq.tv.android.home.core.ApplicationNotFoundException;
@@ -64,5 +65,17 @@ public class MainActivity extends Activity
 		super.onPause();
 		Log.i(TAG, ".onPause");
 		_application.onPause();
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
+		return _application.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event)
+	{
+		return _application.onKeyUp(keyCode, event);
 	}
 }

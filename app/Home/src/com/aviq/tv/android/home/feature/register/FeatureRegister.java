@@ -69,7 +69,7 @@ public class FeatureRegister extends FeatureComponent
 			int registerInterval = prefs.getInt(Param.System.ABMP_REGISTER_INTERVAL);
 
 			FeatureInternet featureInternet = (FeatureInternet) _environment
-			        .getScheduler(FeatureName.Scheduler.INTERNET);
+			        .getFeatureScheduler(FeatureName.Scheduler.INTERNET);
 			featureInternet.addCheckUrl(abmpRegUrl, registerInterval, new FeatureInternet.OnResultReceived()
 			{
 				@Override

@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.aviq.tv.android.home.R;
+import com.aviq.tv.android.home.core.Environment;
 
 /**
  * Base class of all application message boxes
@@ -34,9 +35,9 @@ public class MessageBox extends BaseState
 		INFO, WARN, ERROR
 	}
 
-	public MessageBox(StateManager stateManager)
+	public MessageBox(Environment environment)
     {
-	    super(stateManager, StateEnum.MESSAGEBOX);
+	    super(environment, StateEnum.MESSAGEBOX);
     }
 
 	@Override

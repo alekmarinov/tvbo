@@ -2,30 +2,30 @@
  * Copyright (c) 2007-2013, AVIQ Bulgaria Ltd
  *
  * Project:     AVIQTV
- * Filename:    InfoState.java
+ * Filename:    StateEPGInfo.java
  * Author:      alek
  * Date:        16 Jul 2013
- * Description:
+ * Description: Defines EPG Info state
  */
 
 package com.aviq.tv.android.home.state.info;
 
+import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.state.BaseState;
 import com.aviq.tv.android.home.state.StateEnum;
-import com.aviq.tv.android.home.state.StateManager;
 
 /**
- * @author alek
+ * Defines EPG Info state
  *
  */
-public class InfoState extends BaseState
+public class StateEPGInfo extends BaseState
 {
 
 	/**
-	 * @param stateManager
+	 * @param Environment
 	 */
-	public InfoState(StateManager stateManager)
+	public StateEPGInfo(Environment environment)
 	{
-		super(stateManager, StateEnum.INFO);
+		super(environment, StateEnum.INFO);
 	}
 }

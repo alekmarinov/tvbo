@@ -11,6 +11,7 @@
 package com.aviq.tv.android.home.core;
 
 import android.app.Activity;
+import android.view.KeyEvent;
 
 /**
  * Defines main application interface
@@ -41,4 +42,14 @@ public interface IApplication
 	 * Invoked on activity pause
 	 */
 	void onPause();
+
+	/**
+	 * Invoked on key pressed
+	 */
+	boolean onKeyDown(int keyCode, KeyEvent event);
+
+	/**
+	 * Invoked on key released
+	 */
+	boolean onKeyUp(int keyCode, KeyEvent event);
 }
