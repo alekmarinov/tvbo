@@ -6,3 +6,5 @@
 /app/Test/bin
 .classpath
 project.properties
+/app/Home/.project
+/app/Test/.project
