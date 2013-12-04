@@ -49,7 +49,7 @@ public class Params
 		System.bools.put(Param.System.IS_STUB, Boolean.parseBoolean("@IS_STUB@"));
 		System.bools.put(Param.System.IS_DEVEL, false);
 		System.ints.put(Param.System.ABMP_REGISTER_INTERVAL, 60); // seconds
-		System.ints.put(Param.System.INTERNET_CHECK_INTERVAL, 1 * 20); // seconds
+		System.ints.put(Param.System.INTERNET_CHECK_INTERVAL, 1 * 60); // seconds
 		System.ints.put(Param.System.ALERT_TIMEOUT, 5); // seconds
 		System.ints.put(Param.System.OSD_CHANNELS_TIMEOUT, 2); // seconds
 		System.ints.put(Param.System.OSD_VOLUME_BAR_TIMEOUT, 3); // seconds
@@ -81,6 +81,7 @@ public class Params
 		System.strings.put(Param.System.EPG_PROVIDER, "rayv");
 		System.strings.put(Param.System.EPG_CHANNELS_URL, "${SERVER}/v${VERSION}/channels/${PROVIDER}");
 		System.strings.put(Param.System.EPG_CHANNEL_LOGO_URL, "${SERVER}/static/${PROVIDER}/${CHANNEL}/${LOGO}");
+		System.strings.put(Param.System.EPG_PROGRAMS_URL, "${SERVER}/v${VERSION}/programs/${PROVIDER}/${CHANNEL}");
 		System.strings.put(Param.System.ABMP_REGISTER_URL,
 		        "${SERVER}/Box/Register.aspx?boxID=${BOX_ID}&version=${VERSION}&brand=${BRAND}&network=${NETWORK}");
 

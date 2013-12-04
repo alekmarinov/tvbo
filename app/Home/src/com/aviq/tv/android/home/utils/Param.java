@@ -140,6 +140,11 @@ public class Param
 		EPG_CHANNEL_LOGO_URL,
 
 		/**
+		 * EPG programs url format
+		 */
+		EPG_PROGRAMS_URL,
+		
+		/**
 		 * ABMP registration URL format
 		 */
 		ABMP_REGISTER_URL,
