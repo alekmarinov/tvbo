@@ -15,9 +15,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import com.aviq.tv.android.home.core.ApplicationFactory;
-import com.aviq.tv.android.home.core.ApplicationNotFoundException;
-import com.aviq.tv.android.home.core.IApplication;
+import com.aviq.tv.android.home.core.Environment;
+import com.aviq.tv.android.home.core.application.IApplication;
 
 /**
  * The main activity managing all application screens
@@ -32,15 +31,9 @@ public class MainActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		Log.i(TAG, ".onCreate");
-		try
-        {
-	        _application = ApplicationFactory.getInstance().createApplication(IApplication.Name.AVIQTV);
-	        _application.onCreate(this);
-        }
-        catch (ApplicationNotFoundException e)
-        {
-        	Log.e(TAG, e.getMessage(), e);
-        }
+        _application = (IApplication)getApplication();
+        _application.onActivityCreate(this);
+		Environment.getInstance().initialize(this);
 	}
 
 	@Override
@@ -48,7 +41,7 @@ public class MainActivity extends Activity
 	{
 		super.onDestroy();
 		Log.i(TAG, ".onDestroy");
-		_application.onDestroy();
+		_application.onActivityDestroy();
 	}
 
 	@Override
@@ -56,7 +49,7 @@ public class MainActivity extends Activity
 	{
 		super.onResume();
 		Log.i(TAG, ".onResume");
-		_application.onResume();
+		_application.onActivityResume();
 	}
 
 	@Override
@@ -64,7 +57,7 @@ public class MainActivity extends Activity
 	{
 		super.onPause();
 		Log.i(TAG, ".onPause");
-		_application.onPause();
+		_application.onActivityPause();
 	}
 
 	@Override

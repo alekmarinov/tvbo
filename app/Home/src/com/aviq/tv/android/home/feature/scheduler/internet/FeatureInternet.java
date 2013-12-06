@@ -17,9 +17,9 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.aviq.tv.android.home.core.Environment;
-import com.aviq.tv.android.home.core.FeatureName;
-import com.aviq.tv.android.home.core.FeatureScheduler;
 import com.aviq.tv.android.home.core.ResultCode;
+import com.aviq.tv.android.home.core.feature.FeatureName;
+import com.aviq.tv.android.home.core.feature.FeatureScheduler;
 import com.aviq.tv.android.home.utils.Log;
 
 /**
@@ -37,14 +37,6 @@ public class FeatureInternet extends FeatureScheduler
 		void onReceiveResult(int resultCode, Bundle resultData);
 	}
 
-	/**
-	 * @param environment
-	 */
-	public FeatureInternet(Environment environment)
-	{
-		super(environment);
-	}
-
 	@Override
 	public void initialize(OnFeatureInitialized onFeatureInitialized)
 	{
@@ -52,7 +44,7 @@ public class FeatureInternet extends FeatureScheduler
 	}
 
 	@Override
-	public FeatureName.Scheduler getId()
+	public FeatureName.Scheduler getSchedulerName()
 	{
 		return FeatureName.Scheduler.INTERNET;
 	}
@@ -71,7 +63,7 @@ public class FeatureInternet extends FeatureScheduler
 		StringRequest stringRequest = new StringRequest(url, responseSuccess, responseError);
 		responseSuccess.setRequest(stringRequest);
 		responseError.setRequest(stringRequest);
-		_environment.getRequestQueue().add(stringRequest);
+		Environment.getInstance().getRequestQueue().add(stringRequest);
 	}
 
 	/**
@@ -110,7 +102,7 @@ public class FeatureInternet extends FeatureScheduler
 				_onResultReceived.onReceiveResult(ResultCode.OK, bundle);
 			}
 			Log.i(TAG, "Post checking again in " + _intervalSecs + " ms");
-			_environment.getHandler().postDelayed(this, _intervalSecs);
+			Environment.getInstance().getHandler().postDelayed(this, _intervalSecs);
 		}
 
 		/**
@@ -127,14 +119,14 @@ public class FeatureInternet extends FeatureScheduler
 				_onResultReceived.onReceiveResult(error.networkResponse.statusCode, bundle);
 			}
 			Log.i(TAG, "Post checking again in " + _intervalSecs + " ms");
-			_environment.getHandler().postDelayed(this, _intervalSecs);
+			Environment.getInstance().getHandler().postDelayed(this, _intervalSecs);
 		}
 
 		@Override
 		public void run()
 		{
 			Log.i(TAG, "Calling url " + _stringRequest.getUrl());
-			_environment.getRequestQueue().add(_stringRequest);
+			Environment.getInstance().getRequestQueue().add(_stringRequest);
 		}
 	}
 }

@@ -11,7 +11,9 @@
 package com.aviq.tv.android.home.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.Application;
@@ -21,9 +23,16 @@ import android.os.Handler;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.aviq.tv.android.home.service.ServiceController;
-import com.aviq.tv.android.home.state.StateException;
-import com.aviq.tv.android.home.state.StateManager;
+import com.aviq.tv.android.home.core.feature.FeatureComponent;
+import com.aviq.tv.android.home.core.feature.FeatureFactory;
+import com.aviq.tv.android.home.core.feature.FeatureName;
+import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
+import com.aviq.tv.android.home.core.feature.FeatureScheduler;
+import com.aviq.tv.android.home.core.feature.FeatureState;
+import com.aviq.tv.android.home.core.feature.IFeature;
+import com.aviq.tv.android.home.core.service.ServiceController;
+import com.aviq.tv.android.home.core.state.StateException;
+import com.aviq.tv.android.home.core.state.StateManager;
 import com.aviq.tv.android.home.utils.HttpServer;
 import com.aviq.tv.android.home.utils.Log;
 import com.aviq.tv.android.home.utils.Prefs;
@@ -34,56 +43,75 @@ import com.aviq.tv.android.home.utils.Prefs;
 public class Environment
 {
 	public static final String TAG = Environment.class.getSimpleName();
+	private static Environment _instance;
 	private Activity _activity;
 	private Application _context;
 	private StateManager _stateManager;
 	private ServiceController _serviceController;
 	private HttpServer _httpServer;
 	private Prefs _prefs;
+	private Prefs _userPrefs;
 	private RequestQueue _requestQueue;
 	private List<IFeature> _features = new ArrayList<IFeature>();
 	private Handler _handler = new Handler();
 	private FeatureName.State _homeFeatureState;
+	private Map<FeatureName.Component, Prefs> _componentPrefs = new HashMap<FeatureName.Component, Prefs>();
+	private Map<FeatureName.Scheduler, Prefs> _schedulerPrefs = new HashMap<FeatureName.Scheduler, Prefs>();
+	private Map<FeatureName.State, Prefs> _statePrefs = new HashMap<FeatureName.State, Prefs>();
 
 	/**
 	 * Environment constructor method
 	 */
-	public Environment(Activity activity)
+	private Environment()
 	{
-		_activity = activity;
-		_context = activity.getApplication();
-		_stateManager = new StateManager(activity);
-		_serviceController = new ServiceController(_context);
-		_prefs = new Prefs(_context.getSharedPreferences("user", Activity.MODE_PRIVATE), _context.getSharedPreferences(
-		        "system", Activity.MODE_PRIVATE));
-		_requestQueue = Volley.newRequestQueue(_context);
+	}
+
+	public static synchronized Environment getInstance()
+	{
+		if (_instance == null)
+			_instance = new Environment();
+		return _instance;
 	}
 
 	/**
 	 * Initialize environment
 	 */
-	public void initialize()
+	public void initialize(Activity activity)
 	{
+		// initializes environment context
+		_activity = activity;
+		_context = activity.getApplication();
+		_userPrefs = createUserPrefs();
+		_serviceController = new ServiceController(_context);
+		_requestQueue = Volley.newRequestQueue(_context);
+		_stateManager = new StateManager(activity);
+
+		// initializes features
+		Log.i(TAG, "Sorting features tolologically based on their declared dependencies");
 		_features = topologicalSort(_features);
-		if (_features.size() > 0)
-			_features.get(0).initialize(onFeatureInitialized);
+		for (int i = 0; i < _features.size(); i++)
+		{
+			Log.i(TAG, i + ". " + _features.get(i).getName());
+		}
+
+		Log.i(TAG, "Initializing features");
+		onFeatureInitialized.initializeNext();
 	}
 
-	/**
-	 * Chain based features initializer
-	 */
-	private IFeature.OnFeatureInitialized onFeatureInitialized = new IFeature.OnFeatureInitialized()
+	private class FeatureInitializeTimeout implements Runnable, IFeature.OnFeatureInitialized
 	{
-		private int _nFeature = 0;
+		private int _nFeature = -1;
 
-		@Override
-		public void onInitialized(IFeature feature, int resultCode)
+		// return true if there are more features to initialize or false
+		// otherwise
+		public void initializeNext()
 		{
-			Log.i(TAG, ".initialize " + _nFeature + ": " + feature.getName() + " results " + resultCode);
+			_handler.removeCallbacks(this);
 			if ((_nFeature + 1) < _features.size())
 			{
 				_nFeature++;
 				_features.get(_nFeature).initialize(this);
+				_handler.postDelayed(this, 10000);
 			}
 			else
 			{
@@ -96,24 +124,42 @@ public class Environment
 				else
 				{
 					Log.i(TAG, "Setting main feature state " + _homeFeatureState);
-                    try
-                    {
-                    	FeatureState featureState = getFeatureState(_homeFeatureState);
-						_stateManager.setStateMain(featureState.getState().getStateEnum(), null);
-                    }
-                    catch (FeatureNotFoundException e)
-                    {
-                    	Log.e(TAG, e.getMessage(), e);
-                    }
-                    catch (StateException e)
-                    {
-                    	Log.e(TAG, e.getMessage(), e);
-                    }
+					try
+					{
+						FeatureState featureState = getFeatureState(_homeFeatureState);
+						_stateManager.setStateMain(featureState, null);
+					}
+					catch (FeatureNotFoundException e)
+					{
+						Log.e(TAG, e.getMessage(), e);
+					}
+					catch (StateException e)
+					{
+						Log.e(TAG, e.getMessage(), e);
+					}
 				}
-
 			}
 		}
-	};
+
+		@Override
+		public void run()
+		{
+			// Initialization timed out
+			Log.e(TAG, ".initialize " + _nFeature + ": " + _features.get(_nFeature).getName() + " timeout!");
+		}
+
+		@Override
+		public void onInitialized(IFeature feature, int resultCode)
+		{
+			Log.i(TAG, ".initialize " + _nFeature + ": " + feature.getName() + " results " + resultCode);
+			initializeNext();
+		}
+	}
+
+	/**
+	 * Chain based features initializer
+	 */
+	private FeatureInitializeTimeout onFeatureInitialized = new FeatureInitializeTimeout();
 
 	/**
 	 * @return main application context
@@ -208,7 +254,7 @@ public class Environment
 	public void use(FeatureName.Component featureName) throws FeatureNotFoundException
 	{
 		Log.i(TAG, ".use: Component " + featureName);
-		IFeature feature = FeatureFactory.getInstance().createComponent(featureName, this);
+		IFeature feature = FeatureFactory.getInstance().createComponent(featureName);
 		_features.add(feature);
 	}
 
@@ -221,7 +267,7 @@ public class Environment
 	public void use(FeatureName.Scheduler featureName) throws FeatureNotFoundException
 	{
 		Log.i(TAG, ".use: Scheduler " + featureName);
-		IFeature feature = FeatureFactory.getInstance().createScheduler(featureName, this);
+		IFeature feature = FeatureFactory.getInstance().createScheduler(featureName);
 		_features.add(feature);
 	}
 
@@ -235,7 +281,7 @@ public class Environment
 	public void use(FeatureName.State featureName) throws FeatureNotFoundException
 	{
 		Log.i(TAG, ".use: State " + featureName);
-		IFeature feature = FeatureFactory.getInstance().createState(featureName, this);
+		IFeature feature = FeatureFactory.getInstance().createState(featureName);
 		_features.add(feature);
 
 		// Sets first used feature as home feature
@@ -244,68 +290,112 @@ public class Environment
 	}
 
 	/**
-	 * @param featureId
+	 * @param featureName
 	 * @return FeatureComponent
 	 * @throws FeatureNotFoundException
 	 */
-	public FeatureComponent getFeatureComponent(FeatureName.Component featureId) throws FeatureNotFoundException
+	public FeatureComponent getFeatureComponent(FeatureName.Component featureName) throws FeatureNotFoundException
 	{
 		for (IFeature feature : _features)
 		{
 			if (IFeature.Type.COMPONENT.equals(feature.getType()))
 			{
 				FeatureComponent component = (FeatureComponent) feature;
-				if (featureId.equals(component.getId()))
+				if (featureName.equals(component.getComponentName()))
 					return component;
 			}
 		}
-		throw new FeatureNotFoundException(featureId);
+		throw new FeatureNotFoundException(featureName);
 	}
 
 	/**
-	 * @param featureId
+	 * @param featureName
 	 * @return FeatureScheduler
 	 * @throws FeatureNotFoundException
 	 */
-	public FeatureScheduler getFeatureScheduler(FeatureName.Scheduler featureId) throws FeatureNotFoundException
+	public FeatureScheduler getFeatureScheduler(FeatureName.Scheduler featureName) throws FeatureNotFoundException
 	{
 		for (IFeature feature : _features)
 		{
 			if (IFeature.Type.SCHEDULER.equals(feature.getType()))
 			{
 				FeatureScheduler scheduler = (FeatureScheduler) feature;
-				if (featureId.equals(scheduler.getId()))
+				if (featureName.equals(scheduler.getSchedulerName()))
 					return scheduler;
 			}
 		}
-		throw new FeatureNotFoundException(featureId);
+		throw new FeatureNotFoundException(featureName);
 	}
 
 	/**
-	 * @param featureId
+	 * @param featureName
 	 * @return FeatureState
 	 * @throws FeatureNotFoundException
 	 */
-	public FeatureState getFeatureState(FeatureName.State featureId) throws FeatureNotFoundException
+	public FeatureState getFeatureState(FeatureName.State featureName) throws FeatureNotFoundException
 	{
 		for (IFeature feature : _features)
 		{
 			if (IFeature.Type.STATE.equals(feature.getType()))
 			{
 				FeatureState state = (FeatureState) feature;
-				if (featureId.equals(state.getId()))
+				if (featureName.equals(state.getStateName()))
 					return state;
 			}
 		}
-		throw new FeatureNotFoundException(featureId);
+		throw new FeatureNotFoundException(featureName);
+	}
+
+	public Prefs getFeaturePrefs(FeatureName.Component featureName)
+	{
+		Prefs prefsFile = _componentPrefs.get(featureName);
+		if (prefsFile == null)
+		{
+			prefsFile = createPrefs(featureName.name());
+			_componentPrefs.put(featureName, prefsFile);
+		}
+		return prefsFile;
+	}
+
+	public Prefs getFeaturePrefs(FeatureName.Scheduler featureName)
+	{
+		Prefs prefsFile = _schedulerPrefs.get(featureName);
+		if (prefsFile == null)
+		{
+			prefsFile = createPrefs(featureName.name());
+			_schedulerPrefs.put(featureName, prefsFile);
+		}
+		return prefsFile;
+	}
+
+	public Prefs getFeaturePrefs(FeatureName.State featureName)
+	{
+		Prefs prefsFile = _statePrefs.get(featureName);
+		if (prefsFile == null)
+		{
+			prefsFile = createPrefs(featureName.name());
+			_statePrefs.put(featureName, prefsFile);
+		}
+		return prefsFile;
+	}
+
+	public Prefs getUserPrefs()
+	{
+		return _userPrefs;
 	}
 
 	private List<IFeature> topologicalSort(List<IFeature> features)
 	{
 		List<IFeature> sorted = new ArrayList<IFeature>();
 		int featureCount = features.size();
+
+		Log.v(TAG, ".topologicalSort: " + featureCount + " features");
 		while (sorted.size() < featureCount)
 		{
+			Log.v(TAG, "Sorted " + sorted.size() + " features out of " + featureCount);
+
+			int prevSortedSize = sorted.size();
+
 			// remove all independent features
 			for (IFeature feature : features)
 			{
@@ -318,7 +408,7 @@ public class Environment
 					for (IFeature sortedFeature : sorted)
 					{
 						if (IFeature.Type.COMPONENT.equals(sortedFeature.getType()))
-							if (component.equals(((FeatureComponent) sortedFeature).getId()))
+							if (component.equals(((FeatureComponent) sortedFeature).getComponentName()))
 							{
 								resolvedCounter--;
 								break;
@@ -335,7 +425,7 @@ public class Environment
 					for (IFeature sortedFeature : sorted)
 					{
 						if (IFeature.Type.SCHEDULER.equals(sortedFeature.getType()))
-							if (scheduler.equals(((FeatureScheduler) sortedFeature).getId()))
+							if (scheduler.equals(((FeatureScheduler) sortedFeature).getSchedulerName()))
 							{
 								resolvedCounter--;
 								break;
@@ -352,7 +442,7 @@ public class Environment
 					for (IFeature sortedFeature : sorted)
 					{
 						if (IFeature.Type.STATE.equals(sortedFeature.getType()))
-							if (state.equals(((FeatureState) sortedFeature).getId()))
+							if (state.equals(((FeatureState) sortedFeature).getStateName()))
 							{
 								resolvedCounter--;
 								break;
@@ -365,7 +455,21 @@ public class Environment
 				if (sorted.indexOf(feature) < 0)
 					sorted.add(feature);
 			}
+			if (prevSortedSize == sorted.size())
+				throw new RuntimeException("Internal error. Unable to sort features!");
 		}
 		return sorted;
+	}
+
+	private Prefs createUserPrefs()
+	{
+		Log.i(TAG, ".createUserPrefs");
+		return new Prefs(_context.getSharedPreferences("user", Activity.MODE_PRIVATE), true);
+	}
+
+	private Prefs createPrefs(String name)
+	{
+		Log.i(TAG, ".createPrefs: name = " + name);
+		return new Prefs(_context.getSharedPreferences(name, Activity.MODE_PRIVATE), false);
 	}
 }

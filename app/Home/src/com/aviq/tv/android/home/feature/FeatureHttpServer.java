@@ -15,10 +15,10 @@ import java.io.IOException;
 import android.util.Log;
 
 import com.aviq.tv.android.home.core.Environment;
-import com.aviq.tv.android.home.core.FeatureComponent;
-import com.aviq.tv.android.home.core.FeatureName;
+import com.aviq.tv.android.home.core.feature.FeatureComponent;
+import com.aviq.tv.android.home.core.feature.FeatureName;
+import com.aviq.tv.android.home.core.feature.FeatureName.Component;
 import com.aviq.tv.android.home.core.ResultCode;
-import com.aviq.tv.android.home.core.FeatureName.Component;
 import com.aviq.tv.android.home.utils.HttpServer;
 
 /**
@@ -29,14 +29,6 @@ public class FeatureHttpServer extends FeatureComponent
 {
 	public static final String TAG = FeatureHttpServer.class.getSimpleName();
 
-	/**
-	 * @param environment
-	 */
-	public FeatureHttpServer(Environment environment)
-	{
-		super(environment);
-	}
-
 	@Override
 	public void initialize(OnFeatureInitialized onFeatureInitialized)
 	{
@@ -44,7 +36,7 @@ public class FeatureHttpServer extends FeatureComponent
 
 		// Start HTTP server
 		Log.i(TAG, "Start HTTP server");
-		HttpServer httpServer = new HttpServer(_environment.getContext());
+		HttpServer httpServer = new HttpServer(Environment.getInstance().getContext());
 		try
 		{
 			httpServer.create();
@@ -57,7 +49,7 @@ public class FeatureHttpServer extends FeatureComponent
 	}
 
 	@Override
-	public Component getId()
+	public Component getComponentName()
 	{
 		return FeatureName.Component.HTTP_SERVER;
 	}

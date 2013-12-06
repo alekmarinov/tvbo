@@ -4,7 +4,7 @@
     android:layout_alignParentBottom="true"
     android:layout_centerHorizontal="true" >
 
-    <com.aviq.tv.android.home.state.tv.ZapperListView
+    <com.aviq.tv.android.home.feature.state.tv.ZapperListView
         android:id="@+id/zapperListView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

@@ -1,15 +1,15 @@
 /**
  * Copyright (c) 2007-2013, AVIQ Bulgaria Ltd
  *
- * Project:     AVIQTV
+ * Project:     Home
  * Filename:    Log.java
  * Author:      Zheliazko
  * Date:        16 Jul 2013
  *
  * Description: Logging wrapper
  */
-package com.aviq.tv.android.home.utils;
 
+package com.aviq.tv.android.home.utils;
 
 public class Log
 {

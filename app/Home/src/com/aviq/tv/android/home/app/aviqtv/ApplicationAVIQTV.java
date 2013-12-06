@@ -11,114 +11,71 @@
 package com.aviq.tv.android.home.app.aviqtv;
 
 import android.app.Activity;
+import android.app.Application;
 import android.util.Log;
 import android.view.KeyEvent;
 
 import com.aviq.tv.android.home.R;
 import com.aviq.tv.android.home.core.Environment;
-import com.aviq.tv.android.home.core.FeatureName;
-import com.aviq.tv.android.home.core.FeatureNotFoundException;
-import com.aviq.tv.android.home.core.IApplication;
-import com.aviq.tv.android.home.state.StateException;
+import com.aviq.tv.android.home.core.application.IApplication;
+import com.aviq.tv.android.home.core.feature.FeatureName;
+import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
+import com.aviq.tv.android.home.core.state.StateException;
 
 /**
  * AVIQ TV main application class
  */
-public class ApplicationAVIQTV implements IApplication
+public class ApplicationAVIQTV extends Application implements IApplication
 {
 	public static final String TAG = ApplicationAVIQTV.class.getSimpleName();
-	private Environment _environment;
 
 	@Override
-	public void onCreate(Activity activity)
+	public void onActivityCreate(Activity activity)
 	{
 		activity.setContentView(R.layout.activity_main);
-		Log.i(TAG, ".onCreate");
+		Log.i(TAG, ".onActivityCreate");
 
-		_environment = new Environment(activity);
 		try
 		{
-			_environment.use(FeatureName.Component.PLAYER);
-			_environment.use(FeatureName.Component.EPG);
-			_environment.use(FeatureName.Component.HTTP_SERVER);
-			_environment.use(FeatureName.Component.REGISTER);
-			_environment.use(FeatureName.Scheduler.INTERNET);
-			_environment.use(FeatureName.State.TV);
+			Environment.getInstance().use(FeatureName.Component.PLAYER);
+			Environment.getInstance().use(FeatureName.Component.EPG);
+			Environment.getInstance().use(FeatureName.Component.HTTP_SERVER);
+			Environment.getInstance().use(FeatureName.Component.REGISTER);
+			Environment.getInstance().use(FeatureName.Scheduler.INTERNET);
+			Environment.getInstance().use(FeatureName.State.TV);
+			Environment.getInstance().use(FeatureName.State.MESSAGE_BOX);
 		}
 		catch (FeatureNotFoundException e)
 		{
 			Log.e(TAG, e.getMessage(), e);
 		}
-		_environment.initialize();
 	}
 
 	@Override
-	public void onDestroy()
+	public void onActivityDestroy()
 	{
-		Log.i(TAG, ".onDestroy");
+		Log.i(TAG, ".onActivityDestroy");
 	}
 
 	@Override
-	public void onResume()
+	public void onActivityResume()
 	{
-		Log.i(TAG, ".onResume");
-
-		//
-		// // Set TV state as initial state
-		// try
-		// {
-		// _environment.getStateManager().setStateMain(StateEnum.TV, null);
-		// }
-		// catch (StateException e)
-		// {
-		// Log.e(TAG, "Error", e);
-		// }
-		//
-		// // Add a test overlay state
-		// _environment.getHandler().postDelayed(new Runnable()
-		// {
-		// @Override
-		// public void run()
-		// {
-		// _environment.getStateManager().showMessage(MessageBox.Type.ERROR,
-		// R.string.connection_lost);
-		// }
-		// }, 3000);
-		//
-		// // Add a test overlay state
-		// _environment.getHandler().postDelayed(new Runnable()
-		// {
-		// @Override
-		// public void run()
-		// {
-		// _environment.getStateManager().showMessage(MessageBox.Type.WARN,
-		// R.string.contentDescription);
-		// }
-		// }, 5000);
-		//
-		// // Hide the test overlay state
-		// _environment.getHandler().postDelayed(new Runnable()
-		// {
-		// @Override
-		// public void run()
-		// {
-		// _environment.getStateManager().hideMessage();
-		// }
-		// }, 10000);
+		Log.i(TAG, ".onActivityResume");
 	}
 
 	@Override
-	public void onPause()
+	public void onActivityPause()
 	{
-		Log.i(TAG, ".onPause");
+		Log.i(TAG, ".onActivityPause");
 	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
+		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
 		try
 		{
-			return _environment.getStateManager().onKeyDown(keyCode, event);
+			return Environment.getInstance().getStateManager().onKeyDown(keyCode, event);
 		}
 		catch (StateException e)
 		{
@@ -130,9 +87,10 @@ public class ApplicationAVIQTV implements IApplication
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event)
 	{
+		Log.i(TAG, ".onKeyUp: keyCode = " + keyCode);
 		try
 		{
-			return _environment.getStateManager().onKeyUp(keyCode, event);
+			return Environment.getInstance().getStateManager().onKeyUp(keyCode, event);
 		}
 		catch (StateException e)
 		{

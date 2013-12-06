@@ -20,14 +20,12 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import com.aviq.tv.android.home.core.Environment;
-import com.aviq.tv.android.home.core.FeatureComponent;
-import com.aviq.tv.android.home.core.FeatureName;
-import com.aviq.tv.android.home.core.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.ResultCode;
+import com.aviq.tv.android.home.core.feature.FeatureComponent;
+import com.aviq.tv.android.home.core.feature.FeatureName;
+import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.feature.scheduler.internet.FeatureInternet;
 import com.aviq.tv.android.home.utils.Log;
-import com.aviq.tv.android.home.utils.Param;
-import com.aviq.tv.android.home.utils.Prefs;
 import com.aviq.tv.android.home.utils.TextUtils;
 
 /**
@@ -36,6 +34,40 @@ import com.aviq.tv.android.home.utils.TextUtils;
 public class FeatureRegister extends FeatureComponent
 {
 	private static final String TAG = FeatureRegister.class.getSimpleName();
+
+	public enum Param
+	{
+		/**
+		 * ABMP Server address
+		 */
+		ABMP_SERVER("http://abmp.aviq.bg"),
+
+		/**
+		 * Brand name to represent the box on ABMP
+		 */
+		BRAND("aviqtv"),
+
+		/**
+		 * ABMP registration URL format
+		 */
+		ABMP_REGISTER_URL("${SERVER}/Box/Register.aspx?boxID=${BOX_ID}&version=${VERSION}&brand=${BRAND}&network=${NETWORK}"),
+
+		/**
+		 * Ping ABMP interval in seconds
+		 */
+		ABMP_REGISTER_INTERVAL(60);
+
+		Param(int value)
+		{
+			Environment.getInstance().getFeaturePrefs(FeatureName.Component.REGISTER).put(name(), value);
+		}
+
+		Param(String value)
+		{
+			Environment.getInstance().getFeaturePrefs(FeatureName.Component.REGISTER).put(name(), value);
+		}
+	}
+
 	private static final String MAC_ADDRESS_FILE = "/sys/class/net/eth0/address";
 	private String _boxId;
 	private String _version;
@@ -43,9 +75,8 @@ public class FeatureRegister extends FeatureComponent
 	/**
 	 * @param environment
 	 */
-	public FeatureRegister(Environment environment)
+	public FeatureRegister()
 	{
-		super(environment);
 		_dependencies.Schedulers.add(FeatureName.Scheduler.INTERNET);
 	}
 
@@ -57,18 +88,17 @@ public class FeatureRegister extends FeatureComponent
 			_boxId = readMacAddress();
 			_version = parseAppVersion();
 
-			Prefs prefs = _environment.getPrefs();
 			Bundle bundle = new Bundle();
-			bundle.putString("SERVER", prefs.getString(Param.User.ABMP_SERVER));
+			bundle.putString("SERVER", getPrefs().getString(Param.ABMP_SERVER));
 			bundle.putString("BOX_ID", _boxId);
 			bundle.putString("VERSION", _version);
-			bundle.putString("BRAND", prefs.getString(Param.User.BRAND));
+			bundle.putString("BRAND", getPrefs().getString(Param.BRAND));
 			bundle.putString("NETWORK", getActiveNetworkType());
 
-			String abmpRegUrl = prefs.getString(Param.System.ABMP_REGISTER_URL, bundle);
-			int registerInterval = prefs.getInt(Param.System.ABMP_REGISTER_INTERVAL);
+			String abmpRegUrl = getPrefs().getString(Param.ABMP_REGISTER_URL, bundle);
+			int registerInterval = getPrefs().getInt(Param.ABMP_REGISTER_INTERVAL);
 
-			FeatureInternet featureInternet = (FeatureInternet) _environment
+			FeatureInternet featureInternet = (FeatureInternet) Environment.getInstance()
 			        .getFeatureScheduler(FeatureName.Scheduler.INTERNET);
 			featureInternet.addCheckUrl(abmpRegUrl, registerInterval, new FeatureInternet.OnResultReceived()
 			{
@@ -104,7 +134,7 @@ public class FeatureRegister extends FeatureComponent
 	}
 
 	@Override
-	public FeatureName.Component getId()
+	public FeatureName.Component getComponentName()
 	{
 		return FeatureName.Component.REGISTER;
 	}
@@ -124,7 +154,7 @@ public class FeatureRegister extends FeatureComponent
 
 	private String getActiveNetworkType()
 	{
-		final ConnectivityManager connectivityManager = (ConnectivityManager) _environment.getContext()
+		final ConnectivityManager connectivityManager = (ConnectivityManager) Environment.getInstance().getContext()
 		        .getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netInfo = connectivityManager.getActiveNetworkInfo();
 		return (netInfo != null) ? netInfo.getTypeName().toLowerCase() : "";
@@ -132,8 +162,8 @@ public class FeatureRegister extends FeatureComponent
 
 	private String parseAppVersion() throws NameNotFoundException
 	{
-		String version = _environment.getContext().getPackageManager()
-		        .getPackageInfo(_environment.getContext().getPackageName(), 0).versionName;
+		String version = Environment.getInstance().getContext().getPackageManager()
+		        .getPackageInfo(Environment.getInstance().getContext().getPackageName(), 0).versionName;
 		int dotIdx = version.lastIndexOf('.');
 		if (dotIdx >= 0)
 		{
