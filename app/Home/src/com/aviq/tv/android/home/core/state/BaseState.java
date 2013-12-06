@@ -87,7 +87,7 @@ public class BaseState extends Fragment
 	 *         should continue to be propagated.
 	 * @throws StateException
 	 */
-    public boolean onKeyDown(int keyCode, KeyEvent event) throws StateException
+    public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		return false;
 	}
@@ -104,7 +104,7 @@ public class BaseState extends Fragment
 	 *         should continue to be propagated.
 	 * @throws StateException
 	 */
-    public boolean onKeyUp(int keyCode, KeyEvent event) throws StateException
+    public boolean onKeyUp(int keyCode, KeyEvent event)
 	{
 		return false;
 	}

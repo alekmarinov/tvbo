@@ -16,7 +16,7 @@ import com.aviq.tv.android.home.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.home.feature.register.FeatureRegister;
 import com.aviq.tv.android.home.feature.scheduler.internet.FeatureInternet;
 import com.aviq.tv.android.home.feature.state.MessageBox;
-import com.aviq.tv.android.home.feature.state.tv.FeatureTV;
+import com.aviq.tv.android.home.feature.state.tv.FeatureStateTV;
 
 /**
  * Singleton with factory methods to create features by id
@@ -70,7 +70,7 @@ public class FeatureFactory
 		switch (featureId)
 		{
 			case TV:
-				return new FeatureTV();
+				return new FeatureStateTV();
 			case MESSAGE_BOX:
 				return new MessageBox();
 		}

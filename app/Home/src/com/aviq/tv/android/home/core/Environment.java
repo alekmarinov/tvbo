@@ -28,6 +28,7 @@ import com.aviq.tv.android.home.core.feature.FeatureFactory;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureScheduler;
+import com.aviq.tv.android.home.core.feature.FeatureSet;
 import com.aviq.tv.android.home.core.feature.FeatureState;
 import com.aviq.tv.android.home.core.feature.IFeature;
 import com.aviq.tv.android.home.core.service.ServiceController;
@@ -254,8 +255,17 @@ public class Environment
 	public void use(FeatureName.Component featureName) throws FeatureNotFoundException
 	{
 		Log.i(TAG, ".use: Component " + featureName);
-		IFeature feature = FeatureFactory.getInstance().createComponent(featureName);
-		_features.add(feature);
+		try
+		{
+			// Check if feature is already used
+			getFeatureComponent(featureName);
+		}
+		catch (FeatureNotFoundException e)
+		{
+			IFeature feature = FeatureFactory.getInstance().createComponent(featureName);
+			useDependencies(feature);
+			_features.add(feature);
+		}
 	}
 
 	/**
@@ -267,8 +277,18 @@ public class Environment
 	public void use(FeatureName.Scheduler featureName) throws FeatureNotFoundException
 	{
 		Log.i(TAG, ".use: Scheduler " + featureName);
-		IFeature feature = FeatureFactory.getInstance().createScheduler(featureName);
-		_features.add(feature);
+
+		try
+		{
+			// Check if feature is already used
+			getFeatureScheduler(featureName);
+		}
+		catch (FeatureNotFoundException e)
+		{
+			IFeature feature = FeatureFactory.getInstance().createScheduler(featureName);
+			useDependencies(feature);
+			_features.add(feature);
+		}
 	}
 
 	/**
@@ -281,12 +301,22 @@ public class Environment
 	public void use(FeatureName.State featureName) throws FeatureNotFoundException
 	{
 		Log.i(TAG, ".use: State " + featureName);
-		IFeature feature = FeatureFactory.getInstance().createState(featureName);
-		_features.add(feature);
 
-		// Sets first used feature as home feature
-		if (_homeFeatureState == null)
-			_homeFeatureState = featureName;
+		try
+		{
+			// Check if feature is already used
+			getFeatureState(featureName);
+		}
+		catch (FeatureNotFoundException e)
+		{
+			// Use feature
+			IFeature feature = FeatureFactory.getInstance().createState(featureName);
+			useDependencies(feature);
+			_features.add(feature);
+		}
+
+		// Sets last used feature state as home state
+		_homeFeatureState = featureName;
 	}
 
 	/**
@@ -382,6 +412,28 @@ public class Environment
 	public Prefs getUserPrefs()
 	{
 		return _userPrefs;
+	}
+
+	public void setHomeState(FeatureName.State featureName)
+	{
+		_homeFeatureState = featureName;
+	}
+
+	private void useDependencies(IFeature feature) throws FeatureNotFoundException
+	{
+		FeatureSet deps = feature.dependencies();
+		for (FeatureName.Component featureName: deps.Components)
+		{
+			use(featureName);
+		}
+		for (FeatureName.Scheduler featureName: deps.Schedulers)
+		{
+			use(featureName);
+		}
+		for (FeatureName.State featureName: deps.States)
+		{
+			use(featureName);
+		}
 	}
 
 	private List<IFeature> topologicalSort(List<IFeature> features)

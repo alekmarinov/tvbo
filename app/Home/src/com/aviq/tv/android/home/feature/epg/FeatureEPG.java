@@ -10,6 +10,7 @@
 
 package com.aviq.tv.android.home.feature.epg;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,10 +19,15 @@ import android.graphics.Bitmap.Config;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageRequest;
 import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.ResultCode;
@@ -29,6 +35,8 @@ import com.aviq.tv.android.home.core.feature.FeatureComponent;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureName.Component;
 import com.aviq.tv.android.home.core.feature.FeatureSet;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 /**
  * Component feature providing EPG data
@@ -96,7 +104,6 @@ public class FeatureEPG extends FeatureComponent
 	private int _metaChannelTitle;
 	private int _metaChannelThumbnail;
 	private Bitmap[] _channelLogos;
-	private int _retrievedLogos = 0;
 	private OnFeatureInitialized _onFeatureInitialized;
 	private int _epgVersion;
 	private String _epgServer;
@@ -107,6 +114,13 @@ public class FeatureEPG extends FeatureComponent
 	private int _metaProgramStart;
 	private int _metaProgramStop;
 	private int _metaProgramTitle;
+
+	// used to detect when all channel logos are retrieved with success or error
+	private int _retrievedChannelLogos;
+
+	// used to detect when all channel programs are retrieved with success or
+	// error
+	private int _retrievedChannelPrograms;
 
 	@Override
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
@@ -124,13 +138,13 @@ public class FeatureEPG extends FeatureComponent
 
 		// Retrieve EPG channels
 		String channelsUrl = getChannelsUrl();
+		ChannelListResponseCallback channelListResponseCallback = new ChannelListResponseCallback();
 		GsonRequest<ChannelListResponse> channelListRequest = new GsonRequest<ChannelListResponse>(Request.Method.GET,
-		        channelsUrl, ChannelListResponse.class, new ChannelListResponseCallback(),
-		        new ChannelListResponseErrorCallback());
+		        channelsUrl, ChannelListResponse.class, channelListResponseCallback, channelListResponseCallback);
 		queue.add(channelListRequest);
 	}
 
-	private class ChannelListResponseCallback implements Response.Listener<ChannelListResponse>
+	private class ChannelListResponseCallback implements Response.Listener<ChannelListResponse>, Response.ErrorListener
 	{
 		@Override
 		public void onResponse(ChannelListResponse response)
@@ -142,7 +156,8 @@ public class FeatureEPG extends FeatureComponent
 			final RequestQueue queue = Environment.getInstance().getRequestQueue();
 			final int nChannels = getChannelCount();
 			_channelLogos = new Bitmap[nChannels];
-			_retrievedLogos = 0;
+			_retrievedChannelLogos = 0;
+			_retrievedChannelPrograms = 0;
 
 			int channelLogoWidth = getPrefs().getInt(Param.CHANNEL_LOGO_WIDTH);
 			int channelLogoHeight = getPrefs().getInt(Param.CHANNEL_LOGO_HEIGHT);
@@ -150,26 +165,26 @@ public class FeatureEPG extends FeatureComponent
 			for (int i = 0; i < nChannels; i++)
 			{
 				final String channelId = getChannelId(i);
+
+				// Retrieve channel logo
 				String channelLogo = getChannelLogoName(i);
 				String channelLogoUrl = getChannelsLogoUrl(channelId, channelLogo);
 				Log.i(TAG, "Retrieving channel logo " + channelLogoUrl);
-
-				ImageRequest imageRequest = new ImageRequest(channelLogoUrl, new LogoResponseCallback(channelId, i),
-						channelLogoWidth, channelLogoHeight, Config.ARGB_8888, new LogoResponseErrorCallback(channelId, nChannels));
+				LogoResponseCallback logoResponseCallback = new LogoResponseCallback(channelId, i);
+				ImageRequest imageRequest = new ImageRequest(channelLogoUrl, logoResponseCallback, channelLogoWidth,
+				        channelLogoHeight, Config.ARGB_8888, logoResponseCallback);
 				queue.add(imageRequest);
 
 				// Retrieve EPG programs
 				String programsUrl = getProgramsUrl(channelId);
+				Log.i(TAG, "Retrieving programs " + programsUrl);
+				ProgramsResponseCallback programsResponseCallback = new ProgramsResponseCallback(channelId);
 				GsonRequest<ProgramsResponse> programsRequest = new GsonRequest<ProgramsResponse>(Request.Method.GET,
-				        programsUrl, ProgramsResponse.class, new ProgramsResponseCallback(channelId),
-				        new ProgramsResponseErrorCallback());
+				        programsUrl, ProgramsResponse.class, programsResponseCallback, programsResponseCallback);
 				queue.add(programsRequest);
 			}
 		}
-	}
 
-	private class ChannelListResponseErrorCallback implements Response.ErrorListener
-	{
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
@@ -178,7 +193,7 @@ public class FeatureEPG extends FeatureComponent
 		}
 	}
 
-	private class LogoResponseCallback implements Response.Listener<Bitmap>
+	private class LogoResponseCallback implements Response.Listener<Bitmap>, Response.ErrorListener
 	{
 		private int _index;
 		private String _channelId;
@@ -194,47 +209,27 @@ public class FeatureEPG extends FeatureComponent
 		{
 			Log.i(TAG, "Received bitmap " + response.getWidth() + "x" + response.getHeight());
 			_channelLogos[_index] = response;
-			_retrievedLogos++;
-			if (_retrievedLogos == getChannelCount())
-			{
-				Log.i(TAG, "Last channel logo with idx " + _index + " retrieved successfully");
-				_onFeatureInitialized.onInitialized(FeatureEPG.this, ResultCode.OK);
-			}
-			else
-			{
-				Log.i(TAG, "Retrieved channel logo with idx " + _index);
-			}
-		}
-	};
-
-	private class LogoResponseErrorCallback implements Response.ErrorListener
-	{
-		private String _channelId;
-		private int _totalChannels;
-
-		LogoResponseErrorCallback(String channelId, int totalChannels)
-		{
-			_channelId = channelId;
-			_totalChannels = totalChannels;
+			logoProcessed();
 		}
 
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
-			_retrievedLogos++;
-			if (_retrievedLogos == _totalChannels)
+			Log.i(TAG, "Retrieve channel logo " + _channelId + " with error: " + error);
+			logoProcessed();
+		}
+
+		private void logoProcessed()
+		{
+			_retrievedChannelLogos++;
+			if (_retrievedChannelPrograms == getChannelCount() && _retrievedChannelLogos == getChannelCount())
 			{
-				Log.i(TAG, "Last channel logo retrieved with error: " + error.getMessage());
 				_onFeatureInitialized.onInitialized(FeatureEPG.this, ResultCode.OK);
 			}
-			else
-			{
-				Log.i(TAG, "Retrieve channel logo " + _channelId + " with error: " + error);
-			}
 		}
-	}
+	};
 
-	private class ProgramsResponseCallback implements Response.Listener<ProgramsResponse>
+	private class ProgramsResponseCallback implements Response.Listener<ProgramsResponse>, Response.ErrorListener
 	{
 		private String _channelId;
 
@@ -246,17 +241,26 @@ public class FeatureEPG extends FeatureComponent
 		@Override
 		public void onResponse(ProgramsResponse response)
 		{
+			Log.i(TAG, "Received programs for channel " + _channelId);
 			parseProgramsMetaData(response.meta);
 			parseProgramsData(_channelId, response.data);
+			programsProcessed();
 		}
-	}
 
-	private class ProgramsResponseErrorCallback implements Response.ErrorListener
-	{
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
-			_onFeatureInitialized.onInitialized(FeatureEPG.this, error.networkResponse.statusCode);
+			Log.i(TAG, "Error " + error + " retrieving programs for " + _channelId);
+			programsProcessed();
+		}
+
+		private void programsProcessed()
+		{
+			_retrievedChannelPrograms++;
+			if (_retrievedChannelPrograms == getChannelCount() && _retrievedChannelLogos == getChannelCount())
+			{
+				_onFeatureInitialized.onInitialized(FeatureEPG.this, ResultCode.OK);
+			}
 		}
 	}
 
@@ -352,10 +356,7 @@ public class FeatureEPG extends FeatureComponent
 		bundle.putString("PROVIDER", _epgProvider);
 		bundle.putString("CHANNEL", channelId);
 
-		String programsUrl = getPrefs().getString(Param.EPG_PROGRAMS_URL, bundle);
-		Log.i(TAG, "Retrieving programs from " + programsUrl);
-
-		return programsUrl;
+		return getPrefs().getString(Param.EPG_PROGRAMS_URL, bundle);
 	}
 
 	@Override
@@ -422,5 +423,68 @@ public class FeatureEPG extends FeatureComponent
 		if (_channelLogos != null && index < _channelLogos.length)
 			return _channelLogos[index];
 		return null;
+	}
+
+	// GSON entity class of channel list response
+	private class ChannelListResponse
+	{
+		public String[] meta;
+		public String[][] data;
+	}
+
+	// GSON entity class of programs response
+	private class ProgramsResponse
+	{
+		public String[] meta;
+		public String[][] data;
+	}
+
+	// GSON volley request
+	private class GsonRequest<T> extends Request<T>
+	{
+		private final Gson mGson;
+		private final Class<T> mClazz;
+		private final Listener<T> mListener;
+
+		public GsonRequest(int method, String url, Class<T> clazz, Listener<T> listener, ErrorListener errorListener)
+		{
+			super(Method.GET, url, errorListener);
+			this.mClazz = clazz;
+			this.mListener = listener;
+			mGson = new Gson();
+		}
+
+		public GsonRequest(int method, String url, Class<T> clazz, Listener<T> listener, ErrorListener errorListener,
+		        Gson gson)
+		{
+			super(Method.GET, url, errorListener);
+			this.mClazz = clazz;
+			this.mListener = listener;
+			mGson = gson;
+		}
+
+		@Override
+		protected void deliverResponse(T response)
+		{
+			mListener.onResponse(response);
+		}
+
+		@Override
+		protected Response<T> parseNetworkResponse(NetworkResponse response)
+		{
+			try
+			{
+				String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+				return Response.success(mGson.fromJson(json, mClazz), HttpHeaderParser.parseCacheHeaders(response));
+			}
+			catch (UnsupportedEncodingException e)
+			{
+				return Response.error(new ParseError(e));
+			}
+			catch (JsonSyntaxException e)
+			{
+				return Response.error(new ParseError(e));
+			}
+		}
 	}
 }

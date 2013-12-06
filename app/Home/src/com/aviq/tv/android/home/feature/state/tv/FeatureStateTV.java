@@ -24,19 +24,18 @@ import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
-import com.aviq.tv.android.home.core.state.StateException;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
 import com.aviq.tv.android.home.feature.state.MessageBox;
 
 /**
  * TV state feature
  */
-public class FeatureTV extends FeatureState
+public class FeatureStateTV extends FeatureState
 {
-	public static final String TAG = FeatureTV.class.getSimpleName();
+	public static final String TAG = FeatureStateTV.class.getSimpleName();
 	private ZapperListView _zapperListView;
 
-	public FeatureTV()
+	public FeatureStateTV()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
@@ -83,7 +82,7 @@ public class FeatureTV extends FeatureState
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) throws StateException
+	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		if (keyCode == KeyEvent.KEYCODE_ENTER)
 		{
