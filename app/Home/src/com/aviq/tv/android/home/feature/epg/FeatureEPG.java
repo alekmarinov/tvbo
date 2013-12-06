@@ -50,7 +50,7 @@ public class FeatureEPG extends FeatureComponent
 		/**
 		 * The name of the EPG provider, e.g. rayv, wilmaa, generic
 		 */
-		EPG_PROVIDER("rayv"),
+		EPG_PROVIDER("wilmaa"),
 
 		/**
 		 * The main url to the EPG server

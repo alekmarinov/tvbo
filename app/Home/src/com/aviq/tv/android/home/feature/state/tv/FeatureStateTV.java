@@ -60,7 +60,7 @@ public class FeatureStateTV extends FeatureState
 	{
 		Log.i(TAG, ".onCreateView");
 		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_tv, container, false);
-		_zapperListView = (ZapperListView) viewGroup.findViewById(R.id.zapperListView);
+		_zapperListView = (ZapperListView) viewGroup.findViewById(R.id.tv_channel_bar);
 		try
 		{
 			FeatureEPG featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(
