@@ -24,7 +24,6 @@ import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.OverScroller;
 import android.widget.ScrollView;
@@ -41,7 +40,6 @@ public class ZapperListView extends ScrollView
 	private OverScroller _myScroller;
 	private int _position = 0;
 	private int _activeItemIndex = 6;
-	private int _bmpMaxWidth = 80;
 	private int _bmpMaxHeight = 50;
 	private int _topMargin = _bmpMaxHeight / 2;
 
@@ -88,20 +86,11 @@ public class ZapperListView extends ScrollView
 		@Override
 		protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
 		{
-			int w = _bmpMaxWidth;
-			if (_hasNumbers)
-			{
-				w += _textWidth;
-			}
-			w += 2 * _hpadding;
-			if (_hasNumbers)
-			{
-				w += _hpadding;
-			}
 			int virtualItemsCount = _bitmaps.size() + _activeItemIndex + _visibleItemsCount - _activeItemIndex;
 			int h = _topMargin + virtualItemsCount * _bmpMaxHeight;
 			h += 2 * virtualItemsCount * _vpadding;
 
+			int w =  MeasureSpec.getSize(widthMeasureSpec);
 			setMeasuredDimension(w, h);
 			Log.d(TAG, ".onMeasure: widthMeasureSpec = " + widthMeasureSpec + ", heightMeasureSpec = "
 			        + heightMeasureSpec + ", w = " + w + ", h = " + h);
@@ -248,28 +237,19 @@ public class ZapperListView extends ScrollView
 		return _scrollItem.getCount();
 	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	public void scrollUp()
 	{
-		Log.d(TAG, ".onKeyDown: keyCode = " + keyCode + ", _position = " + _position);
-		if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
-		{
-			if (keyCode == KeyEvent.KEYCODE_DPAD_UP)
-			{
-				if (_position > 0)
-					selectIndex(_position - 1);
-				else
-					selectIndex(getCount() - 1);
-			}
-			else
-			{
-				if (_position < getCount() - 1)
-					selectIndex(_position + 1);
-				else
-					selectIndex(0);
-			}
-			return true;
-		}
-		return false;
+		if (_position > 0)
+			selectIndex(_position - 1);
+		else
+			selectIndex(getCount() - 1);
+	}
+
+	public void scrollDown()
+	{
+		if (_position < getCount() - 1)
+			selectIndex(_position + 1);
+		else
+			selectIndex(0);
 	}
 }

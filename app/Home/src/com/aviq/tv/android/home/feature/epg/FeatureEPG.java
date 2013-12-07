@@ -13,6 +13,9 @@ package com.aviq.tv.android.home.feature.epg;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -50,7 +53,7 @@ public class FeatureEPG extends FeatureComponent
 		/**
 		 * The name of the EPG provider, e.g. rayv, wilmaa, generic
 		 */
-		EPG_PROVIDER("wilmaa"),
+		EPG_PROVIDER("rayv"),
 
 		/**
 		 * The main url to the EPG server
@@ -109,6 +112,7 @@ public class FeatureEPG extends FeatureComponent
 	private String _epgServer;
 	private String _epgProvider;
 	private Map<String, String[][]> _programsData = new HashMap<String, String[][]>();
+	private Map<String, NavigableMap<String, String>> _channelPrograms = new HashMap<String, NavigableMap<String, String>>();
 
 	// FIXME: Decide how to use later when needed
 	private int _metaProgramStart;
@@ -317,7 +321,21 @@ public class FeatureEPG extends FeatureComponent
 
 	private void parseProgramsData(String channelId, String[][] data)
 	{
-		_programsData.put(channelId, data);
+		// _programsData.put(channelId, data);
+		NavigableMap<String, String> programsMap = new TreeMap<String, String>();
+		for (int i = 0; i < data.length; i++)
+		{
+			programsMap.put(data[i][_metaProgramStart], data[i][_metaProgramTitle]);
+		}
+
+		_channelPrograms.put(channelId, programsMap);
+	}
+
+	/** get program title by date time, temporary method, please refactore */
+	public Entry<String, String> getProgram(String channelId, String datetime)
+	{
+		NavigableMap<String, String> programsMap = _channelPrograms.get(channelId);
+		return programsMap.floorEntry(datetime);
 	}
 
 	private String getChannelsUrl()

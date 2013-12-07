@@ -44,6 +44,25 @@ import com.aviq.tv.android.home.utils.Prefs;
 public class Environment
 {
 	public static final String TAG = Environment.class.getSimpleName();
+
+	public enum Param
+	{
+		/**
+		 * Timeout in seconds for feature initialization
+		 */
+		FEATURE_INITIALIZE_TIMEOUT(15);
+
+		Param(int value)
+		{
+			Environment.getInstance().getPrefs().put(name(), value);
+		}
+
+		Param(String value)
+		{
+			Environment.getInstance().getPrefs().put(name(), value);
+		}
+	}
+
 	private static Environment _instance;
 	private Activity _activity;
 	private Application _context;
@@ -83,6 +102,7 @@ public class Environment
 		_activity = activity;
 		_context = activity.getApplication();
 		_userPrefs = createUserPrefs();
+		_prefs = createPrefs("system");
 		_serviceController = new ServiceController(_context);
 		_requestQueue = Volley.newRequestQueue(_context);
 		_stateManager = new StateManager(activity);
@@ -96,12 +116,20 @@ public class Environment
 		}
 
 		Log.i(TAG, "Initializing features");
+		onFeatureInitialized.setTimeout(getPrefs().getInt(Param.FEATURE_INITIALIZE_TIMEOUT));
 		onFeatureInitialized.initializeNext();
 	}
 
 	private class FeatureInitializeTimeout implements Runnable, IFeature.OnFeatureInitialized
 	{
 		private int _nFeature = -1;
+		private long _initStartedTime;
+		private int _timeout = 0;
+
+		public void setTimeout(int timeout)
+		{
+			_timeout = timeout;
+		}
 
 		// return true if there are more features to initialize or false
 		// otherwise
@@ -111,8 +139,9 @@ public class Environment
 			if ((_nFeature + 1) < _features.size())
 			{
 				_nFeature++;
+				_handler.postDelayed(this, _timeout * 1000);
+				_initStartedTime = System.currentTimeMillis();
 				_features.get(_nFeature).initialize(this);
-				_handler.postDelayed(this, 10000);
 			}
 			else
 			{
@@ -146,13 +175,16 @@ public class Environment
 		public void run()
 		{
 			// Initialization timed out
-			Log.e(TAG, ".initialize " + _nFeature + ": " + _features.get(_nFeature).getName() + " timeout!");
+			Log.e(TAG, _nFeature + ". initialize " + (System.currentTimeMillis() - _initStartedTime) + " ms: "
+			        + _features.get(_nFeature).getName() + " timeout!");
+			throw new RuntimeException("timeout!");
 		}
 
 		@Override
 		public void onInitialized(IFeature feature, int resultCode)
 		{
-			Log.i(TAG, ".initialize " + _nFeature + ": " + feature.getName() + " results " + resultCode);
+			Log.i(TAG, _nFeature + ". initialize " + (System.currentTimeMillis() - _initStartedTime) + " ms: "
+			        + feature.getName() + " results " + resultCode);
 			initializeNext();
 		}
 	}
@@ -422,15 +454,15 @@ public class Environment
 	private void useDependencies(IFeature feature) throws FeatureNotFoundException
 	{
 		FeatureSet deps = feature.dependencies();
-		for (FeatureName.Component featureName: deps.Components)
+		for (FeatureName.Component featureName : deps.Components)
 		{
 			use(featureName);
 		}
-		for (FeatureName.Scheduler featureName: deps.Schedulers)
+		for (FeatureName.Scheduler featureName : deps.Schedulers)
 		{
 			use(featureName);
 		}
-		for (FeatureName.State featureName: deps.States)
+		for (FeatureName.State featureName : deps.States)
 		{
 			use(featureName);
 		}
