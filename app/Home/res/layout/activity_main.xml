@@ -10,40 +10,44 @@
         android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/contentDescription"
         android:scaleType="fitXY"
-        android:src="@drawable/black" 
-        android:contentDescription="@string/contentDescription"/>
+        android:src="@drawable/black" />
 
     <!-- Video -->
 
     <VideoView
         android:id="@+id/player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="false" />
+    <!--
         android:layout_width="@dimen/player_w"
         android:layout_height="@dimen/player_h"
         android:layout_marginLeft="@dimen/player_x"
         android:layout_marginTop="@dimen/player_y"
-        android:focusable="false" />
+    -->
+
 
     <!-- Main Fragment -->
 
     <FrameLayout
         android:id="@+id/main_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-    />
+        android:layout_height="match_parent" />
 
     <!-- Overlay Fragment -->
+
     <FrameLayout
         android:id="@+id/overlay_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-    />
+        android:layout_height="match_parent" />
 
     <!-- Message Fragment -->
+
     <FrameLayout
         android:id="@+id/message_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-     />
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

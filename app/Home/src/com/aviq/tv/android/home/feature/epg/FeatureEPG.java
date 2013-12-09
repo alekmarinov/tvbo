@@ -37,14 +37,13 @@ import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureComponent;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureName.Component;
-import com.aviq.tv.android.home.core.feature.FeatureSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 /**
  * Component feature providing EPG data
  */
-public class FeatureEPG extends FeatureComponent
+public abstract class FeatureEPG extends FeatureComponent
 {
 	public static final String TAG = FeatureEPG.class.getSimpleName();
 
@@ -101,7 +100,6 @@ public class FeatureEPG extends FeatureComponent
 		}
 	}
 
-	private FeatureSet _dependencies = new FeatureSet();
 	private String[][] _channelsData;
 	private int _metaChannelId;
 	private int _metaChannelTitle;
@@ -147,6 +145,14 @@ public class FeatureEPG extends FeatureComponent
 		        channelsUrl, ChannelListResponse.class, channelListResponseCallback, channelListResponseCallback);
 		queue.add(channelListRequest);
 	}
+
+	/**
+	 * Return stream url for specified channel
+	 *
+	 * @param channelIndex
+	 * @return stream url
+	 */
+	public abstract String getChannelStreamUrl(int channelIndex);
 
 	private class ChannelListResponseCallback implements Response.Listener<ChannelListResponse>, Response.ErrorListener
 	{
@@ -375,12 +381,6 @@ public class FeatureEPG extends FeatureComponent
 		bundle.putString("CHANNEL", channelId);
 
 		return getPrefs().getString(Param.EPG_PROGRAMS_URL, bundle);
-	}
-
-	@Override
-	public FeatureSet dependencies()
-	{
-		return _dependencies;
 	}
 
 	@Override

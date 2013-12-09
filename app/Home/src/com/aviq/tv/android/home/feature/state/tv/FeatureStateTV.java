@@ -31,7 +31,7 @@ import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
-import com.aviq.tv.android.home.feature.state.MessageBox;
+import com.aviq.tv.android.home.feature.player.FeaturePlayer;
 
 /**
  * TV state feature
@@ -64,6 +64,7 @@ public class FeatureStateTV extends FeatureState
 	private TextView _channelTitleTextView;
 	private TextView _currentProgramTitle;
 	private FeatureEPG _featureEPG;
+	private FeaturePlayer _featurePlayer;
 	private ProgramBarUpdater _programBarUpdater = new ProgramBarUpdater();
 	private int _updateProgramBarDelay;
 
@@ -81,6 +82,7 @@ public class FeatureStateTV extends FeatureState
 		try
 		{
 			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
+			_featurePlayer = (FeaturePlayer)Environment.getInstance().getFeatureComponent(FeatureName.Component.PLAYER);
 			_updateProgramBarDelay = getPrefs().getInt(Param.UPDATE_PROGRAM_BAR_DELAY);
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
@@ -132,30 +134,9 @@ public class FeatureStateTV extends FeatureState
 		switch (keyCode)
 		{
 			case KeyEvent.KEYCODE_ENTER:
-				// test with message box
-				boolean isAdded = false;
-				try
-				{
-					MessageBox messageBox = (MessageBox) Environment.getInstance().getFeatureState(
-					        FeatureName.State.MESSAGE_BOX);
-					isAdded = messageBox.isAdded();
-				}
-				catch (FeatureNotFoundException e)
-				{
-					Log.e(TAG, e.getMessage(), e);
-				}
-
-				// show hide message box
-				if (isAdded)
-				{
-					Environment.getInstance().getStateManager().hideMessage();
-				}
-				else
-				{
-					Environment.getInstance().getStateManager()
-					        .showMessage(MessageBox.Type.ERROR, R.string.connection_lost);
-				}
-				return false;
+				// Switch TV channel
+				onSwitchChannelIndex(_zapperListView.getSelectIndex());
+				return true;
 			case KeyEvent.KEYCODE_DPAD_UP:
 				_zapperListView.scrollUp();
 				onSelectChannelIndex(_zapperListView.getSelectIndex());
@@ -179,6 +160,12 @@ public class FeatureStateTV extends FeatureState
 		        + now + ", currentTitle = " + (currentTitle != null ? currentTitle.getKey() : "null") + " -> "
 		        + (currentTitle != null ? currentTitle.getValue() : "null"));
 		updateProgramBar(_featureEPG.getChannelTitle(channelIndex), currentTitle != null?currentTitle.getValue():"");
+	}
+
+	private void onSwitchChannelIndex(int channelIndex)
+	{
+		String streamUrl = _featureEPG.getChannelStreamUrl(channelIndex);
+		_featurePlayer.getPlayer().play(streamUrl);
 	}
 
 	private void updateProgramBar(String channelTitle, String currentProgramTitle)
