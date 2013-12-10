@@ -16,6 +16,7 @@ import com.aviq.tv.android.home.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.home.feature.register.FeatureRegister;
 import com.aviq.tv.android.home.feature.scheduler.internet.FeatureInternet;
 import com.aviq.tv.android.home.feature.state.MessageBox;
+import com.aviq.tv.android.home.feature.state.epg.FeatureStateEPG;
 import com.aviq.tv.android.home.feature.state.tv.FeatureTV;
 
 /**
@@ -73,6 +74,8 @@ public class FeatureFactory
 				return new FeatureTV();
 			case MESSAGE_BOX:
 				return new MessageBox();
+			case EPG:
+				return new FeatureStateEPG();
 		}
 		throw new FeatureNotFoundException(featureId);
 	}

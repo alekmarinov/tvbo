@@ -66,13 +66,13 @@ public class FeatureTV extends FeatureState
 		{
 			FeatureEPG featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(
 			        FeatureName.Component.EPG);
-			for (int i = 0; i < featureEPG.getChannelCount(); i++)
+			for (int i = 0; i < featureEPG.getEpgData().getChannelCount(); i++)
 			{
-				Bitmap bmp = featureEPG.getChannelLogoBitmap(i);
+				Bitmap bmp = featureEPG.getEpgData().getChannelLogoBitmap(i);
 				if (bmp != null)
 					_zapperListView.addBitmap(bmp);
 				else
-					Log.w(TAG, "Channel " + featureEPG.getChannelId(i) + " doesn't have image logo!");
+					Log.w(TAG, "Channel " + featureEPG.getEpgData().getChannel(i).getChannelId() + " doesn't have image logo!");
 			}
 		}
 		catch (FeatureNotFoundException e)

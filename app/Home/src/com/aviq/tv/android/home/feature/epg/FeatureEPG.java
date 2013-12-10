@@ -10,8 +10,10 @@
 
 package com.aviq.tv.android.home.feature.epg;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -90,23 +92,26 @@ public class FeatureEPG extends FeatureComponent
 		}
 	}
 
+	private RequestQueue _httpQueue;
 	private FeatureSet _dependencies = new FeatureSet();
-	private String[][] _channelsData;
-	private int _metaChannelId;
-	private int _metaChannelTitle;
-	private int _metaChannelThumbnail;
-	private Bitmap[] _channelLogos;
-	private int _retrievedLogos = 0;
 	private OnFeatureInitialized _onFeatureInitialized;
 	private int _epgVersion;
 	private String _epgServer;
 	private String _epgProvider;
-	private Map<String, String[][]> _programsData = new HashMap<String, String[][]>();
-
-	// FIXME: Decide how to use later when needed
-	private int _metaProgramStart;
-	private int _metaProgramStop;
-	private int _metaProgramTitle;
+	private int _channelLogoWidth;
+	private int _channelLogoHeight;
+	
+	// used to detect when all channel logos are retrieved with success or error
+	private int _retrievedChannelLogos;
+	
+	// used to detect when all channel programs are retrieved with success or
+	// error
+	private int _retrievedChannelPrograms;
+	
+	private EpgData _epgData;
+	private EpgData _epgDataBeingLoaded;
+	private ChannelMetaData _channelsMeta;
+	private ProgramMetaData _programsMeta;
 
 	@Override
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
@@ -119,18 +124,56 @@ public class FeatureEPG extends FeatureComponent
 		_epgVersion = getPrefs().getInt(Param.EPG_VERSION);
 		_epgServer = getPrefs().getString(Param.EPG_SERVER);
 		_epgProvider = getPrefs().getString(Param.EPG_PROVIDER);
+		_channelLogoWidth = getPrefs().getInt(Param.CHANNEL_LOGO_WIDTH);
+		_channelLogoHeight = getPrefs().getInt(Param.CHANNEL_LOGO_HEIGHT);
 
-		final RequestQueue queue = Environment.getInstance().getRequestQueue();
+		_httpQueue = Environment.getInstance().getRequestQueue();
 
-		// Retrieve EPG channels
-		String channelsUrl = getChannelsUrl();
-		GsonRequest<ChannelListResponse> channelListRequest = new GsonRequest<ChannelListResponse>(Request.Method.GET,
-		        channelsUrl, ChannelListResponse.class, new ChannelListResponseCallback(),
-		        new ChannelListResponseErrorCallback());
-		queue.add(channelListRequest);
+		retrieveChannels();
 	}
 
-	private class ChannelListResponseCallback implements Response.Listener<ChannelListResponse>
+	private void retrieveChannels()
+	{
+		String channelsUrl = getChannelsUrl();
+		ChannelListResponseCallback responseCallback = new ChannelListResponseCallback();
+		
+		GsonRequest<ChannelListResponse> channelListRequest = new GsonRequest<ChannelListResponse>(Request.Method.GET,
+		        channelsUrl, ChannelListResponse.class, responseCallback, responseCallback);
+
+		_httpQueue.add(channelListRequest);
+	}
+	
+	private void retrieveChannelLogo(Channel channel, int channelIndex)
+	{
+		String channelId = channel.getChannelId();
+		String channelLogo = channel.getThumbnail();
+		
+		String channelLogoUrl = getChannelsLogoUrl(channelId, channelLogo);
+		Log.i(TAG, "Retrieving channel logo " + channelLogoUrl);
+
+		LogoResponseCallback responseCallback = new LogoResponseCallback(channelId, channelIndex);
+
+		ImageRequest imageRequest = new ImageRequest(channelLogoUrl, responseCallback, _channelLogoWidth,
+		        _channelLogoHeight, Config.ARGB_8888, responseCallback);
+		
+		_httpQueue.add(imageRequest);
+	}
+	
+	private void retrievePrograms(Channel channel)
+	{
+		String channelId = channel.getChannelId();
+		String programsUrl = getProgramsUrl(channelId);
+		
+		ProgramsResponseCallback responseCallback = new ProgramsResponseCallback(channelId);
+		
+		GsonRequest<ProgramsResponse> programsRequest = new GsonRequest<ProgramsResponse>(Request.Method.GET,
+		        programsUrl, ProgramsResponse.class, responseCallback,
+		        responseCallback);
+		
+		_httpQueue.add(programsRequest);
+	}
+	
+	private class ChannelListResponseCallback implements Response.Listener<ChannelListResponse>, Response.ErrorListener
 	{
 		@Override
 		public void onResponse(ChannelListResponse response)
@@ -138,38 +181,20 @@ public class FeatureEPG extends FeatureComponent
 			parseChannelListMetaData(response.meta);
 			parseChannelData(response.data);
 
-			// Get all channel logos
-			final RequestQueue queue = Environment.getInstance().getRequestQueue();
-			final int nChannels = getChannelCount();
-			_channelLogos = new Bitmap[nChannels];
-			_retrievedLogos = 0;
-
-			int channelLogoWidth = getPrefs().getInt(Param.CHANNEL_LOGO_WIDTH);
-			int channelLogoHeight = getPrefs().getInt(Param.CHANNEL_LOGO_HEIGHT);
+			// Download channel-related data: logo, programs, etc.
+			
+			final int nChannels = _epgDataBeingLoaded.getChannelCount();
+			_retrievedChannelLogos = 0;
+		   _retrievedChannelPrograms = 0;
 
 			for (int i = 0; i < nChannels; i++)
 			{
-				final String channelId = getChannelId(i);
-				String channelLogo = getChannelLogoName(i);
-				String channelLogoUrl = getChannelsLogoUrl(channelId, channelLogo);
-				Log.i(TAG, "Retrieving channel logo " + channelLogoUrl);
-
-				ImageRequest imageRequest = new ImageRequest(channelLogoUrl, new LogoResponseCallback(channelId, i),
-						channelLogoWidth, channelLogoHeight, Config.ARGB_8888, new LogoResponseErrorCallback(channelId, nChannels));
-				queue.add(imageRequest);
-
-				// Retrieve EPG programs
-				String programsUrl = getProgramsUrl(channelId);
-				GsonRequest<ProgramsResponse> programsRequest = new GsonRequest<ProgramsResponse>(Request.Method.GET,
-				        programsUrl, ProgramsResponse.class, new ProgramsResponseCallback(channelId),
-				        new ProgramsResponseErrorCallback());
-				queue.add(programsRequest);
+				Channel channel = _epgData.getChannel(i);
+				retrieveChannelLogo(channel, i);
+				retrievePrograms(channel);
 			}
 		}
-	}
-
-	private class ChannelListResponseErrorCallback implements Response.ErrorListener
-	{
+		
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
@@ -177,86 +202,89 @@ public class FeatureEPG extends FeatureComponent
 			        error.networkResponse != null ? error.networkResponse.statusCode : ResultCode.GENERAL_FAILURE);
 		}
 	}
-
-	private class LogoResponseCallback implements Response.Listener<Bitmap>
+	
+	private class LogoResponseCallback implements Response.Listener<Bitmap>, Response.ErrorListener
 	{
 		private int _index;
 		private String _channelId;
-
+		
 		LogoResponseCallback(String channelId, int index)
 		{
 			_channelId = channelId;
 			_index = index;
 		}
-
+		
 		@Override
 		public void onResponse(Bitmap response)
 		{
 			Log.i(TAG, "Received bitmap " + response.getWidth() + "x" + response.getHeight());
-			_channelLogos[_index] = response;
-			_retrievedLogos++;
-			if (_retrievedLogos == getChannelCount())
-			{
-				Log.i(TAG, "Last channel logo with idx " + _index + " retrieved successfully");
-				_onFeatureInitialized.onInitialized(FeatureEPG.this, ResultCode.OK);
-			}
-			else
-			{
-				Log.i(TAG, "Retrieved channel logo with idx " + _index);
-			}
+			_epgDataBeingLoaded.setChannelLogo(_index, response);
+			logoProcessed();
 		}
-	};
-
-	private class LogoResponseErrorCallback implements Response.ErrorListener
-	{
-		private String _channelId;
-		private int _totalChannels;
-
-		LogoResponseErrorCallback(String channelId, int totalChannels)
-		{
-			_channelId = channelId;
-			_totalChannels = totalChannels;
-		}
-
+		
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
-			_retrievedLogos++;
-			if (_retrievedLogos == _totalChannels)
-			{
-				Log.i(TAG, "Last channel logo retrieved with error: " + error.getMessage());
-				_onFeatureInitialized.onInitialized(FeatureEPG.this, ResultCode.OK);
-			}
-			else
-			{
-				Log.i(TAG, "Retrieve channel logo " + _channelId + " with error: " + error);
-			}
+			Log.i(TAG, "Retrieve channel logo " + _channelId + " with error: " + error);
+			logoProcessed();
 		}
-	}
-
-	private class ProgramsResponseCallback implements Response.Listener<ProgramsResponse>
+		
+		private void logoProcessed()
+		{
+			_retrievedChannelLogos++;
+			checkInitializeFinished();
+		}
+	};
+	
+	private class ProgramsResponseCallback implements Response.Listener<ProgramsResponse>, Response.ErrorListener
 	{
 		private String _channelId;
-
+		
 		ProgramsResponseCallback(String channelId)
 		{
 			_channelId = channelId;
 		}
-
+		
 		@Override
 		public void onResponse(ProgramsResponse response)
 		{
+			Log.i(TAG, "Received programs for channel " + _channelId);
 			parseProgramsMetaData(response.meta);
 			parseProgramsData(_channelId, response.data);
+			programsProcessed();
 		}
-	}
-
-	private class ProgramsResponseErrorCallback implements Response.ErrorListener
-	{
+		
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
-			_onFeatureInitialized.onInitialized(FeatureEPG.this, error.networkResponse.statusCode);
+			Log.i(TAG, "Error " + error + " retrieving programs for " + _channelId);
+			programsProcessed();
+		}
+		
+		private void programsProcessed()
+		{
+			_retrievedChannelPrograms++;
+			checkInitializeFinished();
+		}
+	}
+	
+	private void checkInitializeFinished()
+	{
+		int numChannels = _epgDataBeingLoaded.getChannelCount();
+		if (_retrievedChannelPrograms == numChannels && _retrievedChannelLogos == numChannels)
+		{
+			synchronized (_epgData)
+			{
+				// Forget the old EpgData object, from now on work with the new
+				// one. Anyone else holding a reference to the old object will
+				// be able to finish its job. Then the garbage collector will
+				// free up the memory.
+				
+				_epgData = _epgDataBeingLoaded;
+				_epgDataBeingLoaded = null;
+			}
+			
+			_onFeatureInitialized.onInitialized(FeatureEPG.this, ResultCode.OK);
 		}
 	}
 
@@ -273,11 +301,11 @@ public class FeatureEPG extends FeatureComponent
 			String key = meta[j];
 
 			if ("id".equals(key))
-				_metaChannelId = j;
+				_channelsMeta.metaChannelId = j;
 			else if ("title".equals(key))
-				_metaChannelTitle = j;
+				_channelsMeta.metaChannelTitle = j;
 			else if ("thumbnail".equals(key))
-				_metaChannelThumbnail = j;
+				_channelsMeta.metaChannelThumbnail = j;
 			else
 				Log.w(TAG, "Unknown channel column `" + key + "`");
 		}
@@ -285,7 +313,17 @@ public class FeatureEPG extends FeatureComponent
 
 	private void parseChannelData(String[][] data)
 	{
-		_channelsData = data;
+		List<Channel> newChannelList = new ArrayList<Channel>();
+		for (int i = 0; i < data.length; i++)
+		{
+			Channel channel = new Channel();
+			channel.setChannelId(data[i][_channelsMeta.metaChannelId]);
+			channel.setTitle(data[i][_channelsMeta.metaChannelTitle]);
+			channel.setThumbnail(data[i][_channelsMeta.metaChannelThumbnail]);
+			newChannelList.add(channel);
+		}
+		
+		_epgDataBeingLoaded = new EpgData(newChannelList);
 	}
 
 	private void parseProgramsMetaData(String[] meta)
@@ -301,11 +339,11 @@ public class FeatureEPG extends FeatureComponent
 			String key = meta[j];
 
 			if ("start".equals(key))
-				_metaProgramStart = j;
+				_programsMeta.metaStart = j;
 			else if ("stop".equals(key))
-				_metaProgramStop = j;
+				_programsMeta.metaStop = j;
 			else if ("title".equals(key))
-				_metaProgramTitle = j;
+				_programsMeta.metaTitle = j;
 			else
 				Log.w(TAG, "Unknown program column `" + key + "`");
 		}
@@ -313,7 +351,22 @@ public class FeatureEPG extends FeatureComponent
 
 	private void parseProgramsData(String channelId, String[][] data)
 	{
-		_programsData.put(channelId, data);
+		NavigableMap<String, Integer> programMap = new TreeMap<String, Integer>();
+		List<Program> programList = new ArrayList<Program>();
+
+		for (int i = 0; i < data.length; i++)
+		{
+			Program program = new Program();
+			program.setStartTime(data[i][_programsMeta.metaStart]);
+			program.setStopTime(data[i][_programsMeta.metaStop]);
+			program.setTitle(data[i][_programsMeta.metaTitle]);
+			
+			programList.add(program);
+			programMap.put(program.getStartTime(), i);
+		}
+		
+		_epgDataBeingLoaded.addProgramNavigableMap(channelId, programMap);
+		_epgDataBeingLoaded.addProgramList(channelId, programList);
 	}
 
 	private String getChannelsUrl()
@@ -358,6 +411,11 @@ public class FeatureEPG extends FeatureComponent
 		return programsUrl;
 	}
 
+	public EpgData getEpgData()
+	{
+		return _epgData;
+	}
+	
 	@Override
 	public FeatureSet dependencies()
 	{
@@ -370,57 +428,17 @@ public class FeatureEPG extends FeatureComponent
 		return FeatureName.Component.EPG;
 	}
 
-	/**
-	 * @return the number of channels
-	 */
-	public int getChannelCount()
+	private static class ChannelMetaData
 	{
-		return _channelsData.length;
+		public int metaChannelId;
+		public int metaChannelTitle;
+		public int metaChannelThumbnail;
 	}
-
-	/**
-	 * Return channel id for specified channel index
-	 *
-	 * @param index
-	 * @return String
-	 */
-	public String getChannelId(int index)
+	
+	private static class ProgramMetaData
 	{
-		return _channelsData[index][_metaChannelId];
-	}
-
-	/**
-	 * Return channel title for specified channel index
-	 *
-	 * @param index
-	 * @return String
-	 */
-	public String getChannelTitle(int index)
-	{
-		return _channelsData[index][_metaChannelTitle];
-	}
-
-	/**
-	 * Return channel logo name for specified channel index
-	 *
-	 * @param index
-	 * @return String
-	 */
-	public String getChannelLogoName(int index)
-	{
-		return _channelsData[index][_metaChannelThumbnail];
-	}
-
-	/**
-	 * Return channel logo bitmap for specified channel index
-	 *
-	 * @param index
-	 * @return Bitmap
-	 */
-	public Bitmap getChannelLogoBitmap(int index)
-	{
-		if (_channelLogos != null && index < _channelLogos.length)
-			return _channelLogos[index];
-		return null;
+		public int metaStart;
+		public int metaStop;
+		public int metaTitle;
 	}
 }

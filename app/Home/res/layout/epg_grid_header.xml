@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/epg_grid_header_height">
+
+    <TextView
+        android:id="@+id/datetime"
+        android:background="@drawable/epg_grid_cell_inactive_no_border"
+        android:layout_width="@dimen/epg_channel_info_width"
+        android:layout_height="fill_parent"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:paddingLeft="16dip"
+        android:paddingRight="16dip"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <com.aviq.tipc.android.widget.EpgHeaderView
+        android:id="@+id/time_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/datetime"
+        android:orientation="horizontal" />
+
+</RelativeLayout>

@@ -1,0 +1,277 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:background="#CC000000" >
+
+    <!-- Program details layout -->
+
+    <LinearLayout
+        android:id="@+id/program_details_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/epg_program_details_thumbnail_height"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="70dp"
+        android:layout_marginTop="25dp"
+        android:background="@android:color/transparent"
+        android:orientation="horizontal" >
+
+        <!-- Thumbnail and date/time container -->
+
+        <RelativeLayout
+            android:id="@+id/thumbnail_container"
+            android:layout_width="@dimen/epg_program_details_thumbnail_width"
+            android:layout_height="@dimen/epg_program_details_thumbnail_height"
+            android:background="#342D6B"
+            android:padding="1dp" >
+
+            <ImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/contentDescription"
+                android:scaleType="fitXY"
+                android:src="@drawable/test_epg_thumbnail" />
+
+            <LinearLayout
+                android:id="@+id/program_time_container"
+                android:layout_width="match_parent"
+                android:layout_height="57dp"
+                android:layout_alignParentBottom="true"
+                android:background="#cc545454"
+                android:gravity="center|center_horizontal"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="17dp"
+                    android:drawableLeft="@drawable/ic_calendar"
+                    android:drawablePadding="10dp"
+                    android:singleLine="true"
+                    android:text="22/10/2013 г."
+                    android:textColor="#ffffff"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="17dp"
+                    android:drawableLeft="@drawable/ic_remaining_time"
+                    android:drawablePadding="10dp"
+                    android:singleLine="true"
+                    android:text="20:00"
+                    android:textColor="#ffffff"
+                    android:textSize="26sp" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/program_details_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/title_primary"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/program_details_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:singleLine="true"
+                android:text="Декстър"
+                android:textColor="#60B2EF"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/title_secondary"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/program_details_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:singleLine="true"
+                android:text="сезон 2, епизод 12"
+                android:textColor="#ffffff"
+                android:textSize="23sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/summary"
+                android:layout_width="match_parent"
+                android:layout_height="112dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/program_details_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:singleLine="false"
+                android:text="Декстър преследва и брутално убива онези опасни убийци, които са успели да избягат от &quot;дългата ръка на закона&quot;. Той организира убийствата си съгласно &quot;Кодекса на Хари&quot;, който е създал..."
+                android:textColor="#ffffff"
+                android:textSize="23sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- EPG grid layout -->
+
+    <LinearLayout
+        android:id="@+id/epg_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/program_details_container"
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="70dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/button_bar"
+        android:baselineAligned="false"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <include
+                android:id="@+id/epg_grid_header"
+                layout="@layout/epg_grid_header" />
+
+            <!--
+            It's very important to keep this attribute as is: android:layout_height="fill_parent". 
+            Otherwise, you get lots of getView() calls to constantly recalculate the ListView height.
+            -->
+
+            <com.aviq.tv.android.home.feature.state.epg.EpgListView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/gridList"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/epg_grid_header"
+                android:layout_gravity="center"
+                android:layout_marginLeft="0dip"
+                android:layout_marginRight="0dip"
+                android:addStatesFromChildren="true"
+                android:cacheColorHint="@android:color/transparent"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                android:fadingEdge="none"
+                android:gravity="left"
+                android:listSelector="@android:color/transparent"
+                android:scrollingCache="false" >
+            </com.aviq.tv.android.home.feature.state.epg.EpgListView>
+
+            <TextView
+                android:id="@+id/rcu_channel_selection"
+                android:layout_width="140dp"
+                android:layout_height="120dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="45dp"
+                android:singleLine="true"
+                android:textColor="#0000ff"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <!-- Contextual button bar -->
+
+    <RelativeLayout
+        android:id="@+id/button_bar_container"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:layout_below="@id/epg_grid"
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="70dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/button_bar"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" >
+
+        <TextView
+            android:id="@+id/home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="17dp"
+            android:drawableLeft="@drawable/ic_menu"
+            android:drawablePadding="10dp"
+            android:singleLine="true"
+            android:text="Начало"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/prevNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginRight="17dp"
+            android:layout_toRightOf="@id/home"
+            android:drawableLeft="@drawable/ic_navigation"
+            android:drawablePadding="10dp"
+            android:singleLine="true"
+            android:text="Предходен / Следващ"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginRight="17dp"
+            android:layout_toRightOf="@id/prevNext"
+            android:drawableLeft="@drawable/ic_ok"
+            android:drawablePadding="10dp"
+            android:singleLine="true"
+            android:text="Избор"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginRight="17dp"
+            android:layout_toRightOf="@id/ok"
+            android:drawableLeft="@drawable/ic_back"
+            android:drawablePadding="10dp"
+            android:singleLine="true"
+            android:text="Назад"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/epg_channel_order_index"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:singleLine="true"
+            android:text="2 / 100"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

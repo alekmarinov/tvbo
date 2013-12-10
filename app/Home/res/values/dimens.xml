@@ -21,5 +21,8 @@
 	<dimen name="program_info_option_height">70dip</dimen>
 	
 	<dimen name="wizard_infotext_fontsize">36sp</dimen>
-		
+	
+	<!-- Thumbnail size's ratio is 16:10 -->
+	<dimen name="epg_program_details_thumbnail_width">370dp</dimen>
+	<dimen name="epg_program_details_thumbnail_height">232dp</dimen>
 </resources>
