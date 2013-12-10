@@ -59,17 +59,6 @@ public class StateManager
 	}
 
 	/**
-	 * Register state to manager
-	 *
-	 * @param state
-	 */
-	public void registerState(BaseState state)
-	{
-		// Log.i(TAG, ".registerState: " + state.getStateEnum());
-		// _states.put(state.getStateEnum(), state);
-	}
-
-	/**
 	 * Sets new State as active. If isOverlay is true than the new State appears
 	 * over the current main State.
 	 *
@@ -262,7 +251,7 @@ public class StateManager
 	 *         should continue to be propagated.
 	 * @throws StateException
 	 */
-	public boolean onKeyDown(int keyCode, KeyEvent event) throws StateException
+	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode + ", state = " + getMainState() + ", overlay = "
 		        + getOverlayState());
@@ -284,7 +273,7 @@ public class StateManager
 	 *         should continue to be propagated.
 	 * @throws StateException
 	 */
-	public boolean onKeyUp(int keyCode, KeyEvent event) throws StateException
+	public boolean onKeyUp(int keyCode, KeyEvent event)
 	{
 		Log.i(TAG, ".onKeyUp: keyCode = " + keyCode + ", state = " + getMainState() + ", overlay = "
 		        + getOverlayState());

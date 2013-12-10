@@ -76,4 +76,15 @@ public class EpgData
 	{
 		return _channelLogos[index];
 	}
+	
+	public Program getProgram(String channelId, String dateTime)
+	{
+		Map.Entry<String, Integer> programEntry = _channelToProgramNavigableMap.get(channelId).floorEntry(dateTime);
+		if (programEntry != null)
+		{
+			int programIndex = programEntry.getValue();
+			return _channelToProgramListMap.get(channelId).get(programIndex);
+		}
+		return null;
+	}
 }

@@ -2,45 +2,41 @@
  * Copyright (c) 2007-2013, AVIQ Bulgaria Ltd
  *
  * Project:     Home
- * Filename:    FeaturePlayerRayV.java
+ * Filename:    FeatureEPGRayV.java
  * Author:      alek
  * Date:        1 Dec 2013
- * Description: Component feature providing RayV player
+ * Description: RayV specific extension of EPG feature
  */
 
-package com.aviq.tv.android.home.feature.player.rayv;
+package com.aviq.tv.android.home.feature.epg;
 
 import android.os.Bundle;
 import android.util.Log;
 
-import com.aviq.tv.android.home.R;
 import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
-import com.aviq.tv.android.home.feature.player.FeaturePlayer;
 import com.aviq.tv.android.home.feature.register.FeatureRegister;
-import com.aviq.tv.android.home.utils.TextUtils;
-import com.rayv.StreamingAgent.Loader;
 
 /**
- * Component feature providing RayV player
+ * RayV specific extension of EPG feature
  */
-public class FeaturePlayerRayV extends FeaturePlayer
+public class FeatureEPGRayV extends FeatureEPG
 {
-	public static final String TAG = FeaturePlayerRayV.class.getSimpleName();
+	public static final String TAG = FeatureEPGRayV.class.getSimpleName();
 
 	public enum Param
 	{
 		/**
 		 * Registered RayV user account name
 		 */
-		RAYV_USER(null),
+		RAYV_USER("1C6F65F9DE76"),
 
 		/**
 		 * Registered RayV account password
 		 */
-		RAYV_PASS(null),
+		RAYV_PASS("1C6F65F9DE76"),
 
 		/**
 		 * RayV stream bitrate
@@ -48,7 +44,7 @@ public class FeaturePlayerRayV extends FeaturePlayer
 		RAYV_STREAM_BITRATE(1200),
 
 		/**
-		 * Pattern composing channel stream url for RayV CDN provider
+		 * Pattern composing channel stream url for RayV provider
 		 */
 		RAYV_STREAM_URL_PATTERN("http://localhost:1234/RayVAgent/v1/RAYV/${USER}:${PASS}@${STREAM_ID}?streams=${STREAM_ID}:${BITRATE}");
 
@@ -64,7 +60,7 @@ public class FeaturePlayerRayV extends FeaturePlayer
 		}
 	}
 
-	public FeaturePlayerRayV()
+	public FeatureEPGRayV()
 	{
 		_dependencies.Components.add(FeatureName.Component.REGISTER);
 	}
@@ -72,29 +68,13 @@ public class FeaturePlayerRayV extends FeaturePlayer
 	@Override
 	public void initialize(OnFeatureInitialized onFeatureInitialized)
 	{
-		super.initialize(onFeatureInitialized);
-
-		// Start streaming agent
-		Log.i(TAG, "Start streaming agent");
-		final String streamerIni = TextUtils.inputSteamToString(Environment.getInstance().getResources().openRawResource(
-		        R.raw.streamer));
-
-		new Thread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				Loader.startStreamer(streamerIni);
-			}
-		}).start();
-
         try
 		{
 			FeatureRegister featureRegister = (FeatureRegister) Environment.getInstance().getFeatureComponent(
 			        FeatureName.Component.REGISTER);
 			getPrefs().put(Param.RAYV_USER, featureRegister.getBoxId());
 			getPrefs().put(Param.RAYV_PASS, featureRegister.getBoxId());
-			onFeatureInitialized.onInitialized(this, ResultCode.OK);
+			super.initialize(onFeatureInitialized);
 		}
         catch (FeatureNotFoundException e)
         {
@@ -103,14 +83,21 @@ public class FeaturePlayerRayV extends FeaturePlayer
         }
 	}
 
-	public void play(String channelId)
+	/**
+	 * Return stream url for specified channel
+	 *
+	 * @param channelIndex
+	 * @return stream url
+	 */
+	@Override
+    public String getChannelStreamUrl(int channelIndex)
 	{
+		String channelId = getEpgData().getChannel(channelIndex).getChannelId();
 		Bundle bundle = new Bundle();
 		bundle.putString("USER", getPrefs().getString(Param.RAYV_USER));
 		bundle.putString("PASS", getPrefs().getString(Param.RAYV_PASS));
 		bundle.putString("STREAM_ID", channelId);
 		bundle.putInt("BITRATE", getPrefs().getInt(Param.RAYV_STREAM_BITRATE));
-		String url = getPrefs().getString(Param.RAYV_STREAM_URL_PATTERN, bundle);
-		_player.play(url);
+		return getPrefs().getString(Param.RAYV_STREAM_URL_PATTERN, bundle);
 	}
 }

@@ -6,8 +6,11 @@
 	<dimen name="player_w">480dip</dimen>
 	<dimen name="player_h">270dip</dimen>
 	
-	<dimen name="program_bar_height">225dip</dimen>
-	<dimen name="program_bar_width">1020dip</dimen>
+	<!-- TV -->
+	<dimen name="program_bar_width">1245dip</dimen>
+	<dimen name="program_bar_height">250dip</dimen>
+	<dimen name="channel_bar_width">185dip</dimen>
+
 	<dimen name="program_bar_details_height">150dip</dimen>
 	<dimen name="program_bar_timebar_layout_height">104dip</dimen>
 	<dimen name="programs_text_size">27sp</dimen>

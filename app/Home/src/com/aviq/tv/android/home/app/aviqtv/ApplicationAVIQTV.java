@@ -20,7 +20,6 @@ import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.application.IApplication;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
-import com.aviq.tv.android.home.core.state.StateException;
 
 /**
  * AVIQ TV main application class
@@ -37,13 +36,7 @@ public class ApplicationAVIQTV extends Application implements IApplication
 
 		try
 		{
-			Environment.getInstance().use(FeatureName.Component.PLAYER);
-			Environment.getInstance().use(FeatureName.Component.EPG);
-			Environment.getInstance().use(FeatureName.Component.HTTP_SERVER);
-			Environment.getInstance().use(FeatureName.Component.REGISTER);
-			Environment.getInstance().use(FeatureName.Scheduler.INTERNET);
 			Environment.getInstance().use(FeatureName.State.TV);
-			Environment.getInstance().use(FeatureName.State.MESSAGE_BOX);
 		}
 		catch (FeatureNotFoundException e)
 		{
@@ -73,29 +66,13 @@ public class ApplicationAVIQTV extends Application implements IApplication
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
-		try
-		{
-			return Environment.getInstance().getStateManager().onKeyDown(keyCode, event);
-		}
-		catch (StateException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
-		}
-		return false;
+		return Environment.getInstance().getStateManager().onKeyDown(keyCode, event);
 	}
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event)
 	{
 		Log.i(TAG, ".onKeyUp: keyCode = " + keyCode);
-		try
-		{
-			return Environment.getInstance().getStateManager().onKeyUp(keyCode, event);
-		}
-		catch (StateException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
-		}
-		return false;
+		return Environment.getInstance().getStateManager().onKeyUp(keyCode, event);
 	}
 }
