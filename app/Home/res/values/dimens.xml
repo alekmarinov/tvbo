@@ -10,19 +10,19 @@
 	<dimen name="program_bar_width">1245dip</dimen>
 	<dimen name="program_bar_height">250dip</dimen>
 	<dimen name="channel_bar_width">185dip</dimen>
-
+		
+	<dimen name="program_text_size_normal">28sp</dimen>
+	<dimen name="program_text_size_highlight">31sp</dimen>
+	<dimen name="message_fontsize">36sp</dimen>
+	<!--
 	<dimen name="program_bar_details_height">150dip</dimen>
 	<dimen name="program_bar_timebar_layout_height">104dip</dimen>
-	<dimen name="programs_text_size">27sp</dimen>
-	<dimen name="programs_highlight_text_size">35sp</dimen>
 	
 	<dimen name="program_info_width">1100dip</dimen>
 	<dimen name="program_info_height">600dip</dimen>
 	<dimen name="details_area_width">540dip</dimen>
 	
 	<dimen name="program_info_option_width">210dip</dimen>
-	<dimen name="program_info_option_height">70dip</dimen>
-	
-	<dimen name="wizard_infotext_fontsize">36sp</dimen>
-		
+	<dimen name="program_info_option_height">70dip</dimen>	
+	  -->	
 </resources>

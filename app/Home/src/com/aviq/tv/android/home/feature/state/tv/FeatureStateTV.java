@@ -22,6 +22,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aviq.tv.android.home.R;
@@ -62,7 +63,9 @@ public class FeatureStateTV extends FeatureState
 	private ViewGroup _viewGroup;
 	private ZapperListView _zapperListView;
 	private TextView _channelTitleTextView;
+	private TextView _channelNoTextView;
 	private TextView _currentProgramTitle;
+	private ImageView _channelLogoImageView;
 	private FeatureEPG _featureEPG;
 	private FeaturePlayer _featurePlayer;
 	private ProgramBarUpdater _programBarUpdater = new ProgramBarUpdater();
@@ -82,7 +85,8 @@ public class FeatureStateTV extends FeatureState
 		try
 		{
 			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
-			_featurePlayer = (FeaturePlayer)Environment.getInstance().getFeatureComponent(FeatureName.Component.PLAYER);
+			_featurePlayer = (FeaturePlayer) Environment.getInstance()
+			        .getFeatureComponent(FeatureName.Component.PLAYER);
 			_updateProgramBarDelay = getPrefs().getInt(Param.UPDATE_PROGRAM_BAR_DELAY);
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
@@ -106,7 +110,10 @@ public class FeatureStateTV extends FeatureState
 		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_tv, container, false);
 		_zapperListView = (ZapperListView) _viewGroup.findViewById(R.id.tv_channel_bar);
 		_channelTitleTextView = (TextView) _viewGroup.findViewById(R.id.channel_title);
+		_channelNoTextView = (TextView) _viewGroup.findViewById(R.id.channel_no);
+		_channelLogoImageView = (ImageView) _viewGroup.findViewById(R.id.channel_logo);
 		_currentProgramTitle = (TextView) _viewGroup.findViewById(R.id.current_program_title);
+
 		try
 		{
 			FeatureEPG featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(
@@ -159,7 +166,11 @@ public class FeatureStateTV extends FeatureState
 		Log.i(TAG, ".onSelectChannelIndex: channelIndex = " + channelIndex + ", channelId = " + channelId + ", now = "
 		        + now + ", currentTitle = " + (currentTitle != null ? currentTitle.getKey() : "null") + " -> "
 		        + (currentTitle != null ? currentTitle.getValue() : "null"));
-		updateProgramBar(_featureEPG.getChannelTitle(channelIndex), currentTitle != null?currentTitle.getValue():"");
+
+		_channelNoTextView.setText(channelIndex + 1 + "");
+		_channelLogoImageView.setImageBitmap(_featureEPG.getChannelLogoBitmap(channelIndex));
+
+		updateProgramBar(_featureEPG.getChannelTitle(channelIndex), currentTitle != null ? currentTitle.getValue() : "");
 	}
 
 	private void onSwitchChannelIndex(int channelIndex)

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="selectedPosition" format="integer" />
+    <attr name="visibleItems" format="integer" />
+    <attr name="itemsHeight" format="dimension" />
+    <attr name="topMargin" format="dimension" />
+    <attr name="itemHorizontalPadding" format="dimension" />
+    <attr name="itemVerticalPadding" format="dimension" />
+    <attr name="itemTextSize" format="dimension" />
+
+    <declare-styleable name="ZapperListView">
+        <attr name="selectedPosition" />
+        <attr name="visibleItems" />
+        <attr name="itemsHeight" />
+        <attr name="topMargin" />
+        <attr name="itemHorizontalPadding" />
+        <attr name="itemVerticalPadding" />
+        <attr name="itemTextSize" />
+    </declare-styleable>
+</resources>

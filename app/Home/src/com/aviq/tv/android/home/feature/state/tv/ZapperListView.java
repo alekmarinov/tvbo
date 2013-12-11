@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.widget.OverScroller;
 import android.widget.ScrollView;
 
+import com.aviq.tv.android.home.R;
 import com.aviq.tv.android.home.utils.Log;
 
 /**
@@ -39,9 +41,13 @@ public class ZapperListView extends ScrollView
 	private ScrollItem _scrollItem;
 	private OverScroller _myScroller;
 	private int _position = 0;
-	private int _activeItemIndex = 6;
-	private int _bmpMaxHeight = 50;
-	private int _topMargin = _bmpMaxHeight / 2;
+	private int _activeItemIndex;
+	private int _bmpMaxHeight;
+	private int _topMargin;
+	private int _visibleItemsCount;
+	private int _hpadding;
+	private int _vpadding;
+	private float _fontSize;
 
 	/**
 	 * View defining the content area to be scrolled by the encapsulating
@@ -55,13 +61,9 @@ public class ZapperListView extends ScrollView
 		private List<Bitmap> _bitmaps = new ArrayList<Bitmap>();
 		private int _textWidth;
 		private int _textHeight;
-		private int _hpadding = 10;
-		private int _vpadding = 10;
-		private float _fontSize = 20.0f;
 		private boolean _hasNumbers = true;
 		private int _fontColor = Color.parseColor("#EEEEEE");
-		private int _backColor = Color.parseColor("#A0071522");
-		private int _visibleItemsCount = 10;
+		private int _backColor = Color.parseColor("#01000000");
 
 		public ScrollItem(Context context)
 		{
@@ -143,23 +145,33 @@ public class ZapperListView extends ScrollView
 	public ZapperListView(Context context)
 	{
 		super(context);
-		init(context);
+		init(context, context.obtainStyledAttributes(R.styleable.ZapperListView));
 	}
 
 	public ZapperListView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		init(context);
+		init(context, context.obtainStyledAttributes(attrs, R.styleable.ZapperListView));
 	}
 
 	public ZapperListView(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
-		init(context);
+		init(context, context.obtainStyledAttributes(attrs, R.styleable.ZapperListView, defStyle, 0));
 	}
 
-	private void init(Context ctx)
+	private void init(Context ctx, TypedArray attr)
 	{
+		_activeItemIndex = attr.getInteger(R.styleable.ZapperListView_selectedPosition, 0);
+		_visibleItemsCount = attr.getInteger(R.styleable.ZapperListView_visibleItems, 10);
+		_bmpMaxHeight = (int) attr.getDimension(R.styleable.ZapperListView_itemsHeight, 50);
+		_topMargin = (int) attr.getDimension(R.styleable.ZapperListView_topMargin, 0);
+		_hpadding = (int) attr.getDimension(R.styleable.ZapperListView_itemHorizontalPadding, 10);
+		_vpadding = (int) attr.getDimension(R.styleable.ZapperListView_itemVerticalPadding, 10);
+		_fontSize = attr.getDimension(R.styleable.ZapperListView_itemTextSize, 20f);
+
+		attr.recycle();
+
 		_scrollItem = new ScrollItem(ctx);
 		addView(_scrollItem);
 

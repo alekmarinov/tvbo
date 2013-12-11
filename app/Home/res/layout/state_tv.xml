@@ -7,14 +7,22 @@
     <!-- Channel Bar -->
 
     <com.aviq.tv.android.home.feature.state.tv.ZapperListView
+        xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.home"
         android:id="@+id/tv_channel_bar"
         android:layout_width="@dimen/channel_bar_width"
         android:layout_height="match_parent"
-        android:layout_marginLeft="40dp"
-        android:background="@drawable/tv_channel_bar"
-        android:fadeScrollbars="false"
+        android:layout_marginLeft="56dp"
         android:scrollbarAlwaysDrawVerticalTrack="true"
-        android:scrollbars="none" >
+        android:fadeScrollbars="false"
+        android:scrollbars="none" 
+        aviqtv:selectedPosition="6"
+        aviqtv:visibleItems="9"
+        aviqtv:itemsHeight="60dip"
+        aviqtv:topMargin="20dip"
+        aviqtv:itemHorizontalPadding="10dip"
+        aviqtv:itemVerticalPadding="10dip"
+        aviqtv:itemTextSize="20sp"
+        android:background="@drawable/tv_channel_bar">
     </com.aviq.tv.android.home.feature.state.tv.ZapperListView>
 
     <!-- Program Bar -->
@@ -24,11 +32,43 @@
         android:layout_width="@dimen/program_bar_width"
         android:layout_height="@dimen/program_bar_height"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="100dip"
-        android:background="@drawable/tv_program_bar" 
-        >
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="40dip"
+        android:background="@drawable/tv_program_bar" >
 
+        <!-- Channel logo -->
+        <ImageView android:id="@+id/channel_background"
+            android:layout_width="142dip"
+            android:layout_height="120dip"
+       		android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+       		android:layout_marginLeft="21dip"
+       		android:layout_marginBottom="74dip"
+            android:background="@drawable/tv_selected_channel_background"
+        />
+        
+        <ImageView android:id="@+id/channel_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+       		android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+       		android:layout_marginLeft="72dip"
+       		android:layout_marginBottom="107dip"
+        />
+        <TextView
+            android:id="@+id/channel_no"
+            style="@style/ProgramText"
+            android:layout_width="40dip"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="117dip"
+            android:layout_marginLeft="26dip"
+            android:gravity="right"
+            android:textSize="20sp"
+            android:singleLine="true"       
+		/>
+        
         <!-- Channel title -->
 
         <TextView
@@ -37,18 +77,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="225dip"
+            android:layout_marginLeft="220dip"
+            android:layout_marginTop="36dip"
+            android:textStyle="bold"
             android:singleLine="true"
             android:text="ChannelTitle" />
 
         <!-- Channel image and the 3 current programs -->
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/program_image_and_current_programs"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/channel_title"
-            android:layout_marginLeft="225dp" >
+            android:layout_height="100dip"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="220dp" 
+            android:layout_marginRight="280dip">
 
             <!-- Program Image -->
 
@@ -56,95 +100,84 @@
                 android:id="@+id/program_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/epg_image_placeholder" />
+                android:src="@drawable/tv_image_placeholder" />
 
             <!-- 3 current programs -->
+            <!-- previous program -->
 
-            <LinearLayout
-                android:id="@+id/program_current_programs"
+            <TextView
+                android:id="@+id/previous_program_time"
+                style="@style/ProgramText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="10dip"
+                android:layout_toRightOf="@id/program_image"
+                android:singleLine="true"
+                android:text="13:30" />
 
-                <!-- previous program -->
+            <TextView
+                android:id="@+id/previous_program_title"
+                style="@style/ProgramText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="100dip"
+                android:layout_toRightOf="@id/program_image"
+                android:singleLine="true"
+                android:text="Past Program" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
+            <!-- current program -->
 
-                    <TextView
-                        android:id="@+id/previous_program_time"
-                        style="@style/ProgramText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:singleLine="true"
-                        android:text="13:30" />
+            <TextView
+                android:id="@+id/current_program_time"
+                style="@style/ProgramTextHighlight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dip"
+                android:layout_toRightOf="@id/program_image"
+                android:singleLine="true"
+                android:text="14:30" />
 
-                    <TextView
-                        android:id="@+id/previous_title"
-                        style="@style/ProgramText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dip"
-                        android:singleLine="true"
-                        android:text="Past Program" />
-                </LinearLayout>
+            <TextView
+                android:id="@+id/current_program_title"
+                style="@style/ProgramTextHighlight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="100dip"
+                android:layout_toRightOf="@id/program_image"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:text="Current Program" />
 
-                <!-- current program -->
+            <!-- next program -->
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="-10dip" >
+            <TextView
+                android:id="@+id/next_program_time"
+                style="@style/ProgramText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="10dip"
+                android:layout_toRightOf="@id/program_image"
+                android:singleLine="true"
+                android:text="15:30" />
 
-                    <TextView
-                        android:id="@+id/current_program_time"
-                        style="@style/ProgramTextHighlight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="5dip"
-                        android:singleLine="true"
-                        android:text="14:30" />
-
-                    <TextView
-                        android:id="@+id/current_program_title"
-                        style="@style/ProgramTextHighlight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:padding="5dip"
-                        android:singleLine="true"
-                        android:text="Current Program" />
-                </LinearLayout>
-
-                <!-- next program -->
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:id="@+id/next_program_time"
-                        style="@style/ProgramText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="5dip"
-                        android:singleLine="true"
-                        android:text="15:30" />
-
-                    <TextView
-                        android:id="@+id/next_program_title"
-                        style="@style/ProgramText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="5dip"
-                        android:singleLine="true"
-                        android:text="Next Program" />
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
+            <TextView
+                android:id="@+id/next_program_title"
+                style="@style/ProgramText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="100dip"
+                android:layout_toRightOf="@id/program_image"
+                android:singleLine="true"
+                android:text="Next Program" />
+        </RelativeLayout>
 
         <!-- Timebar -->
 
@@ -152,34 +185,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/program_image_and_current_programs"
-            android:layout_marginLeft="225dip" >
+            android:layout_marginTop="13dip"
+            android:layout_marginLeft="220dip" >
 
             <TextView
                 android:id="@+id/program_start"
                 style="@style/ProgramText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dip"
                 android:singleLine="true"
+                android:layout_marginRight="10dip"
                 android:text="10:05" />
 
             <ProgressBar
                 android:id="@+id/program_progress"
                 style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="500dip"
-                android:layout_height="wrap_content"
+                android:layout_width="578dip"
+                android:layout_height="13dip"
+                android:layout_gravity="center_vertical"
                 android:focusable="false"
                 android:max="100"
                 android:progress="50"
-                android:progressDrawable="@drawable/tv_progressbar"
-                android:layout_gravity="center_vertical" />
+                android:progressDrawable="@drawable/img_progressbar" />
 
             <TextView
                 android:id="@+id/program_end"
                 style="@style/ProgramText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dip"
+                android:layout_marginLeft="10dip"
                 android:singleLine="true"
                 android:text="11:05" />
         </LinearLayout>

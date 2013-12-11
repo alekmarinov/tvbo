@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
-<color name="programs_program_text">#585858</color>
-<color name="white">#FFFFFFFF</color>
-<color name="transparent">#00000000</color>
-
+    <color name="program_text_normal">#FFFFFF</color>
+    <color name="program_text_highlight">#60b2ef</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
 </resources>

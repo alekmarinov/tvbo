@@ -3,14 +3,14 @@
     <style name="AppTheme" parent="android:Theme.DeviceDefault.NoActionBar.Fullscreen" />
 
     <style name="ProgramText">
-        <item name="android:textColor">@color/programs_program_text</item>
-        <item name="android:textSize">@dimen/programs_text_size</item>
+        <item name="android:textColor">@color/program_text_normal</item>
+        <item name="android:textSize">@dimen/program_text_size_normal</item>
         <item name="android:gravity">center_vertical</item>
     </style>
 
     <style name="ProgramTextHighlight">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/programs_highlight_text_size</item>
+        <item name="android:textColor">@color/program_text_highlight</item>
+        <item name="android:textSize">@dimen/program_text_size_highlight</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textStyle">bold</item>
     </style>
@@ -28,10 +28,10 @@
         <item name="android:textColor">@color/white</item>
     </style>
     
-    <style name="WizardInfo">
-        <item name="android:textSize">@dimen/wizard_infotext_fontsize</item>
+    <style name="MessageInfo">
+        <item name="android:textSize">@dimen/message_fontsize</item>
         <item name="android:textStyle">normal</item>
         <item name="android:paddingLeft">0dip</item>
-    </style>
+    </style>    
 
 </resources>

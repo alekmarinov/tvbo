@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item android:id="@android:id/background" android:drawable="@drawable/img_progressbar_grey"/>
+    <item android:id="@android:id/progress">
+        <clip xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clipOrientation="horizontal"
+            android:drawable="@drawable/img_progressbar_blue"
+            android:gravity="left">
+        </clip>
+    </item>
+</layer-list>
