@@ -92,7 +92,7 @@ public class FeatureEPGRayV extends FeatureEPG
 	@Override
     public String getChannelStreamUrl(int channelIndex)
 	{
-		String channelId = getChannelId(channelIndex);
+		String channelId = getEpgData().getChannel(channelIndex).getChannelId();
 		Bundle bundle = new Bundle();
 		bundle.putString("USER", getPrefs().getString(Param.RAYV_USER));
 		bundle.putString("PASS", getPrefs().getString(Param.RAYV_PASS));

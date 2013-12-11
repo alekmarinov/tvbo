@@ -32,6 +32,7 @@ public class FeatureName
 	public static enum State
 	{
 		TV,
-		MESSAGE_BOX
+		MESSAGE_BOX,
+		EPG
 	}
 }

@@ -13,7 +13,6 @@ package com.aviq.tv.android.home.feature.state.tv;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Map.Entry;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -30,7 +29,9 @@ import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
+import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
+import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.player.FeaturePlayer;
 
 /**
@@ -39,7 +40,7 @@ import com.aviq.tv.android.home.feature.player.FeaturePlayer;
 public class FeatureStateTV extends FeatureState
 {
 	public static final String TAG = FeatureStateTV.class.getSimpleName();
-
+	
 	public enum Param
 	{
 		/**
@@ -47,34 +48,35 @@ public class FeatureStateTV extends FeatureState
 		 * change
 		 */
 		UPDATE_PROGRAM_BAR_DELAY(100);
-
+		
 		Param(int value)
 		{
 			Environment.getInstance().getFeaturePrefs(FeatureName.State.TV).put(name(), value);
 		}
-
+		
 		Param(String value)
 		{
 			Environment.getInstance().getFeaturePrefs(FeatureName.State.TV).put(name(), value);
 		}
 	}
-
+	
 	private ViewGroup _viewGroup;
 	private ZapperListView _zapperListView;
 	private TextView _channelTitleTextView;
 	private TextView _currentProgramTitle;
 	private FeatureEPG _featureEPG;
+	private EpgData _epgData;
 	private FeaturePlayer _featurePlayer;
 	private ProgramBarUpdater _programBarUpdater = new ProgramBarUpdater();
 	private int _updateProgramBarDelay;
-
+	
 	public FeatureStateTV()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
 		_dependencies.States.add(FeatureName.State.MESSAGE_BOX);
 	}
-
+	
 	@Override
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
@@ -82,7 +84,9 @@ public class FeatureStateTV extends FeatureState
 		try
 		{
 			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
-			_featurePlayer = (FeaturePlayer)Environment.getInstance().getFeatureComponent(FeatureName.Component.PLAYER);
+			_epgData = _featureEPG.getEpgData();
+			_featurePlayer = (FeaturePlayer) Environment.getInstance()
+			        .getFeatureComponent(FeatureName.Component.PLAYER);
 			_updateProgramBarDelay = getPrefs().getInt(Param.UPDATE_PROGRAM_BAR_DELAY);
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
@@ -92,13 +96,13 @@ public class FeatureStateTV extends FeatureState
 			onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
 		}
 	}
-
+	
 	@Override
 	public FeatureName.State getStateName()
 	{
 		return FeatureName.State.TV;
 	}
-
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
@@ -109,15 +113,13 @@ public class FeatureStateTV extends FeatureState
 		_currentProgramTitle = (TextView) _viewGroup.findViewById(R.id.current_program_title);
 		try
 		{
-			FeatureEPG featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(
-			        FeatureName.Component.EPG);
-			for (int i = 0; i < featureEPG.getChannelCount(); i++)
+			for (int i = 0; i < _epgData.getChannelCount(); i++)
 			{
-				Bitmap bmp = featureEPG.getChannelLogoBitmap(i);
+				Bitmap bmp = _epgData.getChannelLogoBitmap(i);
 				if (bmp != null)
 					_zapperListView.addBitmap(bmp);
 				else
-					Log.w(TAG, "Channel " + featureEPG.getChannelId(i) + " doesn't have image logo!");
+					Log.w(TAG, "Channel " + _epgData.getChannel(i).getChannelId() + " doesn't have image logo!");
 			}
 			onSelectChannelIndex(0);
 		}
@@ -127,7 +129,7 @@ public class FeatureStateTV extends FeatureState
 		}
 		return _viewGroup;
 	}
-
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
@@ -148,26 +150,26 @@ public class FeatureStateTV extends FeatureState
 		}
 		return false;
 	}
-
+	
 	private void onSelectChannelIndex(int channelIndex)
 	{
-		String channelId = _featureEPG.getChannelId(channelIndex);
-
+		String channelId = _epgData.getChannel(channelIndex).getChannelId();
+		
 		DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 		String now = df.format(Calendar.getInstance().getTime());
-		Entry<String, String> currentTitle = _featureEPG.getProgram(channelId, now);
+		Program program = _epgData.getProgram(channelId, now);
+		String currentTitle = program.getTitle();
 		Log.i(TAG, ".onSelectChannelIndex: channelIndex = " + channelIndex + ", channelId = " + channelId + ", now = "
-		        + now + ", currentTitle = " + (currentTitle != null ? currentTitle.getKey() : "null") + " -> "
-		        + (currentTitle != null ? currentTitle.getValue() : "null"));
-		updateProgramBar(_featureEPG.getChannelTitle(channelIndex), currentTitle != null?currentTitle.getValue():"");
+		        + now + ", currentTitle = " + currentTitle + " -> " + currentTitle);
+		updateProgramBar(_epgData.getChannel(channelIndex).getTitle(), currentTitle != null ? currentTitle : "");
 	}
-
+	
 	private void onSwitchChannelIndex(int channelIndex)
 	{
 		String streamUrl = _featureEPG.getChannelStreamUrl(channelIndex);
 		_featurePlayer.getPlayer().play(streamUrl);
 	}
-
+	
 	private void updateProgramBar(String channelTitle, String currentProgramTitle)
 	{
 		_programBarUpdater.ChannelTitle = channelTitle;
@@ -175,12 +177,12 @@ public class FeatureStateTV extends FeatureState
 		Environment.getInstance().getHandler().removeCallbacks(_programBarUpdater);
 		Environment.getInstance().getHandler().postDelayed(_programBarUpdater, _updateProgramBarDelay);
 	}
-
+	
 	private class ProgramBarUpdater implements Runnable
 	{
 		public String ChannelTitle;
 		public String CurrentProgramTitle;
-
+		
 		@Override
 		public void run()
 		{
@@ -188,5 +190,5 @@ public class FeatureStateTV extends FeatureState
 			_currentProgramTitle.setText(CurrentProgramTitle);
 		}
 	}
-
+	
 }
