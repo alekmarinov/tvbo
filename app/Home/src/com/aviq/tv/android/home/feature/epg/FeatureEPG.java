@@ -106,18 +106,18 @@ public abstract class FeatureEPG extends FeatureComponent
 	private String _epgProvider;
 	private int _channelLogoWidth;
 	private int _channelLogoHeight;
-	
+
 	// used to detect when all channel logos are retrieved with success or error
 	private int _retrievedChannelLogos;
-	
+
 	// used to detect when all channel programs are retrieved with success or
 	// error
 	private int _retrievedChannelPrograms;
-	
+
 	private EpgData _epgData;
 	private EpgData _epgDataBeingLoaded;
-	private ChannelMetaData _channelsMeta;
-	private ProgramMetaData _programsMeta;
+	private ChannelMetaData _channelsMeta = new ChannelMetaData();
+	private ProgramMetaData _programsMeta = new ProgramMetaData();
 
 	@Override
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
@@ -138,24 +138,24 @@ public abstract class FeatureEPG extends FeatureComponent
 		retrieveChannels();
 	}
 
-    public abstract String getChannelStreamUrl(int channelIndex);
+	public abstract String getChannelStreamUrl(int channelIndex);
 
 	private void retrieveChannels()
 	{
 		String channelsUrl = getChannelsUrl();
 		ChannelListResponseCallback responseCallback = new ChannelListResponseCallback();
-		
+
 		GsonRequest<ChannelListResponse> channelListRequest = new GsonRequest<ChannelListResponse>(Request.Method.GET,
 		        channelsUrl, ChannelListResponse.class, responseCallback, responseCallback);
 
 		_httpQueue.add(channelListRequest);
 	}
-	
+
 	private void retrieveChannelLogo(Channel channel, int channelIndex)
 	{
 		String channelId = channel.getChannelId();
 		String channelLogo = channel.getThumbnail();
-		
+
 		String channelLogoUrl = getChannelsLogoUrl(channelId, channelLogo);
 		Log.i(TAG, "Retrieving channel logo " + channelLogoUrl);
 
@@ -163,24 +163,23 @@ public abstract class FeatureEPG extends FeatureComponent
 
 		ImageRequest imageRequest = new ImageRequest(channelLogoUrl, responseCallback, _channelLogoWidth,
 		        _channelLogoHeight, Config.ARGB_8888, responseCallback);
-		
+
 		_httpQueue.add(imageRequest);
 	}
-	
+
 	private void retrievePrograms(Channel channel)
 	{
 		String channelId = channel.getChannelId();
 		String programsUrl = getProgramsUrl(channelId);
-		
+
 		ProgramsResponseCallback responseCallback = new ProgramsResponseCallback(channelId);
-		
+
 		GsonRequest<ProgramsResponse> programsRequest = new GsonRequest<ProgramsResponse>(Request.Method.GET,
-		        programsUrl, ProgramsResponse.class, responseCallback,
-		        responseCallback);
-		
+		        programsUrl, ProgramsResponse.class, responseCallback, responseCallback);
+
 		_httpQueue.add(programsRequest);
 	}
-	
+
 	private class ChannelListResponseCallback implements Response.Listener<ChannelListResponse>, Response.ErrorListener
 	{
 		@Override
@@ -190,19 +189,19 @@ public abstract class FeatureEPG extends FeatureComponent
 			parseChannelData(response.data);
 
 			// Download channel-related data: logo, programs, etc.
-			
+
 			final int nChannels = _epgDataBeingLoaded.getChannelCount();
 			_retrievedChannelLogos = 0;
-		   _retrievedChannelPrograms = 0;
+			_retrievedChannelPrograms = 0;
 
 			for (int i = 0; i < nChannels; i++)
 			{
-				Channel channel = _epgData.getChannel(i);
+				Channel channel = _epgDataBeingLoaded.getChannel(i);
 				retrieveChannelLogo(channel, i);
 				retrievePrograms(channel);
 			}
 		}
-		
+
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
@@ -210,18 +209,18 @@ public abstract class FeatureEPG extends FeatureComponent
 			        error.networkResponse != null ? error.networkResponse.statusCode : ResultCode.GENERAL_FAILURE);
 		}
 	}
-	
+
 	private class LogoResponseCallback implements Response.Listener<Bitmap>, Response.ErrorListener
 	{
 		private int _index;
 		private String _channelId;
-		
+
 		LogoResponseCallback(String channelId, int index)
 		{
 			_channelId = channelId;
 			_index = index;
 		}
-		
+
 		@Override
 		public void onResponse(Bitmap response)
 		{
@@ -229,30 +228,30 @@ public abstract class FeatureEPG extends FeatureComponent
 			_epgDataBeingLoaded.setChannelLogo(_index, response);
 			logoProcessed();
 		}
-		
+
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
 			Log.i(TAG, "Retrieve channel logo " + _channelId + " with error: " + error);
 			logoProcessed();
 		}
-		
+
 		private void logoProcessed()
 		{
 			_retrievedChannelLogos++;
 			checkInitializeFinished();
 		}
 	};
-	
+
 	private class ProgramsResponseCallback implements Response.Listener<ProgramsResponse>, Response.ErrorListener
 	{
 		private String _channelId;
-		
+
 		ProgramsResponseCallback(String channelId)
 		{
 			_channelId = channelId;
 		}
-		
+
 		@Override
 		public void onResponse(ProgramsResponse response)
 		{
@@ -261,37 +260,34 @@ public abstract class FeatureEPG extends FeatureComponent
 			parseProgramsData(_channelId, response.data);
 			programsProcessed();
 		}
-		
+
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
 			Log.i(TAG, "Error " + error + " retrieving programs for " + _channelId);
 			programsProcessed();
 		}
-		
+
 		private void programsProcessed()
 		{
 			_retrievedChannelPrograms++;
 			checkInitializeFinished();
 		}
 	}
-	
+
 	private void checkInitializeFinished()
 	{
 		int numChannels = _epgDataBeingLoaded.getChannelCount();
 		if (_retrievedChannelPrograms == numChannels && _retrievedChannelLogos == numChannels)
 		{
-			synchronized (_epgData)
-			{
-				// Forget the old EpgData object, from now on work with the new
-				// one. Anyone else holding a reference to the old object will
-				// be able to finish its job. Then the garbage collector will
-				// free up the memory.
-				
-				_epgData = _epgDataBeingLoaded;
-				_epgDataBeingLoaded = null;
-			}
-			
+			// Forget the old EpgData object, from now on work with the new
+			// one. Anyone else holding a reference to the old object will
+			// be able to finish its job. Then the garbage collector will
+			// free up the memory.
+
+			_epgData = _epgDataBeingLoaded;
+			_epgDataBeingLoaded = null;
+
 			_onFeatureInitialized.onInitialized(FeatureEPG.this, ResultCode.OK);
 		}
 	}
@@ -330,7 +326,7 @@ public abstract class FeatureEPG extends FeatureComponent
 			channel.setThumbnail(data[i][_channelsMeta.metaChannelThumbnail]);
 			newChannelList.add(channel);
 		}
-		
+
 		_epgDataBeingLoaded = new EpgData(newChannelList);
 	}
 
@@ -368,11 +364,11 @@ public abstract class FeatureEPG extends FeatureComponent
 			program.setStartTime(data[i][_programsMeta.metaStart]);
 			program.setStopTime(data[i][_programsMeta.metaStop]);
 			program.setTitle(data[i][_programsMeta.metaTitle]);
-			
+
 			programList.add(program);
 			programMap.put(program.getStartTime(), i);
 		}
-		
+
 		_epgDataBeingLoaded.addProgramNavigableMap(channelId, programMap);
 		_epgDataBeingLoaded.addProgramList(channelId, programList);
 	}
@@ -436,35 +432,35 @@ public abstract class FeatureEPG extends FeatureComponent
 		public int metaChannelTitle;
 		public int metaChannelThumbnail;
 	}
-	
+
 	private static class ProgramMetaData
 	{
 		public int metaStart;
 		public int metaStop;
 		public int metaTitle;
 	}
-	
+
 	// GSON entity class of channel list response
 	private class ChannelListResponse
 	{
 		public String[] meta;
 		public String[][] data;
 	}
-	
+
 	// GSON entity class of programs response
 	private class ProgramsResponse
 	{
 		public String[] meta;
 		public String[][] data;
 	}
-	
+
 	// GSON volley request
 	private class GsonRequest<T> extends Request<T>
 	{
 		private final Gson mGson;
 		private final Class<T> mClazz;
 		private final Listener<T> mListener;
-		
+
 		public GsonRequest(int method, String url, Class<T> clazz, Listener<T> listener, ErrorListener errorListener)
 		{
 			super(Method.GET, url, errorListener);
@@ -472,7 +468,7 @@ public abstract class FeatureEPG extends FeatureComponent
 			this.mListener = listener;
 			mGson = new Gson();
 		}
-		
+
 		public GsonRequest(int method, String url, Class<T> clazz, Listener<T> listener, ErrorListener errorListener,
 		        Gson gson)
 		{
@@ -481,13 +477,13 @@ public abstract class FeatureEPG extends FeatureComponent
 			this.mListener = listener;
 			mGson = gson;
 		}
-		
+
 		@Override
 		protected void deliverResponse(T response)
 		{
 			mListener.onResponse(response);
 		}
-		
+
 		@Override
 		protected Response<T> parseNetworkResponse(NetworkResponse response)
 		{
