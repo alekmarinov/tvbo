@@ -10,7 +10,10 @@
 
 package com.aviq.tv.android.home.core.feature;
 
+import android.os.Bundle;
+
 import com.aviq.tv.android.home.core.Environment;
+import com.aviq.tv.android.home.core.event.EventMessenger;
 import com.aviq.tv.android.home.utils.Prefs;
 
 
@@ -21,6 +24,7 @@ import com.aviq.tv.android.home.utils.Prefs;
 public abstract class FeatureComponent implements IFeature
 {
 	protected FeatureSet _dependencies = new FeatureSet();
+	protected EventMessenger _eventMessanger = new EventMessenger();
 
 	public FeatureComponent()
 	{
@@ -49,9 +53,24 @@ public abstract class FeatureComponent implements IFeature
 		return getComponentName().toString();
 	}
 
-	public Prefs getPrefs()
+	@Override
+    public Prefs getPrefs()
 	{
 		return Environment.getInstance().getFeaturePrefs(getComponentName());
+	}
+
+	/**
+	 * @return an event messenger associated with this feature
+	 */
+	@Override
+	public EventMessenger getEventMessanger()
+	{
+		return _eventMessanger;
+	}
+
+	@Override
+    public void onEvent(int msgId, Bundle bundle)
+	{
 	}
 
 	public abstract FeatureName.Component getComponentName();

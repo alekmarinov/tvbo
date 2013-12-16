@@ -28,52 +28,83 @@ public class BaseState extends Fragment
 
 	/**
 	 * Initialize State instance.
-	 *
 	 */
-    public BaseState()
+	public BaseState()
 	{
 		Log.i(TAG, getClass().getSimpleName() + " created");
 	}
 
 	/**
-	 * Shows State on screen. The method can be overwritten in order to initialize visualization.
+	 * Shows State on screen.
 	 *
 	 * @param params
 	 *            The params set to this State when showing
+	 * @param isOverlay
+	 *            set to true to show this state as Overlay
 	 * @throws StateException
 	 */
-    public void show(Bundle params) throws StateException
+	public void show(Bundle params, boolean isOverlay) throws StateException
 	{
-    	Environment.getInstance().getStateManager().setStateMain(this, params);
+		if (isOverlay)
+			Environment.getInstance().getStateManager().setStateOverlay(this, params);
+		else
+			Environment.getInstance().getStateManager().setStateMain(this, params);
 	}
 
 	/**
-	 * Shows State on screen. The method can be overwritten in order to initialize visualization.
+	 * Shows State on Main layer of the screen
 	 *
 	 * @param params
 	 *            The params set to this State when showing
 	 * @throws StateException
 	 */
-    public void showOverlay(Bundle params) throws StateException
+	public void show(Bundle params) throws StateException
 	{
-    	Environment.getInstance().getStateManager().setStateOverlay(this, params);
+		show(params, false);
+	}
+
+	/**
+	 * Shows State on Overlay layer of the screen
+	 *
+	 * @param params
+	 *            The params set to this State when showing
+	 * @throws StateException
+	 */
+	public void showOverlay(Bundle params) throws StateException
+	{
+		show(params, true);
 	}
 
 	/**
 	 * Hides State from screen
 	 */
-    public void hide()
+	public void hide()
 	{
-    	Environment.getInstance().getStateManager().hideState(this);
+		Environment.getInstance().getStateManager().hideState(this);
+	}
+
+	/**
+	 * Called on showing this state. The method can be overwritten in order to
+	 * initialize visualization.
+	 */
+	protected void onShow()
+	{
+	}
+
+	/**
+	 * Called on hiding this state.
+	 */
+	protected void onHide()
+	{
 	}
 
 	/**
 	 * Returns true if the current state is visible on screen
 	 */
-    public boolean isShown()
-    {
-	    return isAdded();
-    }
+	public boolean isShown()
+	{
+		return isAdded();
+	}
 
 	/**
 	 * Method consuming key down event if the State is currently active
@@ -87,7 +118,7 @@ public class BaseState extends Fragment
 	 *         should continue to be propagated.
 	 * @throws StateException
 	 */
-    public boolean onKeyDown(int keyCode, KeyEvent event)
+	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		return false;
 	}
@@ -104,7 +135,7 @@ public class BaseState extends Fragment
 	 *         should continue to be propagated.
 	 * @throws StateException
 	 */
-    public boolean onKeyUp(int keyCode, KeyEvent event)
+	public boolean onKeyUp(int keyCode, KeyEvent event)
 	{
 		return false;
 	}

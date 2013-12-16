@@ -11,8 +11,10 @@
 package com.aviq.tv.android.home.feature.state.tv;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -22,14 +24,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.aviq.tv.android.home.R;
 import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.ResultCode;
+import com.aviq.tv.android.home.core.event.EventMessenger;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
+import com.aviq.tv.android.home.feature.epg.Channel;
 import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
 import com.aviq.tv.android.home.feature.epg.Program;
@@ -41,6 +46,8 @@ import com.aviq.tv.android.home.feature.player.FeaturePlayer;
 public class FeatureStateTV extends FeatureState
 {
 	public static final String TAG = FeatureStateTV.class.getSimpleName();
+	public static final DateFormat CLOCK_FORMAT = new SimpleDateFormat("HH:mm:ss EEE, MMM d, ''yy, z");
+	public static final int ON_TIMER = EventMessenger.ID();
 
 	public enum Param
 	{
@@ -63,15 +70,15 @@ public class FeatureStateTV extends FeatureState
 
 	private ViewGroup _viewGroup;
 	private ZapperListView _zapperListView;
-	private TextView _channelTitleTextView;
+	private TextView _clockTextView;
 	private TextView _channelNoTextView;
-	private TextView _currentProgramTitle;
 	private ImageView _channelLogoImageView;
 	private FeatureEPG _featureEPG;
 	private EpgData _epgData;
 	private FeaturePlayer _featurePlayer;
 	private ProgramBarUpdater _programBarUpdater = new ProgramBarUpdater();
 	private int _updateProgramBarDelay;
+	private ProgramBar _programBar;
 
 	public FeatureStateTV()
 	{
@@ -84,6 +91,7 @@ public class FeatureStateTV extends FeatureState
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		super.initialize(onFeatureInitialized);
+		Log.i(TAG, ".initialize");
 		try
 		{
 			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
@@ -91,6 +99,7 @@ public class FeatureStateTV extends FeatureState
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
 			_updateProgramBarDelay = getPrefs().getInt(Param.UPDATE_PROGRAM_BAR_DELAY);
+			subscribe(this, ON_TIMER);
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
 		catch (FeatureNotFoundException e)
@@ -111,11 +120,11 @@ public class FeatureStateTV extends FeatureState
 	{
 		Log.i(TAG, ".onCreateView");
 		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_tv, container, false);
+		_clockTextView = (TextView) _viewGroup.findViewById(R.id.clock);
 		_zapperListView = (ZapperListView) _viewGroup.findViewById(R.id.tv_channel_bar);
-		_channelTitleTextView = (TextView) _viewGroup.findViewById(R.id.channel_title);
 		_channelNoTextView = (TextView) _viewGroup.findViewById(R.id.channel_no);
 		_channelLogoImageView = (ImageView) _viewGroup.findViewById(R.id.channel_logo);
-		_currentProgramTitle = (TextView) _viewGroup.findViewById(R.id.current_program_title);
+		_programBar = new ProgramBar((ViewGroup) _viewGroup.findViewById(R.id.tv_program_bar));
 
 		for (int i = 0; i < _epgData.getChannelCount(); i++)
 		{
@@ -126,7 +135,195 @@ public class FeatureStateTV extends FeatureState
 				Log.w(TAG, "Channel " + _epgData.getChannel(i).getChannelId() + " doesn't have image logo!");
 		}
 		onSelectChannelIndex(0);
+		updateClock();
+		getEventMessanger().trigger(ON_TIMER, 1000);
 		return _viewGroup;
+	}
+
+	private void onSelectChannelIndex(int channelIndex)
+	{
+		// stop timer
+		// Update selected channel logo
+		_channelNoTextView.setText(String.valueOf(channelIndex + 1));
+		_channelLogoImageView.setImageBitmap(_epgData.getChannelLogoBitmap(channelIndex));
+
+		// Update program bar
+		updateProgramBar(_epgData.getChannel(channelIndex), Calendar.getInstance());
+	}
+
+	private void onSwitchChannelIndex(int channelIndex)
+	{
+		String streamUrl = _featureEPG.getChannelStreamUrl(channelIndex);
+		_featurePlayer.getPlayer().play(streamUrl);
+	}
+
+	private void updateClock()
+	{
+		_clockTextView.setText(CLOCK_FORMAT.format(Calendar.getInstance().getTime()));
+	}
+
+	private void updateProgramBar(Channel channel, Calendar when)
+	{
+		_programBarUpdater.Channel = channel;
+		_programBarUpdater.When = when;
+		Environment.getInstance().getHandler().removeCallbacks(_programBarUpdater);
+		Environment.getInstance().getHandler().postDelayed(_programBarUpdater, _updateProgramBarDelay);
+	}
+
+	private class ProgramBarUpdater implements Runnable
+	{
+		private Channel Channel;
+		private Calendar When;
+
+		@Override
+		public void run()
+		{
+			// start timer
+
+			Program previousProgram = null;
+			Program currentProgram = null;
+			Program nextProgram = null;
+
+			if (Channel != null)
+			{
+				String channelId = Channel.getChannelId();
+				_programBar.ChannelTitle.setText(Channel.getTitle());
+				int programIndex = _epgData.getProgramIndex(channelId, When);
+				previousProgram = _epgData.getProgramByIndex(channelId, programIndex - 1);
+				currentProgram = _epgData.getProgramByIndex(channelId, programIndex);
+				nextProgram = _epgData.getProgramByIndex(channelId, programIndex + 1);
+			}
+
+			_programBar.setPrograms(When, previousProgram, currentProgram, nextProgram);
+		}
+	}
+
+	private class ProgramBar
+	{
+		private final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
+		private TextView ChannelTitle;
+		private TextView PreviousProgramTime;
+		private TextView PreviousProgramTitle;
+		private ImageView ProgramImage;
+		private TextView CurrentProgramTime;
+		private TextView CurrentProgramTitle;
+		private TextView NextProgramTime;
+		private TextView NextProgramTitle;
+		private TextView ProgressStartTime;
+		private TextView ProgressEndTime;
+		private ProgressBar ProgramProgress;
+
+		private ProgramBar(ViewGroup parent)
+		{
+			ChannelTitle = (TextView) _viewGroup.findViewById(R.id.channel_title);
+			PreviousProgramTime = (TextView) _viewGroup.findViewById(R.id.previous_program_time);
+			PreviousProgramTitle = (TextView) _viewGroup.findViewById(R.id.previous_program_title);
+			ProgramImage = (ImageView) _viewGroup.findViewById(R.id.program_image);
+			CurrentProgramTime = (TextView) _viewGroup.findViewById(R.id.current_program_time);
+			CurrentProgramTitle = (TextView) _viewGroup.findViewById(R.id.current_program_title);
+			NextProgramTime = (TextView) _viewGroup.findViewById(R.id.next_program_time);
+			NextProgramTitle = (TextView) _viewGroup.findViewById(R.id.next_program_title);
+			ProgressStartTime = (TextView) _viewGroup.findViewById(R.id.program_start);
+			ProgressEndTime = (TextView) _viewGroup.findViewById(R.id.program_end);
+			ProgramProgress = (ProgressBar) _viewGroup.findViewById(R.id.program_progress);
+		}
+
+		private void setPrograms(Calendar When, Program previousProgram, Program currentProgram, Program nextProgram)
+		{
+			// update programs info
+			setPreviousProgram(previousProgram);
+			setCurrentProgram(currentProgram);
+			setNextProgram(nextProgram);
+
+			// update progress bar
+			if (currentProgram != null)
+			{
+				try
+				{
+					Calendar startTime = parseDateTime(currentProgram.getStartTime());
+					Calendar endTime = parseDateTime(currentProgram.getStopTime());
+
+					long elapsed = When.getTimeInMillis() - startTime.getTimeInMillis();
+					long total = endTime.getTimeInMillis() - startTime.getTimeInMillis();
+					ProgramProgress.setProgress((int) (100.0f * elapsed / total));
+
+					ProgressStartTime.setText(parseDateTimeToHourMins(currentProgram.getStartTime()));
+					ProgressEndTime.setText(parseDateTimeToHourMins(currentProgram.getStopTime()));
+				}
+				catch (ParseException e)
+				{
+					Log.w(TAG, e.getMessage());
+				}
+			}
+			else
+			{
+				ProgramProgress.setProgress(0);
+			}
+		}
+
+		private void setPreviousProgram(Program program)
+		{
+			setProgramToView(program, PreviousProgramTime, PreviousProgramTitle);
+		}
+
+		private void setCurrentProgram(Program program)
+		{
+			setProgramToView(program, CurrentProgramTime, CurrentProgramTitle);
+		}
+
+		private void setNextProgram(Program program)
+		{
+			setProgramToView(program, NextProgramTime, NextProgramTitle);
+		}
+
+		private void setProgramToView(Program program, TextView programTime, TextView programTitle)
+		{
+			if (program == null)
+			{
+				programTime.setText(null);
+				programTitle.setText(null);
+			}
+			else
+			{
+				try
+				{
+					programTime.setText(parseDateTimeToHourMins(program.getStartTime()));
+				}
+				catch (ParseException e)
+				{
+					Log.w(TAG, e.getMessage());
+					programTime.setText(null);
+				}
+				programTitle.setText(program.getTitle());
+			}
+		}
+
+		private Calendar parseDateTime(String dateTime) throws ParseException
+		{
+			Date date = EpgData.DATE_TIME_FORMAT.parse(dateTime);
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			return cal;
+		}
+
+		private String parseDateTimeToHourMins(String dateTime) throws ParseException
+		{
+			Calendar startTime = parseDateTime(dateTime);
+			return TIME_FORMAT.format(startTime.getTime());
+		}
+	}
+
+	@Override
+    public void onEvent(int msgId, Bundle bundle)
+	{
+		Log.i(TAG, ".onEvent: msgId = " + msgId);
+		if (msgId == ON_TIMER)
+		{
+			Log.i(TAG, ".onEvent: Updating on timer event");
+			_programBarUpdater.run();
+			updateClock();
+			getEventMessanger().trigger(ON_TIMER, 1000);
+		}
 	}
 
 	@Override
@@ -149,49 +346,4 @@ public class FeatureStateTV extends FeatureState
 		}
 		return false;
 	}
-
-	private void onSelectChannelIndex(int channelIndex)
-	{
-		String channelId = _epgData.getChannel(channelIndex).getChannelId();
-		DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-		String now = df.format(Calendar.getInstance().getTime());
-		Program program = _epgData.getProgram(channelId, now);
-		String currentTitle = program != null?program.getTitle():"";
-
-		Log.i(TAG, ".onSelectChannelIndex: channelIndex = " + channelIndex + ", channelId = " + channelId + ", now = "
-		        + now + ", currentTitle = " + currentTitle);
-
-		_channelNoTextView.setText(channelIndex + 1 + "");
-		_channelLogoImageView.setImageBitmap(_epgData.getChannelLogoBitmap(channelIndex));
-
-		updateProgramBar(_epgData.getChannel(channelIndex).getTitle(), currentTitle);
-	}
-
-	private void onSwitchChannelIndex(int channelIndex)
-	{
-		String streamUrl = _featureEPG.getChannelStreamUrl(channelIndex);
-		_featurePlayer.getPlayer().play(streamUrl);
-	}
-
-	private void updateProgramBar(String channelTitle, String currentProgramTitle)
-	{
-		_programBarUpdater.ChannelTitle = channelTitle;
-		_programBarUpdater.CurrentProgramTitle = currentProgramTitle;
-		Environment.getInstance().getHandler().removeCallbacks(_programBarUpdater);
-		Environment.getInstance().getHandler().postDelayed(_programBarUpdater, _updateProgramBarDelay);
-	}
-
-	private class ProgramBarUpdater implements Runnable
-	{
-		public String ChannelTitle;
-		public String CurrentProgramTitle;
-
-		@Override
-		public void run()
-		{
-			_channelTitleTextView.setText(ChannelTitle);
-			_currentProgramTitle.setText(CurrentProgramTitle);
-		}
-	}
-
 }

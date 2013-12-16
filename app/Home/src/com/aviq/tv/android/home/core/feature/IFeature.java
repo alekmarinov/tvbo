@@ -10,10 +10,10 @@
 
 package com.aviq.tv.android.home.core.feature;
 
+import android.os.Bundle;
+
+import com.aviq.tv.android.home.core.event.EventMessenger;
 import com.aviq.tv.android.home.utils.Prefs;
-
-
-
 
 /**
  * Feature interface defining one functional element
@@ -22,9 +22,7 @@ public interface IFeature
 {
 	enum Type
 	{
-		COMPONENT,
-		SCHEDULER,
-		STATE
+		COMPONENT, SCHEDULER, STATE
 	}
 
 	public interface OnFeatureInitialized
@@ -39,6 +37,7 @@ public interface IFeature
 
 	/**
 	 * Define the other features this feature is depending on
+	 *
 	 * @return FeatureSet
 	 */
 	FeatureSet dependencies();
@@ -57,4 +56,19 @@ public interface IFeature
 	 * @return feature preferences
 	 */
 	Prefs getPrefs();
+
+	/**
+	 * @return an event messenger associated with this feature
+	 */
+	EventMessenger getEventMessanger();
+
+	/**
+	 * Inherit this method to receive messages
+	 *
+	 * @param msgId
+	 *            the id of the received message
+	 * @param bundle
+	 *            additional message data
+	 */
+	void onEvent(int msgId, Bundle bundle);
 }

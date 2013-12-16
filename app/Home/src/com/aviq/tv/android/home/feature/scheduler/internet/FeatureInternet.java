@@ -50,12 +50,14 @@ public class FeatureInternet extends FeatureScheduler
 	}
 
 	/**
-     * Adds url to be checked periodically. The url is requested immediately.
-     *
-     * @param url to be checked periodically
-     * @param intervalSecs the time interval in seconds
-     * @param onResultReceived
-     */
+	 * Adds url to be checked periodically. The url is requested immediately.
+	 *
+	 * @param url
+	 *            to be checked periodically
+	 * @param intervalSecs
+	 *            the time interval in seconds
+	 * @param onResultReceived
+	 */
 	public void addCheckUrl(String url, int intervalSecs, OnResultReceived onResultReceived)
 	{
 		CheckResponse responseSuccess = new CheckResponse(1000 * intervalSecs, onResultReceived);
@@ -111,12 +113,15 @@ public class FeatureInternet extends FeatureScheduler
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
-			Log.e(TAG, _stringRequest.getUrl() + " -> " + error.networkResponse.statusCode);
+			int statusCode = ResultCode.GENERAL_FAILURE;
+			if (error.networkResponse != null)
+				statusCode = error.networkResponse.statusCode;
+			Log.e(TAG, _stringRequest.getUrl() + " -> " + statusCode);
 			if (_onResultReceived != null)
 			{
 				Bundle bundle = new Bundle();
 				bundle.putString("URL", _stringRequest.getUrl());
-				_onResultReceived.onReceiveResult(error.networkResponse.statusCode, bundle);
+				_onResultReceived.onReceiveResult(statusCode, bundle);
 			}
 			Log.i(TAG, "Post checking again in " + _intervalSecs + " ms");
 			Environment.getInstance().getHandler().postDelayed(this, _intervalSecs);

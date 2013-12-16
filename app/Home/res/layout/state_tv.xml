@@ -3,9 +3,22 @@
     android:layout_height="match_parent"
     android:layout_alignParentBottom="true"
     android:layout_centerHorizontal="true" >
+    
+    <TextView
+        android:id="@+id/clock"
+        style="@style/ProgramText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="20dip"
+        android:layout_marginTop="20dip"
+        android:gravity="right"
+        android:singleLine="true"
+        android:textSize="20sp" />
 
-    <!-- Channel Bar -->
 
+	<!-- Channel Bar -->
     <com.aviq.tv.android.home.feature.state.tv.ZapperListView
         xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.home"
         android:id="@+id/tv_channel_bar"

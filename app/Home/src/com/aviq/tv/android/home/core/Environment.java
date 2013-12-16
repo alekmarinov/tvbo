@@ -141,7 +141,9 @@ public class Environment
 				_nFeature++;
 				_handler.postDelayed(this, _timeout * 1000);
 				_initStartedTime = System.currentTimeMillis();
-				_features.get(_nFeature).initialize(this);
+				IFeature feature = _features.get(_nFeature);
+				Log.i(TAG, "Initializing " + feature.getName());
+				feature.initialize(this);
 			}
 			else
 			{

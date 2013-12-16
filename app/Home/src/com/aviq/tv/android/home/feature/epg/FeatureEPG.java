@@ -185,6 +185,7 @@ public abstract class FeatureEPG extends FeatureComponent
 		@Override
 		public void onResponse(ChannelListResponse response)
 		{
+			Log.i(TAG, "Channels response received");
 			parseChannelListMetaData(response.meta);
 			parseChannelData(response.data);
 
@@ -205,8 +206,9 @@ public abstract class FeatureEPG extends FeatureComponent
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
-			_onFeatureInitialized.onInitialized(FeatureEPG.this,
-			        error.networkResponse != null ? error.networkResponse.statusCode : ResultCode.GENERAL_FAILURE);
+			int statusCode = error.networkResponse != null ? error.networkResponse.statusCode : ResultCode.GENERAL_FAILURE;
+			Log.e(TAG, "Error retrieving channels with code " + statusCode + ": " + error);
+			_onFeatureInitialized.onInitialized(FeatureEPG.this, statusCode);
 		}
 	}
 

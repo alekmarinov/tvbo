@@ -191,6 +191,9 @@ public class StateManager
 				// FIXME: make transition effect depending on state's StateLayer
 				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 				ft.commit();
+
+				// notify state is shown
+				state.onShow();
 			}
 		};
 		if (state.isAdded())
@@ -343,6 +346,9 @@ public class StateManager
 			FragmentTransaction ft = _activity.getFragmentManager().beginTransaction();
 			ft.remove(state);
 			ft.commit();
+
+			// notify state is hidden
+			state.onHide();
 		}
 	}
 }
