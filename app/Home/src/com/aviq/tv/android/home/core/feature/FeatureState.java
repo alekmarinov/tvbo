@@ -29,7 +29,6 @@ public abstract class FeatureState extends BaseState implements IFeature
 {
 	public static final String TAG = FeatureState.class.getSimpleName();
 	protected FeatureSet _dependencies = new FeatureSet();
-	protected EventMessenger _eventMessanger = new EventMessenger();
 	private List<Subscription> _subscriptions = new ArrayList<Subscription>();
 
 	@Override
@@ -67,7 +66,7 @@ public abstract class FeatureState extends BaseState implements IFeature
 	@Override
 	public EventMessenger getEventMessanger()
 	{
-		return _eventMessanger;
+		return Environment.getInstance().getEventMessenger();
 	}
 
 	@Override
@@ -105,6 +104,7 @@ public abstract class FeatureState extends BaseState implements IFeature
 		Log.i(TAG, ".onShow");
 		for (Subscription subscription: _subscriptions)
 		{
+			Log.i(TAG, "Register " + subscription.Feature.getName() + " " + subscription.Feature.getType() + " to event id = " + subscription.MsgId);
 			subscription.Feature.getEventMessanger().register(this, subscription.MsgId);
 		}
 	}
@@ -118,6 +118,7 @@ public abstract class FeatureState extends BaseState implements IFeature
 		Log.i(TAG, ".onHide");
 		for (Subscription subscription: _subscriptions)
 		{
+			Log.i(TAG, "Unregister " + subscription.Feature.getName() + " " + subscription.Feature.getType() + " to event id = " + subscription.MsgId);
 			subscription.Feature.getEventMessanger().unregister(this, subscription.MsgId);
 		}
 	}

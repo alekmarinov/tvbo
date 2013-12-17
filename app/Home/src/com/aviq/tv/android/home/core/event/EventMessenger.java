@@ -44,7 +44,7 @@ public class EventMessenger extends Handler
 	 */
 	public void register(IFeature feature, int msgId)
 	{
-		Log.i(TAG, ".register " + feature.getName() + " on " + msgId);
+		Log.i(TAG, ".register " + feature.getName() + " " + feature.getType() + " on " + msgId);
 		List<IFeature> msgListeners = _listners.get(msgId);
 		if (msgListeners == null)
 		{
@@ -63,7 +63,7 @@ public class EventMessenger extends Handler
 	 */
 	public void unregister(IFeature feature, int msgId)
 	{
-		Log.i(TAG, ".unregister " + feature.getName() + " from " + msgId);
+		Log.i(TAG, ".unregister " + feature.getName() + " " + feature.getType() + " from " + msgId);
 		List<IFeature> msgListeners = _listners.get(msgId);
 		if (msgListeners != null)
 			msgListeners.remove(feature);
@@ -124,6 +124,7 @@ public class EventMessenger extends Handler
 	@Override
 	public void handleMessage(Message msg)
 	{
+		super.handleMessage(msg);
 		List<IFeature> msgListeners = _listners.get(msg.what);
 		if (msgListeners != null)
 			for (IFeature feature : msgListeners)

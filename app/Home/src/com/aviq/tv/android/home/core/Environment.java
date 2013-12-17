@@ -20,11 +20,11 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Handler;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.aviq.tv.android.home.core.event.EventMessenger;
 import com.aviq.tv.android.home.core.feature.FeatureComponent;
 import com.aviq.tv.android.home.core.feature.FeatureFactory;
 import com.aviq.tv.android.home.core.feature.FeatureName;
@@ -77,7 +77,7 @@ public class Environment
 	private RequestQueue _requestQueue;
 	private ImageLoader _imageLoader;
 	private List<IFeature> _features = new ArrayList<IFeature>();
-	private Handler _handler = new Handler();
+	private EventMessenger _eventMessenger = new EventMessenger();
 	private FeatureName.State _homeFeatureState;
 	private Map<FeatureName.Component, Prefs> _componentPrefs = new HashMap<FeatureName.Component, Prefs>();
 	private Map<FeatureName.Scheduler, Prefs> _schedulerPrefs = new HashMap<FeatureName.Scheduler, Prefs>();
@@ -113,16 +113,16 @@ public class Environment
 
 		// Use 1/8th of the available memory for this memory cache.
 		int memClass = ((ActivityManager) activity.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE))
-                .getMemoryClass();
-        int cacheSize = 1024 * 1024 * memClass / 8;
-        _imageLoader = new ImageLoader(_requestQueue, new BitmapLruCache(cacheSize));
+		        .getMemoryClass();
+		int cacheSize = 1024 * 1024 * memClass / 8;
+		_imageLoader = new ImageLoader(_requestQueue, new BitmapLruCache(cacheSize));
 
 		// initializes features
 		Log.i(TAG, "Sorting features tolologically based on their declared dependencies");
 		_features = topologicalSort(_features);
 		for (int i = 0; i < _features.size(); i++)
 		{
-			Log.i(TAG, i + ". " + _features.get(i).getName());
+			Log.i(TAG, i + ". " + _features.get(i).getName() + " " + _features.get(i).getType());
 		}
 
 		Log.i(TAG, "Initializing features");
@@ -133,6 +133,7 @@ public class Environment
 	private class FeatureInitializeTimeout implements Runnable, IFeature.OnFeatureInitialized
 	{
 		private int _nFeature = -1;
+		private int _nInitialized = -1;
 		private long _initStartedTime;
 		private int _timeout = 0;
 
@@ -145,14 +146,15 @@ public class Environment
 		// otherwise
 		public void initializeNext()
 		{
-			_handler.removeCallbacks(this);
+			_eventMessenger.removeCallbacks(this);
 			if ((_nFeature + 1) < _features.size())
 			{
 				_nFeature++;
-				_handler.postDelayed(this, _timeout * 1000);
+				_eventMessenger.postDelayed(this, _timeout * 1000);
 				_initStartedTime = System.currentTimeMillis();
 				IFeature feature = _features.get(_nFeature);
-				Log.i(TAG, "Initializing " + feature.getName());
+				Log.i(TAG, "Initializing " + feature.getName() + " " + feature.getType() + " with timeout " + _timeout
+				        + " secs");
 				feature.initialize(this);
 			}
 			else
@@ -187,16 +189,23 @@ public class Environment
 		public void run()
 		{
 			// Initialization timed out
+			IFeature feature = _features.get(_nFeature);
 			Log.e(TAG, _nFeature + ". initialize " + (System.currentTimeMillis() - _initStartedTime) + " ms: "
-			        + _features.get(_nFeature).getName() + " timeout!");
+			        + feature.getName() + " " + feature.getType() + " timeout!");
 			throw new RuntimeException("timeout!");
 		}
 
 		@Override
 		public void onInitialized(IFeature feature, int resultCode)
 		{
-			Log.i(TAG, _nFeature + ". initialize " + (System.currentTimeMillis() - _initStartedTime) + " ms: "
-			        + feature.getName() + " results " + resultCode);
+			String featureName = feature.getName() + " " + feature.getType();
+			if (_nInitialized == _nFeature)
+			{
+				throw new RuntimeException("Attempt to initialize feature " + featureName + " more than once");
+			}
+			_nInitialized = _nFeature;
+			Log.i(TAG, _nFeature + ". " + featureName + " initialized in "
+			        + (System.currentTimeMillis() - _initStartedTime) + " ms with result " + resultCode);
 			initializeNext();
 		}
 	}
@@ -291,13 +300,13 @@ public class Environment
 	}
 
 	/**
-	 * Returns handler
+	 * Returns event messenger
 	 *
-	 * @return Handler
+	 * @return EventMessenger
 	 */
-	public Handler getHandler()
+	public EventMessenger getEventMessenger()
 	{
-		return _handler;
+		return _eventMessenger;
 	}
 
 	/**

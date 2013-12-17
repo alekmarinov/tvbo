@@ -165,8 +165,8 @@ public class FeatureStateTV extends FeatureState
 	{
 		_programBarUpdater.Channel = channel;
 		_programBarUpdater.When = when;
-		Environment.getInstance().getHandler().removeCallbacks(_programBarUpdater);
-		Environment.getInstance().getHandler().postDelayed(_programBarUpdater, _updateProgramBarDelay);
+		Environment.getInstance().getEventMessenger().removeCallbacks(_programBarUpdater);
+		Environment.getInstance().getEventMessenger().postDelayed(_programBarUpdater, _updateProgramBarDelay);
 	}
 
 	private class ProgramBarUpdater implements Runnable
@@ -312,10 +312,10 @@ public class FeatureStateTV extends FeatureState
 	@Override
     public void onEvent(int msgId, Bundle bundle)
 	{
-		Log.i(TAG, ".onEvent: msgId = " + msgId);
+		// Log.i(TAG, ".onEvent: msgId = " + msgId);
 		if (msgId == ON_TIMER)
 		{
-			Log.i(TAG, ".onEvent: Updating on timer event");
+			// Log.i(TAG, ".onEvent: Updating on timer event");
 			_programBarUpdater.run();
 			updateClock();
 			getEventMessanger().trigger(ON_TIMER, 1000);
