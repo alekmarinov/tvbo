@@ -8,6 +8,15 @@
     <attr name="itemVerticalPadding" format="dimension" />
     <attr name="itemTextSize" format="dimension" />
 
+    <attr name="selectedVisiblePosition" format="integer" />
+    <attr name="selectedDelay" format="integer" />
+    <attr name="hideSelected" format="boolean" />
+    <attr name="itemsOffset" format="float" />
+    <attr name="topInflated" format="integer" />
+    <attr name="bottomInflated" format="integer" />
+    <attr name="listitem_size" format="dimension" />
+    <attr name="selectionIndex" format="integer" />
+    
     <declare-styleable name="ZapperListView">
         <attr name="selectedPosition" />
         <attr name="visibleItems" />
@@ -16,5 +25,23 @@
         <attr name="itemHorizontalPadding" />
         <attr name="itemVerticalPadding" />
         <attr name="itemTextSize" />
+    </declare-styleable>
+    
+    <declare-styleable name="TimeBasedRelativeLayout">
+        <attr name="pixelsPerOneHour" format="dimension" />
+        <attr name="viewHeight" format="dimension" />
+    </declare-styleable>
+    
+    <declare-styleable name="EpgListView">
+        <attr name="selectedVisiblePosition" />
+        <attr name="visibleItems" />
+        <attr name="selectedDelay" />
+        <attr name="itemsHeight" />
+        <attr name="hideSelected" />
+        <attr name="topInflated" />
+        <attr name="bottomInflated" />
+        <attr name="itemsOffset" />
+        <attr name="listitem_size" />
+        <attr name="selectionIndex" />
     </declare-styleable>
 </resources>

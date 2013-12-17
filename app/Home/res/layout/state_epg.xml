@@ -139,7 +139,6 @@
         android:layout_marginLeft="70dp"
         android:layout_marginRight="70dp"
         android:layout_marginTop="25dp"
-        android:background="@drawable/button_bar"
         android:baselineAligned="false"
         android:orientation="horizontal" >
 
@@ -166,6 +165,7 @@
                 android:layout_marginLeft="0dip"
                 android:layout_marginRight="0dip"
                 android:addStatesFromChildren="true"
+                android:background="@drawable/button_bar"
                 android:cacheColorHint="@android:color/transparent"
                 android:divider="@null"
                 android:dividerHeight="0dp"

@@ -14,7 +14,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -95,7 +94,6 @@ public class FeatureStateTV extends FeatureState
 		try
 		{
 			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
-			_epgData = _featureEPG.getEpgData();
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
 			_updateProgramBarDelay = getPrefs().getInt(Param.UPDATE_PROGRAM_BAR_DELAY);
@@ -126,6 +124,7 @@ public class FeatureStateTV extends FeatureState
 		_channelLogoImageView = (ImageView) _viewGroup.findViewById(R.id.channel_logo);
 		_programBar = new ProgramBar((ViewGroup) _viewGroup.findViewById(R.id.tv_program_bar));
 
+		_epgData = _featureEPG.getEpgData();
 		for (int i = 0; i < _epgData.getChannelCount(); i++)
 		{
 			Bitmap bmp = _epgData.getChannelLogoBitmap(i);
@@ -300,10 +299,7 @@ public class FeatureStateTV extends FeatureState
 
 		private Calendar parseDateTime(String dateTime) throws ParseException
 		{
-			Date date = EpgData.DATE_TIME_FORMAT.parse(dateTime);
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(date);
-			return cal;
+			return Program.getEpgTime(dateTime);
 		}
 
 		private String parseDateTimeToHourMins(String dateTime) throws ParseException

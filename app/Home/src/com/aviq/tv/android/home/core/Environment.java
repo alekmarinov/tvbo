@@ -16,12 +16,14 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.aviq.tv.android.home.core.feature.FeatureComponent;
 import com.aviq.tv.android.home.core.feature.FeatureFactory;
@@ -34,6 +36,7 @@ import com.aviq.tv.android.home.core.feature.IFeature;
 import com.aviq.tv.android.home.core.service.ServiceController;
 import com.aviq.tv.android.home.core.state.StateException;
 import com.aviq.tv.android.home.core.state.StateManager;
+import com.aviq.tv.android.home.utils.BitmapLruCache;
 import com.aviq.tv.android.home.utils.HttpServer;
 import com.aviq.tv.android.home.utils.Log;
 import com.aviq.tv.android.home.utils.Prefs;
@@ -72,6 +75,7 @@ public class Environment
 	private Prefs _prefs;
 	private Prefs _userPrefs;
 	private RequestQueue _requestQueue;
+	private ImageLoader _imageLoader;
 	private List<IFeature> _features = new ArrayList<IFeature>();
 	private Handler _handler = new Handler();
 	private FeatureName.State _homeFeatureState;
@@ -107,6 +111,12 @@ public class Environment
 		_requestQueue = Volley.newRequestQueue(_context);
 		_stateManager = new StateManager(activity);
 
+		// Use 1/8th of the available memory for this memory cache.
+		int memClass = ((ActivityManager) activity.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE))
+                .getMemoryClass();
+        int cacheSize = 1024 * 1024 * memClass / 8;
+        _imageLoader = new ImageLoader(_requestQueue, new BitmapLruCache(cacheSize));
+		
 		// initializes features
 		Log.i(TAG, "Sorting features tolologically based on their declared dependencies");
 		_features = topologicalSort(_features);
@@ -270,6 +280,16 @@ public class Environment
 		return _requestQueue;
 	}
 
+	/**
+	 * Returns global Volley image loader
+	 *
+	 * @return ImageLoader
+	 */
+	public ImageLoader getImageLoader()
+	{
+		return _imageLoader;
+	}
+	
 	/**
 	 * Returns handler
 	 *

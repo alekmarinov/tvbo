@@ -3,4 +3,8 @@
     <string name="contentDescription">disables android warning about missing attribute contentDescription in ImageView</string>
     <string name="connection_lost">Connection lost</string>
     <string name="internet_check_service">Internet Check Service</string>
+    <string name="today">Днес</string>
+    <string name="yesterday">Вчера</string>
+    <string name="tomorrow">Утре</string>
+    <string name="scheduleHeaderDateTimeFormat">MMM dd</string>
 </resources>

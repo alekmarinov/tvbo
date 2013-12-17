@@ -54,6 +54,32 @@ public class Channel implements Parcelable
 		}
 	};
 	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null)
+			return false;
+		if (obj == this)
+			return true;
+		if (!(obj instanceof Channel))
+			return false;
+		
+		Channel other = (Channel) obj;
+		return (_channelId != null && _channelId.equals(other._channelId))
+		        && (_title != null && _title.equals(other._title))
+		        && (_thumbnail != null && _thumbnail.equals(other._thumbnail));
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		int result = 0;
+		result = 31 * result + (_channelId != null ? _channelId.hashCode() : 0);
+		result = 31 * result + (_title != null ? _title.hashCode() : 0);
+		result = 31 * result + (_thumbnail != null ? _thumbnail.hashCode() : 0);
+		return result;
+	}
+	
 	public String getChannelId()
 	{
 		return _channelId;

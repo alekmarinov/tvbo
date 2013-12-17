@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.aviq.tv.android.home.feature.state.epg.TimeBasedRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.home"
+    android:id="@+id/epg_program_container"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/epg_grid_header_height"
+    android:background="@color/transparent"
+    aviqtv:pixelsPerOneHour="@dimen/epg_grid_one_hour_width"
+    aviqtv:viewHeight="@dimen/epg_grid_header_height" >
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="15dp"
+        android:ellipsize="marquee"
+        android:gravity="left|center_vertical"
+        android:maxLines="2"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+</com.aviq.tv.android.home.feature.state.epg.TimeBasedRelativeLayout>
