@@ -25,7 +25,6 @@ import com.aviq.tv.android.home.utils.Prefs;
 public abstract class FeatureScheduler implements IFeature
 {
 	protected FeatureSet _dependencies = new FeatureSet();
-	protected EventMessenger _eventMessanger = new EventMessenger();
 
 	public FeatureScheduler()
 	{
@@ -66,7 +65,7 @@ public abstract class FeatureScheduler implements IFeature
 	@Override
 	public EventMessenger getEventMessanger()
 	{
-		return _eventMessanger;
+		return Environment.getInstance().getEventMessenger();
 	}
 
 	@Override

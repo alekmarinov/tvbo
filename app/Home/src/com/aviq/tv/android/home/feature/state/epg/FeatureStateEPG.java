@@ -47,22 +47,21 @@ public class FeatureStateEPG extends FeatureState
 	private EpgHeaderView _gridHeader;
 	private EpgListView _gridList;
 	private TextView _dateTimeView;
-	
+
 	private EpgData _epgData;
-	
+
 	public FeatureStateEPG()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
 		_dependencies.States.add(FeatureName.State.MESSAGE_BOX);
 	}
-	
+
 	@Override
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		super.initialize(onFeatureInitialized);
-		onFeatureInitialized.onInitialized(this, ResultCode.OK);
-		
+
 		try
 		{
 			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
@@ -76,13 +75,13 @@ public class FeatureStateEPG extends FeatureState
 			onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
 		}
 	}
-	
+
 	@Override
 	public FeatureName.State getStateName()
 	{
-		return FeatureName.State.TV;
+		return FeatureName.State.EPG;
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
@@ -97,7 +96,7 @@ public class FeatureStateEPG extends FeatureState
 
 		return viewGroup;
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
@@ -114,7 +113,7 @@ public class FeatureStateEPG extends FeatureState
 			{
 				Log.e(TAG, e.getMessage(), e);
 			}
-			
+
 			// show hide message box
 			if (isAdded)
 			{
@@ -128,41 +127,41 @@ public class FeatureStateEPG extends FeatureState
 		}
 		return _epgGrid.onKeyDown(keyCode, event);
 	}
-	
+
 	private void initEpgGrid()
 	{
 		_epgData = _featureEPG.getEpgData();
 		_epgGrid = new EpgGrid(getActivity());
 		_epgGrid.setDataProvider(_epgData);
-		
+
 		setEpgGridHeaderAbsMinTime();
 		setEpgGridHeaderAbsMaxTime();
-		
+
 		_epgGrid.setEpgHeaderView(_gridHeader);
 		_epgGrid.setDateTimeView(_dateTimeView);
 
 		_gridList.setDivider(null);
 		_gridList.setDividerHeight(0);
-		_epgGrid.setEpgListView(_gridList);		
-		
+		_epgGrid.setEpgListView(_gridList);
+
 		// FIXME: get current channel
 		Channel channel = _epgData.getChannel(0);
 		_epgGrid.setSelectedChannel(channel);
 		_epgGrid.setOnEpgGridItemSelection(_onEpgGridItemSelectionListener);
 		_epgGrid.prepareEpg();
 	}
-	
+
 	private void setEpgGridHeaderAbsMinTime()
 	{
 		Calendar now = Calendar.getInstance();
-		
+
 		int hoursBack = (int) Math.abs((now.getTimeInMillis() - _epgData.getMinEpgStartTime().getTimeInMillis())
 		        / (1000 * 60 * 60));
 		Calendar absMin = Calendar.getInstance();
 		absMin.add(Calendar.HOUR_OF_DAY, -hoursBack);
 		_gridHeader.setAbsoluteTimeMin(absMin);
 	}
-	
+
 	private void setEpgGridHeaderAbsMaxTime()
 	{
 		Calendar now = Calendar.getInstance();
@@ -173,7 +172,7 @@ public class FeatureStateEPG extends FeatureState
 		absMax.add(Calendar.HOUR_OF_DAY, hoursAhead);
 		_gridHeader.setAbsoluteTimeMax(absMax);
 	}
-	
+
 	private final OnEpgGridItemSelectionListener _onEpgGridItemSelectionListener = new OnEpgGridItemSelectionListener()
 	{
 		@Override

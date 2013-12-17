@@ -104,7 +104,7 @@ public class FeatureInternet extends FeatureScheduler
 				_onResultReceived.onReceiveResult(ResultCode.OK, bundle);
 			}
 			Log.i(TAG, "Post checking again in " + _intervalSecs + " ms");
-			Environment.getInstance().getHandler().postDelayed(this, _intervalSecs);
+			Environment.getInstance().getEventMessenger().postDelayed(this, _intervalSecs);
 		}
 
 		/**
@@ -124,7 +124,7 @@ public class FeatureInternet extends FeatureScheduler
 				_onResultReceived.onReceiveResult(statusCode, bundle);
 			}
 			Log.i(TAG, "Post checking again in " + _intervalSecs + " ms");
-			Environment.getInstance().getHandler().postDelayed(this, _intervalSecs);
+			Environment.getInstance().getEventMessenger().postDelayed(this, _intervalSecs);
 		}
 
 		@Override

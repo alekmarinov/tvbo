@@ -144,6 +144,7 @@ public abstract class FeatureEPG extends FeatureComponent
 	private void retrieveChannels()
 	{
 		String channelsUrl = getChannelsUrl();
+		Log.i(TAG, "Retrieving EPG channels from " + channelsUrl);
 		ChannelListResponseCallback responseCallback = new ChannelListResponseCallback();
 
 		GsonRequest<ChannelListResponse> channelListRequest = new GsonRequest<ChannelListResponse>(Request.Method.GET,
@@ -158,7 +159,7 @@ public abstract class FeatureEPG extends FeatureComponent
 		String channelLogo = channel.getThumbnail();
 
 		String channelLogoUrl = getChannelsLogoUrl(channelId, channelLogo);
-		Log.i(TAG, "Retrieving channel logo " + channelLogoUrl);
+		Log.d(TAG, "Retrieving channel logo from " + channelLogoUrl);
 
 		LogoResponseCallback responseCallback = new LogoResponseCallback(channelId, channelIndex);
 
@@ -172,6 +173,7 @@ public abstract class FeatureEPG extends FeatureComponent
 	{
 		String channelId = channel.getChannelId();
 		String programsUrl = getProgramsUrl(channelId);
+		Log.d(TAG, "Retrieving programs from " + programsUrl);
 
 		ProgramsResponseCallback responseCallback = new ProgramsResponseCallback(channelId);
 
@@ -186,13 +188,11 @@ public abstract class FeatureEPG extends FeatureComponent
 		@Override
 		public void onResponse(ChannelListResponse response)
 		{
-			Log.i(TAG, "Channels response received");
 			parseChannelListMetaData(response.meta);
 			parseChannelData(response.data);
 
-			// Download channel-related data: logo, programs, etc.
-
 			final int nChannels = _epgDataBeingLoaded.getChannelCount();
+			Log.i(TAG, "Response with " + nChannels + " channels received");
 			_retrievedChannelLogos = 0;
 			_retrievedChannelPrograms = 0;
 
@@ -227,7 +227,7 @@ public abstract class FeatureEPG extends FeatureComponent
 		@Override
 		public void onResponse(Bitmap response)
 		{
-			Log.i(TAG, "Received bitmap " + response.getWidth() + "x" + response.getHeight());
+			Log.d(TAG, "Received bitmap " + response.getWidth() + "x" + response.getHeight());
 			_epgDataBeingLoaded.setChannelLogo(_index, response);
 			logoProcessed();
 		}
@@ -235,7 +235,7 @@ public abstract class FeatureEPG extends FeatureComponent
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
-			Log.i(TAG, "Retrieve channel logo " + _channelId + " with error: " + error);
+			Log.d(TAG, "Retrieve channel logo " + _channelId + " with error: " + error);
 			logoProcessed();
 		}
 
@@ -258,7 +258,7 @@ public abstract class FeatureEPG extends FeatureComponent
 		@Override
 		public void onResponse(ProgramsResponse response)
 		{
-			Log.i(TAG, "Received programs for channel " + _channelId);
+			Log.d(TAG, "Received programs for channel " + _channelId);
 			parseProgramsMetaData(response.meta);
 			parseProgramsData(_channelId, response.data);
 			programsProcessed();
@@ -267,7 +267,7 @@ public abstract class FeatureEPG extends FeatureComponent
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
-			Log.i(TAG, "Error " + error + " retrieving programs for " + _channelId);
+			Log.w(TAG, "Error " + error + " retrieving programs for " + _channelId);
 			programsProcessed();
 		}
 
@@ -287,10 +287,10 @@ public abstract class FeatureEPG extends FeatureComponent
 			// one. Anyone else holding a reference to the old object will
 			// be able to finish its job. Then the garbage collector will
 			// free up the memory.
-			
+
 			_epgData = _epgDataBeingLoaded;
 			_epgDataBeingLoaded = null;
-			
+
 			_retrievedChannelPrograms = 0;
 			_retrievedChannelLogos = 0;
 
@@ -377,7 +377,7 @@ public abstract class FeatureEPG extends FeatureComponent
 			{
 				Log.w(TAG, "Undefined start time for program: " + program.getTitle() + " on channel: " + channelId);
 			}
-			
+
 			try
 			{
 				program.setStopTime(data[i][_programsMeta.metaStop]);
@@ -386,7 +386,7 @@ public abstract class FeatureEPG extends FeatureComponent
 			{
 				Log.w(TAG, "Undefined stop time for program: " + program.getTitle() + " on channel: " + channelId);
 			}
-			
+
 			programList.add(program);
 			programMap.put(program.getStartTime(), i);
 		}
@@ -402,10 +402,7 @@ public abstract class FeatureEPG extends FeatureComponent
 		bundle.putInt("VERSION", _epgVersion);
 		bundle.putString("PROVIDER", _epgProvider);
 
-		String channelsUrl = getPrefs().getString(Param.EPG_CHANNELS_URL, bundle);
-		Log.i(TAG, "Retrieving EPG channels from " + channelsUrl);
-
-		return channelsUrl;
+		return getPrefs().getString(Param.EPG_CHANNELS_URL, bundle);
 	}
 
 	private String getChannelsLogoUrl(String channelId, String channelLogo)
@@ -417,10 +414,7 @@ public abstract class FeatureEPG extends FeatureComponent
 		bundle.putString("CHANNEL", channelId);
 		bundle.putString("LOGO", channelLogo);
 
-		String channelLogoUrl = getPrefs().getString(Param.EPG_CHANNEL_LOGO_URL, bundle);
-		Log.i(TAG, "Retrieving channel logo from " + channelLogoUrl);
-
-		return channelLogoUrl;
+		return getPrefs().getString(Param.EPG_CHANNEL_LOGO_URL, bundle);
 	}
 
 	private String getProgramsUrl(String channelId)
@@ -431,10 +425,7 @@ public abstract class FeatureEPG extends FeatureComponent
 		bundle.putString("PROVIDER", _epgProvider);
 		bundle.putString("CHANNEL", channelId);
 
-		String programsUrl = getPrefs().getString(Param.EPG_PROGRAMS_URL, bundle);
-		Log.i(TAG, "Retrieving programs from " + programsUrl);
-
-		return programsUrl;
+		return getPrefs().getString(Param.EPG_PROGRAMS_URL, bundle);
 	}
 
 	public EpgData getEpgData()
