@@ -19,6 +19,7 @@ import java.util.TreeMap;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -289,7 +290,9 @@ public abstract class FeatureEPG extends FeatureComponent
 			// free up the memory.
 			
 			_epgData = _epgDataBeingLoaded;
-			_epgDataBeingLoaded = null;
+			
+// TODO: Uncomment this if "parseProgramData()" is going to work without the AsyncTask logic
+//			_epgDataBeingLoaded = null; 
 			
 			_retrievedChannelPrograms = 0;
 			_retrievedChannelLogos = 0;
@@ -359,40 +362,106 @@ public abstract class FeatureEPG extends FeatureComponent
 		}
 	}
 
-	private void parseProgramsData(String channelId, String[][] data)
+	private void parseProgramsData(final String channelId, final String[][] data)
 	{
-		NavigableMap<String, Integer> programMap = new TreeMap<String, Integer>();
-		List<Program> programList = new ArrayList<Program>();
-
-		for (int i = 0; i < data.length; i++)
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() 
 		{
-			Program program = new Program();
-			program.setTitle(data[i][_programsMeta.metaTitle]);
+			private NavigableMap<String, Integer> _programMap = new TreeMap<String, Integer>();
+			private List<Program> _programList = new ArrayList<Program>();
+			private long _processStart;
+			private long _processEnd;
 
-			try
-			{
-				program.setStartTime(data[i][_programsMeta.metaStart]);
-			}
-			catch (ParseException e)
-			{
-				Log.w(TAG, "Undefined start time for program: " + program.getTitle() + " on channel: " + channelId);
-			}
-			
-			try
-			{
-				program.setStopTime(data[i][_programsMeta.metaStop]);
-			}
-			catch (ParseException e)
-			{
-				Log.w(TAG, "Undefined stop time for program: " + program.getTitle() + " on channel: " + channelId);
-			}
-			
-			programList.add(program);
-			programMap.put(program.getStartTime(), i);
-		}
+			@Override
+            protected Void doInBackground(Void... params)
+            {
+				_processStart = System.nanoTime();
 
-		_epgDataBeingLoaded.addProgramNavigableMap(channelId, programMap);
-		_epgDataBeingLoaded.addProgramList(channelId, programList);
+				for (int i = 0; i < data.length; i++)
+				{
+					Program program = new Program();
+					program.setTitle(data[i][_programsMeta.metaTitle]);
+
+					try
+					{
+						program.setStartTime(data[i][_programsMeta.metaStart]);
+					}
+					catch (ParseException e)
+					{
+						Log.w(TAG, "Undefined start time for program: " + program.getTitle() + " on channel: " + channelId);
+					}
+					
+					try
+					{
+						program.setStopTime(data[i][_programsMeta.metaStop]);
+					}
+					catch (ParseException e)
+					{
+						Log.w(TAG, "Undefined stop time for program: " + program.getTitle() + " on channel: " + channelId);
+					}
+					
+					_programList.add(program);
+					_programMap.put(program.getStartTime(), i);
+				}
+				
+	            return null;
+            }
+			
+			@Override
+			protected void onPostExecute(Void result)
+			{
+				if (_epgDataBeingLoaded == null)
+				{
+					Log.e(TAG, "_epgDataBeingLoaded is NULL");
+					return;
+				}
+				_epgDataBeingLoaded.addProgramNavigableMap(channelId, _programMap);
+				_epgDataBeingLoaded.addProgramList(channelId, _programList);
+
+				_processEnd = System.nanoTime();
+				double processTime = (_processEnd - _processStart) / 1000000000.0;
+				Log.e(TAG, "Parsed " + data.length + " program items for channel " + channelId + " for " + processTime + " sec");
+			}
+		};
+		task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, (Void) null);
+		
+//		long processStart = System.nanoTime();
+//
+//		NavigableMap<String, Integer> programMap = new TreeMap<String, Integer>();
+//		List<Program> programList = new ArrayList<Program>();
+//
+//		for (int i = 0; i < data.length; i++)
+//		{
+//			Program program = new Program();
+//			program.setTitle(data[i][_programsMeta.metaTitle]);
+//
+//			try
+//			{
+//				program.setStartTime(data[i][_programsMeta.metaStart]);
+//			}
+//			catch (ParseException e)
+//			{
+//				Log.w(TAG, "Undefined start time for program: " + program.getTitle() + " on channel: " + channelId);
+//			}
+//			
+//			try
+//			{
+//				program.setStopTime(data[i][_programsMeta.metaStop]);
+//			}
+//			catch (ParseException e)
+//			{
+//				Log.w(TAG, "Undefined stop time for program: " + program.getTitle() + " on channel: " + channelId);
+//			}
+//			
+//			programList.add(program);
+//			programMap.put(program.getStartTime(), i);
+//		}
+//
+//		_epgDataBeingLoaded.addProgramNavigableMap(channelId, programMap);
+//		_epgDataBeingLoaded.addProgramList(channelId, programList);
+//		
+//		long processEnd = System.nanoTime();
+//		double processTime = (processEnd - processStart) / 1000000000.0;
+//		Log.e(TAG, "Parsed " + data.length + " program items for channel " + channelId + " for " + processTime + " sec");
 	}
 
 	private String getChannelsUrl()

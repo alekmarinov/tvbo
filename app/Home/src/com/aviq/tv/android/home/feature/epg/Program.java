@@ -12,6 +12,8 @@ import android.os.Parcelable;
 
 public class Program implements Parcelable, Comparable<Program>
 {
+	private static final DateFormat EPG_DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+	
 	// Bean properties
 	private String _startTime;
 	private String _stopTime;
@@ -95,8 +97,7 @@ public class Program implements Parcelable, Comparable<Program>
 		Calendar cal;
         try
         {
-        	DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
-	        Date dte = dateFormat.parse(epgTime);
+	        Date dte = EPG_DATE_FORMAT.parse(epgTime);
 	        cal = Calendar.getInstance();
 	        cal.setTime(dte);
         }
@@ -109,15 +110,13 @@ public class Program implements Parcelable, Comparable<Program>
 	
 	public static String getEpgTime(Calendar cal)
 	{
-    	DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
-    	String dateTime = dateFormat.format(cal.getTime());
+    	String dateTime = EPG_DATE_FORMAT.format(cal.getTime());
         return dateTime;
 	}
 	
 	public static String getEpgTime(long millis)
 	{
-    	DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
-    	String dateTime = dateFormat.format(new Date(millis));
+    	String dateTime = EPG_DATE_FORMAT.format(new Date(millis));
         return dateTime;
 	}
 
