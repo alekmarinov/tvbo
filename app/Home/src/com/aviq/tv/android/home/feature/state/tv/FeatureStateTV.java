@@ -97,7 +97,6 @@ public class FeatureStateTV extends FeatureState
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
 			_updateProgramBarDelay = getPrefs().getInt(Param.UPDATE_PROGRAM_BAR_DELAY);
-			subscribe(this, ON_TIMER);
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
 		catch (FeatureNotFoundException e)
@@ -134,8 +133,6 @@ public class FeatureStateTV extends FeatureState
 				Log.w(TAG, "Channel " + _epgData.getChannel(i).getChannelId() + " doesn't have image logo!");
 		}
 		onSelectChannelIndex(0);
-		updateClock();
-		getEventMessanger().trigger(ON_TIMER, 1000);
 		return _viewGroup;
 	}
 
@@ -161,12 +158,25 @@ public class FeatureStateTV extends FeatureState
 		_clockTextView.setText(CLOCK_FORMAT.format(Calendar.getInstance().getTime()));
 	}
 
+	private Runnable _onStartProgramBarUpdate = new Runnable()
+	{
+		@Override
+		public void run()
+		{
+			subscribe(FeatureStateTV.this, ON_TIMER);
+			_programBarUpdater.run();
+			getEventMessanger().trigger(ON_TIMER, 1000);
+		}
+	};
+
 	private void updateProgramBar(Channel channel, Calendar when)
 	{
+		if (isSubscribed(FeatureStateTV.this, ON_TIMER))
+			unsubscribe(FeatureStateTV.this, ON_TIMER);
 		_programBarUpdater.Channel = channel;
 		_programBarUpdater.When = when;
-		Environment.getInstance().getEventMessenger().removeCallbacks(_programBarUpdater);
-		Environment.getInstance().getEventMessenger().postDelayed(_programBarUpdater, _updateProgramBarDelay);
+		Environment.getInstance().getEventMessenger().removeCallbacks(_onStartProgramBarUpdate);
+		Environment.getInstance().getEventMessenger().postDelayed(_onStartProgramBarUpdate, _updateProgramBarDelay);
 	}
 
 	private class ProgramBarUpdater implements Runnable
@@ -310,7 +320,7 @@ public class FeatureStateTV extends FeatureState
 	}
 
 	@Override
-    public void onEvent(int msgId, Bundle bundle)
+	public void onEvent(int msgId, Bundle bundle)
 	{
 		// Log.i(TAG, ".onEvent: msgId = " + msgId);
 		if (msgId == ON_TIMER)
