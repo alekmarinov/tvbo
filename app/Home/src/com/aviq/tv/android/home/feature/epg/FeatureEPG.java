@@ -207,7 +207,8 @@ public abstract class FeatureEPG extends FeatureComponent
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
-			int statusCode = error.networkResponse != null ? error.networkResponse.statusCode : ResultCode.GENERAL_FAILURE;
+			int statusCode = error.networkResponse != null ? error.networkResponse.statusCode
+			        : ResultCode.GENERAL_FAILURE;
 			Log.e(TAG, "Error retrieving channels with code " + statusCode + ": " + error);
 			_onFeatureInitialized.onInitialized(FeatureEPG.this, statusCode);
 		}
@@ -287,10 +288,10 @@ public abstract class FeatureEPG extends FeatureComponent
 			// one. Anyone else holding a reference to the old object will
 			// be able to finish its job. Then the garbage collector will
 			// free up the memory.
-			
+
 			_epgData = _epgDataBeingLoaded;
 			_epgDataBeingLoaded = null;
-			
+
 			_retrievedChannelPrograms = 0;
 			_retrievedChannelLogos = 0;
 
@@ -377,7 +378,7 @@ public abstract class FeatureEPG extends FeatureComponent
 			{
 				Log.w(TAG, "Undefined start time for program: " + program.getTitle() + " on channel: " + channelId);
 			}
-			
+
 			try
 			{
 				program.setStopTime(data[i][_programsMeta.metaStop]);
@@ -386,7 +387,7 @@ public abstract class FeatureEPG extends FeatureComponent
 			{
 				Log.w(TAG, "Undefined stop time for program: " + program.getTitle() + " on channel: " + channelId);
 			}
-			
+
 			programList.add(program);
 			programMap.put(program.getStartTime(), i);
 		}
