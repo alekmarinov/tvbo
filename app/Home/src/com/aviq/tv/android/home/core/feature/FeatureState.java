@@ -70,7 +70,7 @@ public abstract class FeatureState extends BaseState implements IFeature
 	}
 
 	@Override
-    public void onEvent(int msgId, Bundle bundle)
+	public void onEvent(int msgId, Bundle bundle)
 	{
 		Log.i(TAG, ".onEvent: msgId = " + msgId);
 	}
@@ -86,7 +86,69 @@ public abstract class FeatureState extends BaseState implements IFeature
 	protected void subscribe(IFeature featureTo, int msgId)
 	{
 		Log.i(TAG, ".subscribe: for " + featureTo.getName() + " on " + msgId);
+		if (isSubscribed(featureTo, msgId))
+		{
+			throw new RuntimeException("Attempt to subscribe " + getName() + " " + getType() + " to "
+			        + featureTo.getName() + " " + featureTo.getType() + " on event id " + msgId + " more than once");
+		}
+
+		// add subscription for registration when this state is shown
 		_subscriptions.add(new Subscription(featureTo, msgId));
+		if (isShown())
+		{
+			// register immediately if the state is already shown
+			featureTo.getEventMessanger().register(this, msgId);
+		}
+	}
+
+	/**
+	 * Unsubscribes this feature from event triggered from another feature
+	 *
+	 * @param feature
+	 *            the feature to unsubscribe from
+	 * @param msgId
+	 *            the id of the message to unsubscribe
+	 */
+	protected void unsubscribe(IFeature featureFrom, int msgId)
+	{
+		Log.i(TAG, ".unsubscribe: from " + featureFrom.getName() + " on " + msgId);
+		for (int i = 0; i < _subscriptions.size(); i++)
+		{
+			Subscription subscription = _subscriptions.get(i);
+			if (subscription.Feature == featureFrom && subscription.MsgId == msgId)
+			{
+				_subscriptions.remove(i);
+				if (isShown())
+				{
+					// if already shown unregister immediately
+					featureFrom.getEventMessanger().unregister(this, msgId);
+				}
+				return;
+			}
+		}
+		throw new RuntimeException("Attempt to unsubscribe " + getName() + " " + getType() + " from "
+		        + featureFrom.getName() + " " + featureFrom.getType() + " on event id " + msgId
+		        + " without being subscribed. Verify if you are not unsubscribing it more than once");
+	}
+
+	/**
+	 * @param featureTo
+	 *            the feature to verify if subscribed to
+	 * @param msgId
+	 *            the id of the message to verify if subscribed to
+	 * @return true if this feature is subscribed to featureTo with event msgId
+	 */
+	protected boolean isSubscribed(IFeature featureTo, int msgId)
+	{
+		for (int i = 0; i < _subscriptions.size(); i++)
+		{
+			Subscription subscription = _subscriptions.get(i);
+			if (subscription.Feature == featureTo && subscription.MsgId == msgId)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -102,9 +164,10 @@ public abstract class FeatureState extends BaseState implements IFeature
 	protected void onShow()
 	{
 		Log.i(TAG, ".onShow");
-		for (Subscription subscription: _subscriptions)
+		for (Subscription subscription : _subscriptions)
 		{
-			Log.i(TAG, "Register " + subscription.Feature.getName() + " " + subscription.Feature.getType() + " to event id = " + subscription.MsgId);
+			Log.i(TAG, "Register " + subscription.Feature.getName() + " " + subscription.Feature.getType()
+			        + " to event id = " + subscription.MsgId);
 			subscription.Feature.getEventMessanger().register(this, subscription.MsgId);
 		}
 	}
@@ -116,9 +179,10 @@ public abstract class FeatureState extends BaseState implements IFeature
 	protected void onHide()
 	{
 		Log.i(TAG, ".onHide");
-		for (Subscription subscription: _subscriptions)
+		for (Subscription subscription : _subscriptions)
 		{
-			Log.i(TAG, "Unregister " + subscription.Feature.getName() + " " + subscription.Feature.getType() + " to event id = " + subscription.MsgId);
+			Log.i(TAG, "Unregister " + subscription.Feature.getName() + " " + subscription.Feature.getType()
+			        + " to event id = " + subscription.MsgId);
 			subscription.Feature.getEventMessanger().unregister(this, subscription.MsgId);
 		}
 	}
