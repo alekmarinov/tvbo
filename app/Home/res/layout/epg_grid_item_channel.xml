@@ -28,8 +28,7 @@
             android:layout_gravity="center"
             android:layout_toRightOf="@id/channelNo"
             android:contentDescription="@string/contentDescription"
-            android:scaleType="fitCenter"
-            android:src="@drawable/heart" />
+            android:scaleType="fitCenter"/>
     </RelativeLayout>
 
     <com.aviq.tv.android.home.feature.state.epg.EpgRowView

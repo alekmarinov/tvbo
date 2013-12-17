@@ -53,7 +53,7 @@ public class Environment
 		/**
 		 * Timeout in seconds for feature initialization
 		 */
-		FEATURE_INITIALIZE_TIMEOUT(15);
+		FEATURE_INITIALIZE_TIMEOUT(55);
 
 		Param(int value)
 		{
@@ -116,7 +116,7 @@ public class Environment
                 .getMemoryClass();
         int cacheSize = 1024 * 1024 * memClass / 8;
         _imageLoader = new ImageLoader(_requestQueue, new BitmapLruCache(cacheSize));
-		
+
 		// initializes features
 		Log.i(TAG, "Sorting features tolologically based on their declared dependencies");
 		_features = topologicalSort(_features);
@@ -289,7 +289,7 @@ public class Environment
 	{
 		return _imageLoader;
 	}
-	
+
 	/**
 	 * Returns handler
 	 *

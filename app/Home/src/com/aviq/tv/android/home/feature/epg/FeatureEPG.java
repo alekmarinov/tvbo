@@ -208,7 +208,8 @@ public abstract class FeatureEPG extends FeatureComponent
 		@Override
 		public void onErrorResponse(VolleyError error)
 		{
-			int statusCode = error.networkResponse != null ? error.networkResponse.statusCode : ResultCode.GENERAL_FAILURE;
+			int statusCode = error.networkResponse != null ? error.networkResponse.statusCode
+			        : ResultCode.GENERAL_FAILURE;
 			Log.e(TAG, "Error retrieving channels with code " + statusCode + ": " + error);
 			_onFeatureInitialized.onInitialized(FeatureEPG.this, statusCode);
 		}
@@ -288,9 +289,9 @@ public abstract class FeatureEPG extends FeatureComponent
 			// one. Anyone else holding a reference to the old object will
 			// be able to finish its job. Then the garbage collector will
 			// free up the memory.
-			
+
 			_epgData = _epgDataBeingLoaded;
-			
+
 // TODO: Uncomment this if "parseProgramData()" is going to work without the AsyncTask logic
 //			_epgDataBeingLoaded = null; 
 			
@@ -405,7 +406,7 @@ public abstract class FeatureEPG extends FeatureComponent
 				
 	            return null;
             }
-			
+
 			@Override
 			protected void onPostExecute(Void result)
 			{
