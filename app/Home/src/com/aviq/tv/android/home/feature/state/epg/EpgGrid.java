@@ -30,7 +30,7 @@ public class EpgGrid
 	// FIXME: this needs to be a calculated value; hard-coded for dev
 	private static final int VISIBLE_CHANNELS = 5;
 
-	private static final int HEADER_POSITION_OFFSET = -1;
+	private static final int HEADER_POSITION_OFFSET = 0; //-1; //TODO:ZZ:set to 0 for testing
 
 	private enum NAVIGATION
 	{
@@ -451,11 +451,11 @@ public class EpgGrid
 		long timeStartMillis = startTime.getTimeInMillis();
 		double minutes = _gridHeader.getWidth() / _gridHeader.getPixelsPerMinute();
 		minutes = minutes - minutes % EpgHeaderView.TIME_SLOT_MINUTES;
-		long timeEndMillis = (timeStartMillis / 1000 + (long) (minutes * 60)) * 1000;
+		long timeEndMillis = timeStartMillis + (long) (minutes * 60000);
 
 		String timeStart = Program.getEpgTime(timeStartMillis);
 		String timeEnd = Program.getEpgTime(timeEndMillis);
-		
+
 		LinkedHashMap<Channel, List<Program>> data = new LinkedHashMap<Channel, List<Program>>();
 		for (int i = startIndex; i < endIndex; i++)
 		{

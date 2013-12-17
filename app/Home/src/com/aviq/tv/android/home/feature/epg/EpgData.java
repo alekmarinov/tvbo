@@ -9,9 +9,12 @@ import java.util.Map;
 import java.util.NavigableMap;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 public class EpgData implements IEpgDataProvider
 {
+	private static final String TAG = EpgData.class.getSimpleName();
+	
 	private List<Channel> _channelList;
 	private Bitmap[] _channelLogos;
 	private Calendar _maxEpgStartTime;
@@ -105,6 +108,31 @@ public class EpgData implements IEpgDataProvider
 		return _channelList.indexOf(channel);
 	}
 	
+	public List<Program> getProgramList(String channelId, String startTime, String endTime)
+	{
+		if (startTime.compareTo(endTime) > 0)
+		{
+			Log.w(TAG, ".getProgramList: startTime > endTime: " + startTime + " > " + endTime + ", ignoring method call");
+			return new ArrayList<Program>();
+		}
+		
+		NavigableMap<String, Integer> programMap = _channelToProgramNavigableMap.get(channelId);
+		NavigableMap<String, Integer> subMap = programMap != null ? programMap.subMap(startTime, true, endTime, false) : null;
+		if (subMap == null)
+		{
+			Log.w(TAG, ".getProgramList: no EPG data for period: startTime = " + startTime + ", endTime " + endTime);
+			return new ArrayList<Program>();
+		}
+
+		List<Program> list = new ArrayList<Program>(subMap.size());
+		for (Map.Entry<String, Integer> entry : subMap.entrySet())
+		{
+			int index = entry.getValue();
+			list.add(_channelToProgramListMap.get(channelId).get(index));
+		}
+		return list;
+	}
+
 	public int getProgramIndex(String channelId, Calendar when)
 	{
 		String dateTime = Program.getEpgTime(when);
@@ -121,19 +149,6 @@ public class EpgData implements IEpgDataProvider
 		return -1;
 	}
 	
-	public List<Program> getProgramList(String channelId, String startTime, String endTime)
-	{
-		NavigableMap<String, Integer> subMap = _channelToProgramNavigableMap.get(channelId).subMap(startTime, true, endTime, false);
-		
-		List<Program> list = new ArrayList<Program>(subMap.size());
-		for (Map.Entry<String, Integer> entry : subMap.entrySet())
-		{
-			int index = entry.getValue();
-			list.add(_channelToProgramListMap.get(channelId).get(index));
-		}
-		return list;
-	}
-
 	public Program getProgramByIndex(String channelId, int programIndex)
 	{
 		List<Program> programsList = _channelToProgramListMap.get(channelId);

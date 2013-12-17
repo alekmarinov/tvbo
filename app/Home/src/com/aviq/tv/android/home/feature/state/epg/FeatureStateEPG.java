@@ -61,8 +61,6 @@ public class FeatureStateEPG extends FeatureState
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		super.initialize(onFeatureInitialized);
-		onFeatureInitialized.onInitialized(this, ResultCode.OK);
-		
 		try
 		{
 			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
@@ -93,9 +91,14 @@ public class FeatureStateEPG extends FeatureState
 		_gridHeader = (EpgHeaderView) viewGroup.findViewById(R.id.time_list);
 		_gridList = (EpgListView) viewGroup.findViewById(R.id.gridList);
 
-		initEpgGrid();
-
 		return viewGroup;
+	}
+	
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		initEpgGrid();
 	}
 	
 	@Override
