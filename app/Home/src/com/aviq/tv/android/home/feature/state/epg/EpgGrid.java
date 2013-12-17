@@ -367,7 +367,7 @@ public class EpgGrid
 				Calendar visibleHeaderEndTime = Calendar.getInstance();
 				visibleHeaderEndTime.setTimeInMillis(timeEndSec * 1000);
 
-				boolean isAtEpgHeaderEnd = (visibleHeaderEndTime.getTimeInMillis() > _dataProvider.getMaxEpgStartTime().getTimeInMillis());
+				boolean isAtEpgHeaderEnd = (visibleHeaderEndTime.getTimeInMillis() > _dataProvider.getMaxEpgStopTime().getTimeInMillis());
 				boolean needToPaginate = !isAtEpgHeaderEnd
 				        && (selectedView2 == null || (selectedView1 != null && selectedView2 != null && selectedView1
 				                .equals(selectedView2)));

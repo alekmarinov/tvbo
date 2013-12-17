@@ -36,8 +36,8 @@ public class ApplicationAVIQTV extends Application implements IApplication
 
 		try
 		{
-			Environment.getInstance().use(FeatureName.State.EPG);
 			Environment.getInstance().use(FeatureName.State.TV);
+			Environment.getInstance().use(FeatureName.State.EPG);
 		}
 		catch (FeatureNotFoundException e)
 		{

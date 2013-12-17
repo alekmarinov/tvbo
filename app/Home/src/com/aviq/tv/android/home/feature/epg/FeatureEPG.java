@@ -413,8 +413,7 @@ public abstract class FeatureEPG extends FeatureComponent
 					Log.e(TAG, "_epgDataBeingLoaded is NULL");
 					return;
 				}
-				_epgDataBeingLoaded.addProgramNavigableMap(channelId, _programMap);
-				_epgDataBeingLoaded.addProgramList(channelId, _programList);
+				_epgDataBeingLoaded.addProgramData(channelId, _programMap, _programList);
 
 				_processEnd = System.nanoTime();
 				double processTime = (_processEnd - _processStart) / 1000000000.0;

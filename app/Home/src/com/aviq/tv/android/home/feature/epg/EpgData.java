@@ -17,7 +17,7 @@ public class EpgData implements IEpgDataProvider
 	
 	private List<Channel> _channelList;
 	private Bitmap[] _channelLogos;
-	private Calendar _maxEpgStartTime;
+	private Calendar _maxEpgStopTime;
 	private Calendar _minEpgStartTime;
 
 	/** key = start time; value = index in program list for a specific channel */
@@ -28,7 +28,7 @@ public class EpgData implements IEpgDataProvider
 	
 	public EpgData(List<Channel> newChannelList)
 	{
-		_maxEpgStartTime = Calendar.getInstance();
+		_maxEpgStopTime = Calendar.getInstance();
 		_minEpgStartTime = Calendar.getInstance();
 		
 		_channelList = newChannelList;
@@ -45,21 +45,25 @@ public class EpgData implements IEpgDataProvider
 		return true;
 	}
 	
-	synchronized boolean addProgramNavigableMap(String channelId, NavigableMap<String, Integer> newProgramNavigableMap)
+	synchronized boolean addProgramData(String channelId, NavigableMap<String, Integer> newProgramNavigableMap, List<Program> newProgramList)
 	{
 		if (newProgramNavigableMap == null || newProgramNavigableMap.size() == 0)
 			return false;
 		
+		if (newProgramList == null || newProgramList.size() == 0)
+			return false;
+		
+		_channelToProgramListMap.put(channelId, newProgramList);
 		_channelToProgramNavigableMap.put(channelId, newProgramNavigableMap);
 		
 		// Keep EPG program max start time
 		
-		String lastStartTime = newProgramNavigableMap.lastKey();
-		Calendar lastStartTimeCal = Program.getEpgTime(lastStartTime);
-
-		if (_maxEpgStartTime.before(lastStartTimeCal))
-			_maxEpgStartTime = lastStartTimeCal;
+		Map.Entry<String, Integer> lastEntry = newProgramNavigableMap.lastEntry();		
+		Program lastProgram = newProgramList.get(lastEntry.getValue());
 		
+		if (_maxEpgStopTime.before(lastProgram.getStopTimeCalendar()))
+			_maxEpgStopTime = lastProgram.getStopTimeCalendar();
+	
 		// Keep EPG program min start time
 		
 		String firstStartTime = newProgramNavigableMap.firstKey();
@@ -67,16 +71,6 @@ public class EpgData implements IEpgDataProvider
 		
 		if (_minEpgStartTime.before(firstStartTimeCal))
 			_minEpgStartTime = firstStartTimeCal;
-		
-		return true;
-	}
-	
-	synchronized boolean addProgramList(String channelId, List<Program> newProgramList)
-	{
-		if (newProgramList == null || newProgramList.size() == 0)
-			return false;
-		
-		_channelToProgramListMap.put(channelId, newProgramList);
 		
 		return true;
 	}
@@ -174,9 +168,9 @@ public class EpgData implements IEpgDataProvider
 		return getProgramByIndex(channelId, getProgramIndex(channelId, when));
     }
 	
-	public Calendar getMaxEpgStartTime()
+	public Calendar getMaxEpgStopTime()
 	{
-		return _maxEpgStartTime;
+		return _maxEpgStopTime;
 	}
 
 	public Calendar getMinEpgStartTime()

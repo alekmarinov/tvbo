@@ -170,7 +170,7 @@ public class FeatureStateEPG extends FeatureState
 	{
 		Calendar now = Calendar.getInstance();
 
-		int hoursAhead = (int) Math.abs((now.getTimeInMillis() - _epgData.getMaxEpgStartTime().getTimeInMillis())
+		int hoursAhead = (int) Math.abs((now.getTimeInMillis() - _epgData.getMaxEpgStopTime().getTimeInMillis())
 		        / (1000 * 60 * 60));
 		Calendar absMax = Calendar.getInstance();
 		absMax.add(Calendar.HOUR_OF_DAY, hoursAhead);
