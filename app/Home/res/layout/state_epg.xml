@@ -14,7 +14,7 @@
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="100dp"
         android:layout_marginRight="92dp"
-        android:layout_marginTop="27dp"
+        android:layout_marginTop="22dp"
         android:background="@android:color/transparent"
         android:orientation="horizontal" >
 
@@ -56,7 +56,7 @@
                     android:drawablePadding="10dp"
                     android:singleLine="true"
                     android:text="22/10/2013 г."
-                    android:textColor="#ffffff"
+                    android:textColor="@color/program_text_normal"
                     android:textSize="26sp" />
 
                 <TextView
@@ -70,7 +70,7 @@
                     android:drawablePadding="10dp"
                     android:singleLine="true"
                     android:text="20:00"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/program_text_normal"
                     android:textSize="26sp" />
             </LinearLayout>
         </RelativeLayout>
@@ -93,7 +93,7 @@
                 android:paddingRight="10dp"
                 android:singleLine="true"
                 android:text="Декстър"
-                android:textColor="#60B2EF"
+                android:textColor="@color/program_text_highlight"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -109,7 +109,7 @@
                 android:paddingRight="10dp"
                 android:singleLine="true"
                 android:text="сезон 2, епизод 12"
-                android:textColor="#ffffff"
+                android:textColor="@color/program_text_normal"
                 android:textSize="23sp"
                 android:textStyle="bold" />
 
@@ -125,7 +125,7 @@
                 android:paddingRight="10dp"
                 android:singleLine="false"
                 android:text="Декстър преследва и брутално убива онези опасни убийци, които са успели да избягат от &quot;дългата ръка на закона&quot;. Той организира убийствата си съгласно &quot;Кодекса на Хари&quot;, който е създал..."
-                android:textColor="#ffffff"
+                android:textColor="@color/program_text_normal"
                 android:textSize="23sp" />
         </LinearLayout>
     </LinearLayout>
@@ -135,11 +135,11 @@
     <LinearLayout
         android:id="@+id/epg_grid"
         android:layout_width="match_parent"
-        android:layout_height="408dp"
+        android:layout_height="429dp"
         android:layout_below="@id/program_details_container"
         android:layout_marginLeft="100dp"
         android:layout_marginRight="100dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="0dp"
         android:baselineAligned="false"
         android:orientation="horizontal" >
 
@@ -167,7 +167,7 @@
                 android:addStatesFromChildren="true"
                 android:background="@drawable/epg_grid_background"
                 android:cacheColorHint="@android:color/transparent"
-                android:divider="#586084"
+                android:divider="@color/epg_grid_divider_bar"
                 android:dividerHeight="1dp"
                 android:fadingEdge="none"
                 android:gravity="left"
@@ -180,7 +180,7 @@
                 android:layout_height="fill_parent"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="@dimen/epg_channel_info_width"
-                android:background="#586084"
+                android:background="@color/epg_grid_divider_bar"
                 android:layout_marginTop="15dp" />
 
             <TextView
@@ -208,7 +208,7 @@
         android:layout_below="@id/epg_grid"
         android:layout_marginLeft="100dp"
         android:layout_marginRight="100dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/epg_grid_background"
         android:gravity="center_vertical"
         android:paddingLeft="10dp"
@@ -224,7 +224,7 @@
             android:drawablePadding="10dp"
             android:singleLine="true"
             android:text="Начало"
-            android:textColor="#ffffff"
+            android:textColor="@color/program_text_normal"
             android:textSize="20sp" />
 
         <TextView
@@ -238,7 +238,7 @@
             android:drawablePadding="10dp"
             android:singleLine="true"
             android:text="Предходен / Следващ"
-            android:textColor="#ffffff"
+            android:textColor="@color/program_text_normal"
             android:textSize="20sp" />
 
         <TextView
@@ -252,7 +252,7 @@
             android:drawablePadding="10dp"
             android:singleLine="true"
             android:text="Избор"
-            android:textColor="#ffffff"
+            android:textColor="@color/program_text_normal"
             android:textSize="20sp" />
 
         <TextView
@@ -266,7 +266,7 @@
             android:drawablePadding="10dp"
             android:singleLine="true"
             android:text="Назад"
-            android:textColor="#ffffff"
+            android:textColor="@color/program_text_normal"
             android:textSize="20sp" />
 
         <TextView
@@ -278,7 +278,7 @@
             android:layout_marginRight="10dp"
             android:singleLine="true"
             android:text="2 / 100"
-            android:textColor="#ffffff"
+            android:textColor="@color/program_text_normal"
             android:textSize="20sp" />
     </RelativeLayout>
 
