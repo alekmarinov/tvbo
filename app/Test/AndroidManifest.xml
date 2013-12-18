@@ -27,6 +27,10 @@
             android:label="@string/title_activity_zapper_list" >
         </activity>
         <activity
+            android:name="com.aviq.tv.android.test.horizlist.HorizListActivity"
+            android:label="@string/title_activity_horiz_list" >
+        </activity>
+        <activity
             android:name="com.aviq.tv.android.test.volley.VolleyActivity"
             android:label="@string/title_activity_volley" >
         </activity>
