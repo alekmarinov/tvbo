@@ -102,7 +102,7 @@ public class EpgGrid
 
 		double pixelsPerMinute = ((TimeBasedRelativeLayout) _gridHeader.getChildAt(0)).getPixelsPerOneMinute();
 		int numMinutesInSinglePosition = _gridHeader.getMinutesForSinglePosition();
-		int numVisibleOnScreen = (int) (_screenWidth / (pixelsPerMinute * numMinutesInSinglePosition));
+		int numVisibleOnScreen = (int) Math.round((_gridHeader.getWidth() / (pixelsPerMinute * numMinutesInSinglePosition)));
 		int nextPositionToShow = pos + numVisibleOnScreen;
 		if (nextPositionToShow > _gridHeader.getAdapter().getCount())
 			return null;
@@ -120,7 +120,7 @@ public class EpgGrid
 
 		double pixelsPerMinute = ((TimeBasedRelativeLayout) _gridHeader.getChildAt(0)).getPixelsPerOneMinute();
 		int numMinutesInSinglePosition = _gridHeader.getMinutesForSinglePosition();
-		int numVisibleOnScreen = (int) (_screenWidth / (pixelsPerMinute * numMinutesInSinglePosition));
+		int numVisibleOnScreen = (int) Math.round((_gridHeader.getWidth() / (pixelsPerMinute * numMinutesInSinglePosition)));
 		int prevPositionToShow = pos - numVisibleOnScreen;
 		if (prevPositionToShow < 0)
 			prevPositionToShow = 0;
@@ -375,12 +375,14 @@ public class EpgGrid
 				Log.d(TAG, ".onKeyDown: isAtEpgHeaderEnd = " + isAtEpgHeaderEnd + " needToPaginate = " + needToPaginate);
 				if (needToPaginate)
 				{
+Log.e(TAG, "-----: old header pos = " + _gridHeader.getPositionForTime(visibleHeaderEndTime));//TODO:ZZ:test
 					Calendar newGridStartTime = getNextPageStartingTime();
 					if (newGridStartTime != null)
 					{
 						_gridStartTimeCalendar = newGridStartTime;
 
 						int headerPos = _gridHeader.getPositionForTime(_gridStartTimeCalendar);
+Log.e(TAG, "-----: new header pos = " + _gridHeader.getPositionForTime(_gridStartTimeCalendar));//TODO:ZZ:test
 						_gridHeader.setPosition(headerPos);
 
 						fillEpgData(_gridStartTimeCalendar, _channel);
