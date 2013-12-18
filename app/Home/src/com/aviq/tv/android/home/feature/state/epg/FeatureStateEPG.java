@@ -144,8 +144,9 @@ public class FeatureStateEPG extends FeatureState
 		_epgGrid.setEpgHeaderView(_gridHeader);
 		_epgGrid.setDateTimeView(_dateTimeView);
 
-		_gridList.setDivider(null);
-		_gridList.setDividerHeight(0);
+//TODO
+//		_gridList.setDivider(null);
+//		_gridList.setDividerHeight(0);
 		_epgGrid.setEpgListView(_gridList);
 
 		// FIXME: get current channel
@@ -187,6 +188,9 @@ public class FeatureStateEPG extends FeatureState
 		@Override
 		public void onEpgGridItemSelected(Channel channel, Program program)
 		{
+			//TODO:ZZ:test
+			Log.v(TAG, "channel = " + channel.getChannelId() + ", program start = " + program.getStartTime()
+			        + ", stop = " + program.getStopTime());
 		}
 	};
 }

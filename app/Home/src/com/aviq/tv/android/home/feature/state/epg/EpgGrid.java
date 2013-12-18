@@ -28,7 +28,7 @@ public class EpgGrid
 	private static final String TAG = EpgGrid.class.getSimpleName();
 
 	// FIXME: this needs to be a calculated value; hard-coded for dev
-	private static final int VISIBLE_CHANNELS = 5;
+	private static final int VISIBLE_CHANNELS = 8;
 
 	private static final int HEADER_POSITION_OFFSET = 0; //-1; //TODO:ZZ:set to 0 for testing
 
@@ -548,7 +548,7 @@ public class EpgGrid
 			// i.e. the EPG grid row before the selection
 
 			ViewGroup logo = (ViewGroup) view.findViewById(R.id.logo_container);
-			logo.setBackgroundResource(R.drawable.epg_grid_cell_inactive);
+			logo.setBackgroundResource(R.color.transparent);
 
 			EpgRowView epgRow = (EpgRowView) view.findViewById(R.id.program_list);
 			Program p = (Program) epgRow.getSelectedItem();

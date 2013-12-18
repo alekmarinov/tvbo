@@ -34,8 +34,8 @@
                 android:contentDescription="@string/contentDescription"
                 android:scaleType="fitXY"
                 android:src="@drawable/test_epg_thumbnail"
-                android:visibility="visible"/>         
-            
+                android:visibility="visible" />
+
             <LinearLayout
                 android:id="@+id/program_time_container"
                 android:layout_width="match_parent"
@@ -153,8 +153,7 @@
 
             <!--
             It's very important to keep this attribute as is: android:layout_height="fill_parent". 
-            Otherwise, you get lots of getView() calls to constantly recalculate the ListView height.
-            -->
+            Otherwise, you get lots of getView() calls to constantly recalculate the ListView height.            -->
 
             <com.aviq.tv.android.home.feature.state.epg.EpgListView
                 xmlns:android="http://schemas.android.com/apk/res/android"
@@ -168,13 +167,21 @@
                 android:addStatesFromChildren="true"
                 android:background="@drawable/epg_grid_background"
                 android:cacheColorHint="@android:color/transparent"
-                android:divider="@null"
-                android:dividerHeight="0dp"
+                android:divider="#586084"
+                android:dividerHeight="1dp"
                 android:fadingEdge="none"
                 android:gravity="left"
                 android:listSelector="@android:color/transparent"
                 android:scrollingCache="false" >
             </com.aviq.tv.android.home.feature.state.epg.EpgListView>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/epg_channel_info_width"
+                android:background="#586084"
+                android:layout_marginTop="15dp" />
 
             <TextView
                 android:id="@+id/rcu_channel_selection"
