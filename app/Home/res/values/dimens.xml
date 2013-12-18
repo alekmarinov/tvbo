@@ -33,12 +33,12 @@
 	<dimen name="channel_number">24sp</dimen>
 	
 	<!-- Thumbnail size's ratio is 16:10 -->
-    <dimen name="epg_program_details_thumbnail_width">370dp</dimen>
-    <dimen name="epg_program_details_thumbnail_height">232dp</dimen>
-    <dimen name="epg_grid_header_height">56dp</dimen>
-    <dimen name="epg_grid_row_height">74dp</dimen>
-    <dimen name="epg_grid_cell_height">74dp</dimen>
-    <dimen name="epg_grid_one_hour_width">370dp</dimen>
+    <dimen name="epg_program_details_thumbnail_width">352dp</dimen>
+    <dimen name="epg_program_details_thumbnail_height">204dp</dimen>
+    <dimen name="epg_grid_header_height">25dp</dimen>
+    <dimen name="epg_grid_row_height">49dp</dimen>
+    <dimen name="epg_grid_cell_height">49dp</dimen>
+    <dimen name="epg_grid_one_hour_width">380dp</dimen>
     <dimen name="epg_grid_channel_logo_width">85dp</dimen>
-    <dimen name="epg_channel_info_width">150dp</dimen>
+    <dimen name="epg_channel_info_width">215dp</dimen>
 </resources>

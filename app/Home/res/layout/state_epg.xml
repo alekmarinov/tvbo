@@ -12,9 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/epg_program_details_thumbnail_height"
         android:layout_marginBottom="15dp"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="92dp"
+        android:layout_marginTop="27dp"
         android:background="@android:color/transparent"
         android:orientation="horizontal" >
 
@@ -24,7 +24,7 @@
             android:id="@+id/thumbnail_container"
             android:layout_width="@dimen/epg_program_details_thumbnail_width"
             android:layout_height="@dimen/epg_program_details_thumbnail_height"
-            android:background="#342D6B"
+            android:background="@drawable/program_thumbnail_mask"
             android:padding="1dp" >
 
             <ImageView
@@ -33,14 +33,15 @@
                 android:layout_height="match_parent"
                 android:contentDescription="@string/contentDescription"
                 android:scaleType="fitXY"
-                android:src="@drawable/test_epg_thumbnail" />
-
+                android:src="@drawable/test_epg_thumbnail"
+                android:visibility="visible"/>         
+            
             <LinearLayout
                 android:id="@+id/program_time_container"
                 android:layout_width="match_parent"
-                android:layout_height="57dp"
+                android:layout_height="55dp"
                 android:layout_alignParentBottom="true"
-                android:background="#cc545454"
+                android:background="@drawable/program_time_container"
                 android:gravity="center|center_horizontal"
                 android:orientation="horizontal" >
 
@@ -78,13 +79,13 @@
             android:id="@+id/program_details_info_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="8dp"
             android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/title_primary"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="46dp"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/program_details_strip"
                 android:gravity="center_vertical"
@@ -99,9 +100,9 @@
             <TextView
                 android:id="@+id/title_secondary"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="46dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="6dp"
                 android:background="@drawable/program_details_strip"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
@@ -115,9 +116,9 @@
             <TextView
                 android:id="@+id/summary"
                 android:layout_width="match_parent"
-                android:layout_height="112dp"
+                android:layout_height="99dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="6dp"
                 android:background="@drawable/program_details_strip"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
@@ -134,11 +135,11 @@
     <LinearLayout
         android:id="@+id/epg_grid"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="408dp"
         android:layout_below="@id/program_details_container"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginTop="5dp"
         android:baselineAligned="false"
         android:orientation="horizontal" >
 
@@ -165,7 +166,7 @@
                 android:layout_marginLeft="0dip"
                 android:layout_marginRight="0dip"
                 android:addStatesFromChildren="true"
-                android:background="@drawable/button_bar"
+                android:background="@drawable/epg_grid_background"
                 android:cacheColorHint="@android:color/transparent"
                 android:divider="@null"
                 android:dividerHeight="0dp"
@@ -196,12 +197,12 @@
     <RelativeLayout
         android:id="@+id/button_bar_container"
         android:layout_width="match_parent"
-        android:layout_height="51dp"
+        android:layout_height="37dp"
         android:layout_below="@id/epg_grid"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/button_bar"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/epg_grid_background"
         android:gravity="center_vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp" >

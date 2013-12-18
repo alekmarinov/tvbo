@@ -11,8 +11,8 @@
         android:layout_centerVertical="true"
         android:background="@color/transparent"
         android:gravity="center"
-        android:paddingLeft="16dip"
-        android:paddingRight="16dip"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold" />
