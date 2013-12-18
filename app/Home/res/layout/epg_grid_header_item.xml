@@ -4,7 +4,7 @@
     android:id="@+id/epg_program_container"
     android:layout_width="wrap_content"
     android:layout_height="@dimen/epg_grid_header_height"
-    android:background="@color/transparent"
+    android:background="@drawable/epg_grid_cell_header"
     aviqtv:pixelsPerOneHour="@dimen/epg_grid_one_hour_width"
     aviqtv:viewHeight="@dimen/epg_grid_header_height" >
 

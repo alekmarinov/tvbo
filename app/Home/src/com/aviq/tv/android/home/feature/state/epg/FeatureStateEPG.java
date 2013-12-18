@@ -18,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.aviq.tv.android.home.R;
@@ -45,6 +46,7 @@ public class FeatureStateEPG extends FeatureState
 	private FeaturePlayer _featurePlayer;
 	private EpgGrid _epgGrid;
 	private EpgHeaderView _gridHeader;
+	private int _gridHeaderWidth = 0;
 	private EpgListView _gridList;
 	private TextView _dateTimeView;
 
@@ -91,6 +93,21 @@ public class FeatureStateEPG extends FeatureState
 		_gridHeader = (EpgHeaderView) viewGroup.findViewById(R.id.time_list);
 		_gridList = (EpgListView) viewGroup.findViewById(R.id.gridList);
 
+		_gridHeader.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() 
+		{
+		    @Override
+		    public void onGlobalLayout() 
+		    {
+		    	_gridHeader.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+		    	_gridHeaderWidth = _gridHeader.getWidth();
+		    	
+				// This method relies on the width of the _gridHeader widget. In
+				// onResume() it is still zero, therefore, we get it from the
+				// OnGlobalLayoutListener.
+		    	initEpgGrid();
+		    }
+		});
+
 		return viewGroup;
 	}
 
@@ -98,7 +115,6 @@ public class FeatureStateEPG extends FeatureState
 	public void onResume()
 	{
 		super.onResume();
-		initEpgGrid();
 	}
 	
 	@Override
@@ -144,8 +160,6 @@ public class FeatureStateEPG extends FeatureState
 		_epgGrid.setEpgHeaderView(_gridHeader);
 		_epgGrid.setDateTimeView(_dateTimeView);
 
-		_gridList.setDivider(null);
-		_gridList.setDividerHeight(0);
 		_epgGrid.setEpgListView(_gridList);
 
 		// FIXME: get current channel
@@ -187,6 +201,9 @@ public class FeatureStateEPG extends FeatureState
 		@Override
 		public void onEpgGridItemSelected(Channel channel, Program program)
 		{
+			//TODO:ZZ:test
+			Log.v(TAG, "channel = " + channel.getChannelId() + ", program start = " + program.getStartTime()
+			        + ", stop = " + program.getStopTime());
 		}
 	};
 }

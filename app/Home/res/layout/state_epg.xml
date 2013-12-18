@@ -12,9 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/epg_program_details_thumbnail_height"
         android:layout_marginBottom="15dp"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="92dp"
+        android:layout_marginTop="22dp"
         android:background="@android:color/transparent"
         android:orientation="horizontal" >
 
@@ -24,7 +24,7 @@
             android:id="@+id/thumbnail_container"
             android:layout_width="@dimen/epg_program_details_thumbnail_width"
             android:layout_height="@dimen/epg_program_details_thumbnail_height"
-            android:background="#342D6B"
+            android:background="@drawable/program_thumbnail_mask"
             android:padding="1dp" >
 
             <ImageView
@@ -33,14 +33,15 @@
                 android:layout_height="match_parent"
                 android:contentDescription="@string/contentDescription"
                 android:scaleType="fitXY"
-                android:src="@drawable/test_epg_thumbnail" />
+                android:src="@drawable/test_epg_thumbnail"
+                android:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/program_time_container"
                 android:layout_width="match_parent"
-                android:layout_height="57dp"
+                android:layout_height="55dp"
                 android:layout_alignParentBottom="true"
-                android:background="#cc545454"
+                android:background="@drawable/program_time_container"
                 android:gravity="center|center_horizontal"
                 android:orientation="horizontal" >
 
@@ -55,7 +56,7 @@
                     android:drawablePadding="10dp"
                     android:singleLine="true"
                     android:text="22/10/2013 г."
-                    android:textColor="#ffffff"
+                    android:textColor="@color/program_text_normal"
                     android:textSize="26sp" />
 
                 <TextView
@@ -69,7 +70,7 @@
                     android:drawablePadding="10dp"
                     android:singleLine="true"
                     android:text="20:00"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/program_text_normal"
                     android:textSize="26sp" />
             </LinearLayout>
         </RelativeLayout>
@@ -78,13 +79,13 @@
             android:id="@+id/program_details_info_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="8dp"
             android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/title_primary"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="46dp"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/program_details_strip"
                 android:gravity="center_vertical"
@@ -92,39 +93,39 @@
                 android:paddingRight="10dp"
                 android:singleLine="true"
                 android:text="Декстър"
-                android:textColor="#60B2EF"
+                android:textColor="@color/program_text_highlight"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/title_secondary"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="46dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="6dp"
                 android:background="@drawable/program_details_strip"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:singleLine="true"
                 android:text="сезон 2, епизод 12"
-                android:textColor="#ffffff"
+                android:textColor="@color/program_text_normal"
                 android:textSize="23sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/summary"
                 android:layout_width="match_parent"
-                android:layout_height="112dp"
+                android:layout_height="99dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="6dp"
                 android:background="@drawable/program_details_strip"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:singleLine="false"
                 android:text="Декстър преследва и брутално убива онези опасни убийци, които са успели да избягат от &quot;дългата ръка на закона&quot;. Той организира убийствата си съгласно &quot;Кодекса на Хари&quot;, който е създал..."
-                android:textColor="#ffffff"
+                android:textColor="@color/program_text_normal"
                 android:textSize="23sp" />
         </LinearLayout>
     </LinearLayout>
@@ -134,11 +135,11 @@
     <LinearLayout
         android:id="@+id/epg_grid"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="429dp"
         android:layout_below="@id/program_details_container"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginTop="0dp"
         android:baselineAligned="false"
         android:orientation="horizontal" >
 
@@ -152,8 +153,7 @@
 
             <!--
             It's very important to keep this attribute as is: android:layout_height="fill_parent". 
-            Otherwise, you get lots of getView() calls to constantly recalculate the ListView height.
-            -->
+            Otherwise, you get lots of getView() calls to constantly recalculate the ListView height.            -->
 
             <com.aviq.tv.android.home.feature.state.epg.EpgListView
                 xmlns:android="http://schemas.android.com/apk/res/android"
@@ -165,15 +165,23 @@
                 android:layout_marginLeft="0dip"
                 android:layout_marginRight="0dip"
                 android:addStatesFromChildren="true"
-                android:background="@drawable/button_bar"
+                android:background="@drawable/epg_grid_background"
                 android:cacheColorHint="@android:color/transparent"
-                android:divider="@null"
-                android:dividerHeight="0dp"
+                android:divider="@color/epg_grid_divider_bar"
+                android:dividerHeight="1dp"
                 android:fadingEdge="none"
                 android:gravity="left"
                 android:listSelector="@android:color/transparent"
                 android:scrollingCache="false" >
             </com.aviq.tv.android.home.feature.state.epg.EpgListView>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/epg_channel_info_width"
+                android:background="@color/epg_grid_divider_bar"
+                android:layout_marginTop="15dp" />
 
             <TextView
                 android:id="@+id/rcu_channel_selection"
@@ -196,12 +204,12 @@
     <RelativeLayout
         android:id="@+id/button_bar_container"
         android:layout_width="match_parent"
-        android:layout_height="51dp"
+        android:layout_height="37dp"
         android:layout_below="@id/epg_grid"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/button_bar"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/epg_grid_background"
         android:gravity="center_vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp" >
@@ -216,7 +224,7 @@
             android:drawablePadding="10dp"
             android:singleLine="true"
             android:text="Начало"
-            android:textColor="#ffffff"
+            android:textColor="@color/program_text_normal"
             android:textSize="20sp" />
 
         <TextView
@@ -230,7 +238,7 @@
             android:drawablePadding="10dp"
             android:singleLine="true"
             android:text="Предходен / Следващ"
-            android:textColor="#ffffff"
+            android:textColor="@color/program_text_normal"
             android:textSize="20sp" />
 
         <TextView
@@ -244,7 +252,7 @@
             android:drawablePadding="10dp"
             android:singleLine="true"
             android:text="Избор"
-            android:textColor="#ffffff"
+            android:textColor="@color/program_text_normal"
             android:textSize="20sp" />
 
         <TextView
@@ -258,7 +266,7 @@
             android:drawablePadding="10dp"
             android:singleLine="true"
             android:text="Назад"
-            android:textColor="#ffffff"
+            android:textColor="@color/program_text_normal"
             android:textSize="20sp" />
 
         <TextView
@@ -270,7 +278,7 @@
             android:layout_marginRight="10dp"
             android:singleLine="true"
             android:text="2 / 100"
-            android:textColor="#ffffff"
+            android:textColor="@color/program_text_normal"
             android:textSize="20sp" />
     </RelativeLayout>
 

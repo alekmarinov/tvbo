@@ -7,8 +7,7 @@
     <RelativeLayout
         android:id="@+id/logo_container"
         android:layout_width="@dimen/epg_channel_info_width"
-        android:layout_height="@dimen/epg_grid_row_height"
-        android:background="@drawable/epg_grid_cell_inactive" >
+        android:layout_height="@dimen/epg_grid_row_height" >
 
         <TextView
             android:id="@+id/channelNo"
@@ -22,7 +21,7 @@
         <ImageView
             android:id="@+id/logo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_gravity="center"
@@ -36,8 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/epg_grid_row_height"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/logo_container"
-        android:background="@drawable/epg_grid_cell_inactive" />
+        android:layout_toRightOf="@id/logo_container" />
 
     <!--
          ImageView

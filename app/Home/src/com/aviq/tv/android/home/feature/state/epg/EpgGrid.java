@@ -28,7 +28,7 @@ public class EpgGrid
 	private static final String TAG = EpgGrid.class.getSimpleName();
 
 	// FIXME: this needs to be a calculated value; hard-coded for dev
-	private static final int VISIBLE_CHANNELS = 5;
+	private static final int VISIBLE_CHANNELS = 8;
 
 	private static final int HEADER_POSITION_OFFSET = 0; //-1; //TODO:ZZ:set to 0 for testing
 
@@ -406,7 +406,7 @@ public class EpgGrid
 			throw new NullPointerException("Please use setEpgHeaderView() before calling this method.");
 
 		if (_channel == null)
-			throw new NullPointerException("Please use setChannel() to set the initial channel selection.");
+			throw new NullPointerException("Please use setSelectedChannel() to set the initial channel selection.");
 
 		_currentVerticalPageNumber = calcVerticalPageNum(_channel);
 		if (_currentVerticalPageNumber < 0)
@@ -463,7 +463,7 @@ public class EpgGrid
 			List<Program> programList = _dataProvider.getProgramList(channelTmp.getChannelId(), timeStart, timeEnd);
 			data.put(channelTmp, programList);
 		}
-		
+
 		// Re-init channel object on page up/down
 		Channel selectedChannel = channel;
 		if (selectedChannel == null)
@@ -548,7 +548,7 @@ public class EpgGrid
 			// i.e. the EPG grid row before the selection
 
 			ViewGroup logo = (ViewGroup) view.findViewById(R.id.logo_container);
-			logo.setBackgroundResource(R.drawable.epg_grid_cell_inactive);
+			logo.setBackgroundResource(R.color.transparent);
 
 			EpgRowView epgRow = (EpgRowView) view.findViewById(R.id.program_list);
 			Program p = (Program) epgRow.getSelectedItem();
