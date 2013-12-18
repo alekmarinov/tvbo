@@ -406,7 +406,7 @@ public class EpgGrid
 			throw new NullPointerException("Please use setEpgHeaderView() before calling this method.");
 
 		if (_channel == null)
-			throw new NullPointerException("Please use setChannel() to set the initial channel selection.");
+			throw new NullPointerException("Please use setSelectedChannel() to set the initial channel selection.");
 
 		_currentVerticalPageNumber = calcVerticalPageNum(_channel);
 		if (_currentVerticalPageNumber < 0)
@@ -463,7 +463,7 @@ public class EpgGrid
 			List<Program> programList = _dataProvider.getProgramList(channelTmp.getChannelId(), timeStart, timeEnd);
 			data.put(channelTmp, programList);
 		}
-		
+
 		// Re-init channel object on page up/down
 		Channel selectedChannel = channel;
 		if (selectedChannel == null)

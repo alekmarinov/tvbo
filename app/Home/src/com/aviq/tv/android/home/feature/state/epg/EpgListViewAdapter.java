@@ -102,7 +102,8 @@ public class EpgListViewAdapter extends BaseAdapter
 
 			holder.programList = (EpgRowView) convertView.findViewById(R.id.program_list);
 
-			holder.programList.setSelectedItemBackgroundResourceIdOnLayout(R.drawable.epg_grid_cell_selected);
+			//holder.programList.setSelectedItemBackgroundResourceIdOnLayout(R.drawable.epg_grid_cell_selected);
+
 			holder.programList.setSelectedItemBackgroundResourceId(R.drawable.epg_grid_cell_selected);
 
 			holder.programList.setOnItemSelectingListener(mOnProgramItemSelectingListener);
@@ -116,7 +117,7 @@ public class EpgListViewAdapter extends BaseAdapter
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-		int channelIndex = mDataProvider.getChannelIndex(channel); //_isUsingFavorites ? channel.getFavIndex() : channel.getIndex();
+		int channelIndex = 1 + mDataProvider.getChannelIndex(channel); //_isUsingFavorites ? channel.getFavIndex() : channel.getIndex();
 		holder.channelNo.setText("" + channelIndex);
 		
 		Bitmap logo = mDataProvider.getChannelLogoBitmap(channelIndex);
