@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.aviq.tv.android.test.horizlist.HorizListActivity;
 import com.aviq.tv.android.test.volley.VolleyActivity;
 import com.aviq.tv.android.test.zapperlist.ZapperListActivity;
 
@@ -22,6 +23,7 @@ public class MainActivity extends ListActivity
 
 		adapter = new ArrayAdapter<String>(this, R.layout.list_item);
 		adapter.add(ZapperListActivity.class.getName());
+		adapter.add(HorizListActivity.class.getName());
 		adapter.add(VolleyActivity.class.getName());
 
 		setListAdapter(adapter);
