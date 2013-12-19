@@ -38,6 +38,7 @@
 
             <com.aviq.tv.android.home.feature.state.epg.EpgListView
                 xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.home"
                 android:id="@+id/gridList"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -53,7 +54,8 @@
                 android:fadingEdge="none"
                 android:gravity="left"
                 android:listSelector="@android:color/transparent"
-                android:scrollingCache="false" >
+                android:scrollingCache="false"
+                aviqtv:visibleItems="7" >
             </com.aviq.tv.android.home.feature.state.epg.EpgListView>
 
             <View
