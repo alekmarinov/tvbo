@@ -8,7 +8,7 @@
     <!-- Program details layout -->
 
     <include
-        android:id="@+id/program_details_container" 
+        android:id="@+id/program_details_container"
         layout="@layout/epg_program_details" />
 
     <!-- EPG grid layout -->
@@ -16,11 +16,11 @@
     <LinearLayout
         android:id="@+id/epg_grid"
         android:layout_width="match_parent"
-        android:layout_height="429dp"
+        android:layout_height="378dp"
         android:layout_below="@id/program_details_container"
         android:layout_marginLeft="100dp"
         android:layout_marginRight="100dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="15dp"
         android:baselineAligned="false"
         android:orientation="horizontal" >
 
@@ -34,7 +34,8 @@
 
             <!--
             It's very important to keep this attribute as is: android:layout_height="fill_parent". 
-            Otherwise, you get lots of getView() calls to constantly recalculate the ListView height.            -->
+            Otherwise, you get lots of getView() calls to constantly recalculate the ListView height.
+            -->
 
             <com.aviq.tv.android.home.feature.state.epg.EpgListView
                 xmlns:android="http://schemas.android.com/apk/res/android"
@@ -63,8 +64,8 @@
                 android:layout_height="fill_parent"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="@dimen/epg_channel_info_width"
-                android:background="@color/epg_grid_divider_bar"
-                android:layout_marginTop="15dp" />
+                android:layout_marginTop="15dp"
+                android:background="@color/epg_grid_divider_bar" />
 
             <TextView
                 android:id="@+id/rcu_channel_selection"
@@ -84,85 +85,9 @@
 
     <!-- Contextual button bar -->
 
-    <RelativeLayout
+    <include
         android:id="@+id/button_bar_container"
-        android:layout_width="match_parent"
-        android:layout_height="37dp"
-        android:layout_below="@id/epg_grid"
-        android:layout_marginLeft="100dp"
-        android:layout_marginRight="100dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/epg_grid_background"
-        android:gravity="center_vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" >
-
-        <TextView
-            android:id="@+id/home"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="17dp"
-            android:drawableLeft="@drawable/ic_menu"
-            android:drawablePadding="10dp"
-            android:singleLine="true"
-            android:text="Начало"
-            android:textColor="@color/program_text_normal"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/prevNext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="45dp"
-            android:layout_marginRight="17dp"
-            android:layout_toRightOf="@id/home"
-            android:drawableLeft="@drawable/ic_navigation"
-            android:drawablePadding="10dp"
-            android:singleLine="true"
-            android:text="Предходен / Следващ"
-            android:textColor="@color/program_text_normal"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="45dp"
-            android:layout_marginRight="17dp"
-            android:layout_toRightOf="@id/prevNext"
-            android:drawableLeft="@drawable/ic_ok"
-            android:drawablePadding="10dp"
-            android:singleLine="true"
-            android:text="Избор"
-            android:textColor="@color/program_text_normal"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="45dp"
-            android:layout_marginRight="17dp"
-            android:layout_toRightOf="@id/ok"
-            android:drawableLeft="@drawable/ic_back"
-            android:drawablePadding="10dp"
-            android:singleLine="true"
-            android:text="Назад"
-            android:textColor="@color/program_text_normal"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/epg_channel_order_index"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:singleLine="true"
-            android:text="2 / 100"
-            android:textColor="@color/program_text_normal"
-            android:textSize="20sp" />
-    </RelativeLayout>
+        layout="@layout/epg_button_bar"
+    />
 
 </RelativeLayout>

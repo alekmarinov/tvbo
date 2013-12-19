@@ -20,6 +20,7 @@ import com.aviq.tv.android.home.feature.state.epg.FeatureStateEPG;
 import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.home.feature.state.tv.FeatureStateTV;
 import com.aviq.tv.android.home.feature.state.tv.FeatureStateTest;
+import com.aviq.tv.android.home.feature.state.watchlist.FeatureStateWatchlist;
 
 /**
  * Singleton with factory methods to create features by id
@@ -80,6 +81,8 @@ public class FeatureFactory
 				return new FeatureStateEPG();
 			case MESSAGE_BOX:
 				return new MessageBox();
+			case WATCHLIST:
+				return new FeatureStateWatchlist();
 			case TEST:
 				return new FeatureStateTest();
 		}

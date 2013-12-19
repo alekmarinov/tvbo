@@ -10,4 +10,7 @@
     <string name="programInfoDateFormat">dd/MM/yyyy г.</string>
     <string name="programInfoTimeFormat">kk:mm</string>
     <string name="back">Назад</string>
+    <string name="beginning">Начало</string>
+    <string name="prev_next">Предходен / Следващ</string>
+    <string name="selection">Избор</string>
 </resources>

@@ -3,10 +3,9 @@
     android:id="@+id/program_details_container"
     android:layout_width="match_parent"
     android:layout_height="@dimen/epg_program_details_thumbnail_height"
-    android:layout_marginBottom="15dp"
     android:layout_marginLeft="100dp"
     android:layout_marginRight="92dp"
-    android:layout_marginTop="22dp"
+    android:layout_marginTop="30dp"
     android:background="@android:color/transparent"
     android:orientation="horizontal" >
 
@@ -23,9 +22,10 @@
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="3dip"
             android:contentDescription="@string/contentDescription"
-            android:scaleType="fitXY"
-            android:src="@drawable/test_epg_thumbnail"
+            android:scaleType="center"
+            android:src="@drawable/epg_image_thumbnail"
             android:visibility="visible" />
 
         <LinearLayout
