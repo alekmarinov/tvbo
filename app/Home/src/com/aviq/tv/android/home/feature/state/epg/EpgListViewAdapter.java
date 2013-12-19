@@ -117,9 +117,9 @@ public class EpgListViewAdapter extends BaseAdapter
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-		int channelIndex = 1 + mDataProvider.getChannelIndex(channel); //_isUsingFavorites ? channel.getFavIndex() : channel.getIndex();
-		holder.channelNo.setText("" + channelIndex);
-		
+		int channelIndex = mDataProvider.getChannelIndex(channel); //_isUsingFavorites ? channel.getFavIndex() : channel.getIndex();
+		holder.channelNo.setText("" + (1 + channelIndex));
+
 		Bitmap logo = mDataProvider.getChannelLogoBitmap(channelIndex);
 		holder.channelLogo.setImageBitmap(logo);
 		holder.programList.setEpgRowStartTimeMillis(mGridStartTimeMillis);

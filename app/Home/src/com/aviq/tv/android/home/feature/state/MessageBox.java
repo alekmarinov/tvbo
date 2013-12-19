@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.aviq.tv.android.home.R;
-import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureState;
 
@@ -38,16 +37,9 @@ public class MessageBox extends FeatureState
 	}
 
 	@Override
-	public void initialize(final OnFeatureInitialized onFeatureInitialized)
-	{
-		super.initialize(onFeatureInitialized);
-		onFeatureInitialized.onInitialized(this, ResultCode.OK);
-	}
-
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_messagebox, container, false);
+		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_messagebox, container, false);
 		ViewGroup messageContainer = (ViewGroup) viewGroup.findViewById(R.id.messageContainer);
 		TextView messageText = (TextView) viewGroup.findViewById(R.id.messageText);
 

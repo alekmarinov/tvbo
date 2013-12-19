@@ -27,9 +27,6 @@ public class EpgGrid
 {
 	private static final String TAG = EpgGrid.class.getSimpleName();
 
-	// FIXME: this needs to be a calculated value; hard-coded for dev
-	private static final int VISIBLE_CHANNELS = 8;
-
 	private static final int HEADER_POSITION_OFFSET = 0; //-1; //TODO:ZZ:set to 0 for testing
 
 	private enum NAVIGATION
@@ -375,14 +372,12 @@ public class EpgGrid
 				Log.d(TAG, ".onKeyDown: isAtEpgHeaderEnd = " + isAtEpgHeaderEnd + " needToPaginate = " + needToPaginate);
 				if (needToPaginate)
 				{
-Log.e(TAG, "-----: old header pos = " + _gridHeader.getPositionForTime(visibleHeaderEndTime));//TODO:ZZ:test
 					Calendar newGridStartTime = getNextPageStartingTime();
 					if (newGridStartTime != null)
 					{
 						_gridStartTimeCalendar = newGridStartTime;
 
 						int headerPos = _gridHeader.getPositionForTime(_gridStartTimeCalendar);
-Log.e(TAG, "-----: new header pos = " + _gridHeader.getPositionForTime(_gridStartTimeCalendar));//TODO:ZZ:test
 						_gridHeader.setPosition(headerPos);
 
 						fillEpgData(_gridStartTimeCalendar, _channel);
@@ -445,8 +440,8 @@ Log.e(TAG, "-----: new header pos = " + _gridHeader.getPositionForTime(_gridStar
 		_loadingEpgData = true;
 
 		// Get the list of channels that will become visible
-		int startIndex = _currentVerticalPageNumber * VISIBLE_CHANNELS;
-		int endIndex = startIndex + VISIBLE_CHANNELS;
+		int startIndex = _currentVerticalPageNumber * _gridList.getVisibleItems();
+		int endIndex = startIndex + _gridList.getVisibleItems();
 		if (endIndex > _dataProvider.getChannelCount())
 			endIndex = _dataProvider.getChannelCount();
 
@@ -507,12 +502,12 @@ Log.e(TAG, "-----: new header pos = " + _gridHeader.getPositionForTime(_gridStar
 	 */
 	private int calcVerticalPageNum(Channel currentChannel)
 	{
-		return _dataProvider.getChannelIndex(currentChannel) / VISIBLE_CHANNELS;
+		return _dataProvider.getChannelIndex(currentChannel) / _gridList.getVisibleItems();
 	}
 
 	private int getEpgPagesCount()
 	{
-		return (int) Math.ceil((double) _dataProvider.getChannelCount() / VISIBLE_CHANNELS);
+		return (int) Math.ceil((double) _dataProvider.getChannelCount() / _gridList.getVisibleItems());
 	}
 
 	private boolean isViewOnScreen(View view)

@@ -20,6 +20,8 @@ import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.application.IApplication;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
+import com.aviq.tv.android.home.core.feature.FeatureState;
+import com.aviq.tv.android.home.core.state.StateException;
 
 /**
  * AVIQ TV main application class
@@ -36,8 +38,9 @@ public class ApplicationAVIQTV extends Application implements IApplication
 
 		try
 		{
+			Environment.getInstance().use(FeatureName.State.EPG);
 			Environment.getInstance().use(FeatureName.State.TV);
-			//Environment.getInstance().use(FeatureName.State.EPG);
+			//Environment.getInstance().use(FeatureName.State.MENU);
 			Environment.getInstance().use(FeatureName.State.TEST);
 		}
 		catch (FeatureNotFoundException e)
@@ -68,6 +71,29 @@ public class ApplicationAVIQTV extends Application implements IApplication
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
+		switch (keyCode)
+		{
+			// Menu
+			case KeyEvent.KEYCODE_F2:
+			{
+				FeatureState menuFeatureState;
+                try
+                {
+	                menuFeatureState = Environment.getInstance().getFeatureState(FeatureName.State.MENU);
+					Environment.getInstance().getStateManager().setStateOverlay(menuFeatureState, null);
+                }
+                catch (FeatureNotFoundException e)
+                {
+                	Log.e(TAG, e.getMessage(), e);
+                }
+                catch (StateException e)
+                {
+                	Log.e(TAG, e.getMessage(), e);
+                }
+			}
+			break;
+
+		}
 		return Environment.getInstance().getStateManager().onKeyDown(keyCode, event);
 	}
 

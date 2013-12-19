@@ -72,7 +72,12 @@ public class StateManager
 	private void setState(BaseState newState, Bundle params, boolean isOverlay) throws StateException
 	{
 		StringBuffer logMsg = new StringBuffer();
-		String stateName = newState.getClass().getSimpleName();
+		String stateName;
+		if (newState != null)
+			stateName = newState.getClass().getSimpleName();
+		else
+			stateName = "null";
+
 		logMsg.append(".setState: ").append(stateName).append('(');
 		Strings.implodeBundle(logMsg, params, '=', ',').append("), overlay=").append(isOverlay);
 		Log.i(TAG, logMsg.toString());
@@ -87,36 +92,51 @@ public class StateManager
 				}
 				else
 				{
-					_activeStates.add(newState);
-					showState(newState, StateLayer.MAIN, params);
+					if (newState != null)
+					{
+						_activeStates.add(newState);
+						showState(newState, StateLayer.MAIN, params);
+					}
 				}
 			break;
 			case 1:
 				if (isOverlay)
 				{
-					_activeStates.add(newState);
-					showState(newState, StateLayer.OVERLAY, params);
+					if (newState != null)
+					{
+						_activeStates.add(newState);
+						showState(newState, StateLayer.OVERLAY, params);
+					}
 				}
 				else
 				{
 					hideState(_activeStates.pop());
-					_activeStates.add(newState);
-					showState(newState, StateLayer.MAIN, params);
+					if (newState != null)
+					{
+						_activeStates.add(newState);
+						showState(newState, StateLayer.MAIN, params);
+					}
 				}
 			break;
 			case 2:
 				if (isOverlay)
 				{
 					hideState(_activeStates.pop());
-					_activeStates.add(newState);
-					showState(newState, StateLayer.OVERLAY, params);
+					if (newState != null)
+					{
+						_activeStates.add(newState);
+						showState(newState, StateLayer.OVERLAY, params);
+					}
 				}
 				else
 				{
 					hideState(_activeStates.pop());
 					hideState(_activeStates.pop());
-					_activeStates.add(newState);
-					showState(newState, StateLayer.MAIN, params);
+					if (newState != null)
+					{
+						_activeStates.add(newState);
+						showState(newState, StateLayer.MAIN, params);
+					}
 				}
 			break;
 		}
@@ -146,6 +166,21 @@ public class StateManager
 	public void setStateOverlay(BaseState state, Bundle params) throws StateException
 	{
 		setState(state, params, true);
+	}
+
+	/**
+	 * Hides overlay state
+	 */
+	public void hideStateOverlay()
+	{
+		try
+		{
+			setState(null, null, true);
+		}
+		catch (StateException e)
+		{
+			Log.e(TAG, e.getMessage(), e);
+		}
 	}
 
 	/**
