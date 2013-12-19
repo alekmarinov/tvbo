@@ -33,16 +33,18 @@ import com.aviq.tv.android.home.core.event.EventMessenger;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
+import com.aviq.tv.android.home.core.state.IStateMenuItem;
 import com.aviq.tv.android.home.feature.epg.Channel;
 import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
 import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.player.FeaturePlayer;
+import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
 
 /**
  * TV state feature
  */
-public class FeatureStateTV extends FeatureState
+public class FeatureStateTV extends FeatureState implements IStateMenuItem
 {
 	public static final String TAG = FeatureStateTV.class.getSimpleName();
 	public static final DateFormat CLOCK_FORMAT = new SimpleDateFormat("HH:mm:ss EEE, MMM d, ''yy, z");
@@ -83,13 +85,13 @@ public class FeatureStateTV extends FeatureState
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
+		_dependencies.States.add(FeatureName.State.MENU);
 		_dependencies.States.add(FeatureName.State.MESSAGE_BOX);
 	}
 
 	@Override
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
-		super.initialize(onFeatureInitialized);
 		Log.i(TAG, ".initialize");
 		try
 		{
@@ -97,6 +99,11 @@ public class FeatureStateTV extends FeatureState
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
 			_updateProgramBarDelay = getPrefs().getInt(Param.UPDATE_PROGRAM_BAR_DELAY);
+
+			FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
+			        FeatureName.State.MENU);
+			featureStateMenu.addMenuItemState(this);
+
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
 		catch (FeatureNotFoundException e)
@@ -351,5 +358,19 @@ public class FeatureStateTV extends FeatureState
 				return true;
 		}
 		return false;
+	}
+
+	// IMenuItemState implementation
+
+	@Override
+	public int getMenuItemResourceId()
+	{
+		return R.drawable.ic_menu_my_channels;
+	}
+
+	@Override
+	public String getMenuItemCaption()
+	{
+		return getStateName().name();
 	}
 }

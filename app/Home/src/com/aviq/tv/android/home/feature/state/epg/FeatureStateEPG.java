@@ -27,6 +27,7 @@ import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
+import com.aviq.tv.android.home.core.state.IStateMenuItem;
 import com.aviq.tv.android.home.feature.epg.Channel;
 import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
@@ -34,11 +35,12 @@ import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.player.FeaturePlayer;
 import com.aviq.tv.android.home.feature.state.MessageBox;
 import com.aviq.tv.android.home.feature.state.epg.EpgGrid.OnEpgGridItemSelectionListener;
+import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
 
 /**
  * TV state feature
  */
-public class FeatureStateEPG extends FeatureState
+public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 {
 	public static final String TAG = FeatureStateEPG.class.getSimpleName();
 
@@ -56,18 +58,24 @@ public class FeatureStateEPG extends FeatureState
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
+		_dependencies.States.add(FeatureName.State.MENU);
 		_dependencies.States.add(FeatureName.State.MESSAGE_BOX);
 	}
 
 	@Override
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
-		super.initialize(onFeatureInitialized);
+		Log.i(TAG, ".initialize");
 		try
 		{
 			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
+
+			FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
+			        FeatureName.State.MENU);
+			featureStateMenu.addMenuItemState(this);
+
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
 		catch (FeatureNotFoundException e)
@@ -93,19 +101,19 @@ public class FeatureStateEPG extends FeatureState
 		_gridHeader = (EpgHeaderView) viewGroup.findViewById(R.id.time_list);
 		_gridList = (EpgListView) viewGroup.findViewById(R.id.gridList);
 
-		_gridHeader.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() 
+		_gridHeader.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener()
 		{
-		    @Override
-		    public void onGlobalLayout() 
-		    {
-		    	_gridHeader.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-		    	_gridHeaderWidth = _gridHeader.getWidth();
-		    	
+			@Override
+			public void onGlobalLayout()
+			{
+				_gridHeader.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				_gridHeaderWidth = _gridHeader.getWidth();
+
 				// This method relies on the width of the _gridHeader widget. In
 				// onResume() it is still zero, therefore, we get it from the
 				// OnGlobalLayoutListener.
-		    	initEpgGrid();
-		    }
+				initEpgGrid();
+			}
 		});
 
 		return viewGroup;
@@ -116,7 +124,7 @@ public class FeatureStateEPG extends FeatureState
 	{
 		super.onResume();
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
@@ -201,9 +209,23 @@ public class FeatureStateEPG extends FeatureState
 		@Override
 		public void onEpgGridItemSelected(Channel channel, Program program)
 		{
-			//TODO:ZZ:test
+			// TODO:ZZ:test
 			Log.v(TAG, "channel = " + channel.getChannelId() + ", program start = " + program.getStartTime()
 			        + ", stop = " + program.getStopTime());
 		}
 	};
+
+	// IMenuItemState implementation
+
+	@Override
+	public int getMenuItemResourceId()
+	{
+		return R.drawable.ic_menu_epg;
+	}
+
+	@Override
+	public String getMenuItemCaption()
+	{
+		return getStateName().name();
+	}
 }
