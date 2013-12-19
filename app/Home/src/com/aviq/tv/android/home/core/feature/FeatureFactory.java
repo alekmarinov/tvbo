@@ -17,6 +17,7 @@ import com.aviq.tv.android.home.feature.register.FeatureRegister;
 import com.aviq.tv.android.home.feature.scheduler.internet.FeatureInternet;
 import com.aviq.tv.android.home.feature.state.MessageBox;
 import com.aviq.tv.android.home.feature.state.epg.FeatureStateEPG;
+import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.home.feature.state.tv.FeatureStateTV;
 
 /**
@@ -70,6 +71,8 @@ public class FeatureFactory
 	{
 		switch (featureId)
 		{
+			case MENU:
+				return new FeatureStateMenu();
 			case TV:
 				return new FeatureStateTV();
 			case EPG:

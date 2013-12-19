@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.aviq.tv.android.home.core.Environment;
+import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.event.EventMessenger;
 import com.aviq.tv.android.home.core.state.BaseState;
 import com.aviq.tv.android.home.core.state.StateException;
@@ -34,6 +35,7 @@ public abstract class FeatureState extends BaseState implements IFeature
 	@Override
 	public void initialize(OnFeatureInitialized onFeatureInitialized)
 	{
+		onFeatureInitialized.onInitialized(this, ResultCode.OK);
 	}
 
 	@Override
