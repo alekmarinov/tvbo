@@ -70,6 +70,10 @@ public class ApplicationAVIQTV extends Application implements IApplication
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
+		boolean handled = Environment.getInstance().getStateManager().onKeyDown(keyCode, event);
+		if (handled)
+			return true;
+
 		switch (keyCode)
 		{
 			// Menu
@@ -90,10 +94,9 @@ public class ApplicationAVIQTV extends Application implements IApplication
                 	Log.e(TAG, e.getMessage(), e);
                 }
 			}
-			break;
-
+			return true;
 		}
-		return Environment.getInstance().getStateManager().onKeyDown(keyCode, event);
+		return false;
 	}
 
 	@Override
