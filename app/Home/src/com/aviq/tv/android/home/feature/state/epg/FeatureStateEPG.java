@@ -51,6 +51,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 	private int _gridHeaderWidth = 0;
 	private EpgListView _gridList;
 	private TextView _dateTimeView;
+	private EpgProgramInfo _programInfo;
 
 	private EpgData _epgData;
 
@@ -91,6 +92,20 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		return FeatureName.State.EPG;
 	}
 
+	// IMenuItemState implementation
+
+	@Override
+	public int getMenuItemResourceId()
+	{
+		return R.drawable.ic_menu_epg;
+	}
+
+	@Override
+	public String getMenuItemCaption()
+	{
+		return getStateName().name();
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
@@ -101,20 +116,10 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		_gridHeader = (EpgHeaderView) viewGroup.findViewById(R.id.time_list);
 		_gridList = (EpgListView) viewGroup.findViewById(R.id.gridList);
 
-		_gridHeader.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener()
-		{
-			@Override
-			public void onGlobalLayout()
-			{
-				_gridHeader.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-				_gridHeaderWidth = _gridHeader.getWidth();
-
-				// This method relies on the width of the _gridHeader widget. In
-				// onResume() it is still zero, therefore, we get it from the
-				// OnGlobalLayoutListener.
-				initEpgGrid();
-			}
-		});
+		ViewGroup programInfoContainer = (ViewGroup) viewGroup.findViewById(R.id.program_details_container); 
+		_programInfo = new EpgProgramInfo(getActivity(), programInfoContainer);
+		
+		initEpgGridOnGlobalLayout();
 
 		return viewGroup;
 	}
@@ -156,6 +161,24 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		return _epgGrid.onKeyDown(keyCode, event);
 	}
 
+	private void initEpgGridOnGlobalLayout()
+	{
+		_gridHeader.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener()
+		{
+			@Override
+			public void onGlobalLayout()
+			{
+				_gridHeader.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				_gridHeaderWidth = _gridHeader.getWidth();
+
+				// This method relies on the width of the _gridHeader widget. In
+				// onResume() it is still zero, therefore, we get it from the
+				// OnGlobalLayoutListener.
+				initEpgGrid();
+			}
+		});
+	}
+	
 	private void initEpgGrid()
 	{
 		_epgData = _featureEPG.getEpgData();
@@ -212,20 +235,9 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 			// TODO:ZZ:test
 			Log.v(TAG, "channel = " + channel.getChannelId() + ", program start = " + program.getStartTime()
 			        + ", stop = " + program.getStopTime());
+			
+			_programInfo.update(program);
 		}
 	};
 
-	// IMenuItemState implementation
-
-	@Override
-	public int getMenuItemResourceId()
-	{
-		return R.drawable.ic_menu_epg;
-	}
-
-	@Override
-	public String getMenuItemCaption()
-	{
-		return getStateName().name();
-	}
 }

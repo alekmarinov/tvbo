@@ -88,8 +88,10 @@ public class FeatureStateMenu extends FeatureState
 		{
 			case KeyEvent.KEYCODE_BACK:
 				// Hide overlay state
-                Environment.getInstance().getStateManager().hideStateOverlay();
-			break;
+				Environment.getInstance().getStateManager().hideStateOverlay();
+				return true;
+			case KeyEvent.KEYCODE_F2:
+				return true;
 		}
 		return false;
 	}
