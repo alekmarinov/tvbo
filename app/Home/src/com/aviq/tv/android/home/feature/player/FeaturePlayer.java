@@ -14,6 +14,7 @@ import android.widget.VideoView;
 
 import com.aviq.tv.android.home.R;
 import com.aviq.tv.android.home.core.Environment;
+import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureComponent;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureName.Component;
@@ -27,16 +28,12 @@ public class FeaturePlayer extends FeatureComponent
 	public static final String TAG = FeaturePlayer.class.getSimpleName();
 	protected AndroidPlayer _player;
 
-	public FeaturePlayer()
-	{
-		_dependencies.Components.add(FeatureName.Component.EPG);
-	}
-
 	@Override
 	public void initialize(OnFeatureInitialized onFeatureInitialized)
 	{
 		VideoView videoView = (VideoView) Environment.getInstance().getActivity().findViewById(R.id.player);
 		_player = new AndroidPlayer(videoView);
+		onFeatureInitialized.onInitialized(this, ResultCode.OK);
 	}
 
 	@Override

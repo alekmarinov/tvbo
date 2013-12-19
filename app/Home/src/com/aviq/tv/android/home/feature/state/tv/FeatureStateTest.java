@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aviq.tv.android.home.R;
-import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureState;
 
@@ -35,14 +34,6 @@ public class FeatureStateTest extends FeatureState
 	{
 		//_dependencies.Components.add(FeatureName.Component.EPG);
 		_dependencies.States.add(FeatureName.State.MESSAGE_BOX);
-	}
-
-	@Override
-	public void initialize(final OnFeatureInitialized onFeatureInitialized)
-	{
-		super.initialize(onFeatureInitialized);
-		Log.i(TAG, ".initialize");
-		onFeatureInitialized.onInitialized(this, ResultCode.OK);
 	}
 
 	@Override

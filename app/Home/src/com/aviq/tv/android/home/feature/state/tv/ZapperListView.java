@@ -114,9 +114,14 @@ public class ZapperListView extends ScrollView
 			{
 				if (_hasNumbers)
 					canvas.drawText(String.format("%3d", num), _hpadding, y + yText, _textPaint);
-				canvas.drawBitmap(bmp, bmpOffset, y + _vpadding + (_bmpMaxHeight - bmp.getHeight()) / 2, _paint);
+				if (bmp != null)
+				{
+					int bmpY = y + _vpadding + (_bmpMaxHeight - bmp.getHeight()) / 2;
+					Log.d(TAG, "draw bmp " + bmp.getWidth() + "x" + bmp.getHeight() + " at x=" + bmpOffset + ", y = " + bmpY);
+					canvas.drawBitmap(bmp, bmpOffset, bmpY, _paint);
+				}
 				y += itemHeight;
-				// / canvas.drawLine(0, y, getWidth(), y, _textPaint);
+				//canvas.drawLine(0, y, getWidth(), y, _textPaint);
 				num++;
 			}
 		};
@@ -186,13 +191,12 @@ public class ZapperListView extends ScrollView
 				parent = parent.getSuperclass();
 				attempts++;
 			} while (!parent.getName().equals("android.widget.ScrollView") && attempts < 20);
-			Log.i(TAG, "Class: " + parent.getName());
 
 			Field field = parent.getDeclaredField("mScroller");
 			field.setAccessible(true);
 			_myScroller = (OverScroller) field.get(this);
 			_myScroller.setFriction(0.025f);
-			Log.i(TAG, "Scroller found.");
+			Log.i(TAG, "Smooth scroller available for use");
 		}
 		catch (Exception e)
 		{
@@ -203,7 +207,7 @@ public class ZapperListView extends ScrollView
 	public void addDrawable(int resId)
 	{
 		Bitmap bmp = BitmapFactory.decodeResource(getResources(), resId);
-		_scrollItem.addBitmap(bmp);
+		addBitmap(bmp);
 	}
 
 	public void addBitmap(Bitmap bitmap)

@@ -72,8 +72,6 @@ public class FeaturePlayerRayV extends FeaturePlayer
 	@Override
 	public void initialize(OnFeatureInitialized onFeatureInitialized)
 	{
-		super.initialize(onFeatureInitialized);
-
 		// Start streaming agent
 		Log.i(TAG, "Start streaming agent");
 		final String streamerIni = TextUtils.inputSteamToString(Environment.getInstance().getResources().openRawResource(
@@ -94,7 +92,7 @@ public class FeaturePlayerRayV extends FeaturePlayer
 			        FeatureName.Component.REGISTER);
 			getPrefs().put(Param.RAYV_USER, featureRegister.getBoxId());
 			getPrefs().put(Param.RAYV_PASS, featureRegister.getBoxId());
-			onFeatureInitialized.onInitialized(this, ResultCode.OK);
+			super.initialize(onFeatureInitialized);
 		}
         catch (FeatureNotFoundException e)
         {

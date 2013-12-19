@@ -8,7 +8,7 @@
  * Description: RayV specific extension of EPG feature
  */
 
-package com.aviq.tv.android.home.feature.epg;
+package com.aviq.tv.android.home.feature.epg.rayv;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +17,9 @@ import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
+import com.aviq.tv.android.home.feature.epg.Channel;
+import com.aviq.tv.android.home.feature.epg.FeatureEPG;
+import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.register.FeatureRegister;
 
 /**
@@ -82,6 +85,14 @@ public class FeatureEPGRayV extends FeatureEPG
     		onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
         }
 	}
+	/**
+	 * @return rayv EPG provider name
+	 */
+	@Override
+    protected FeatureEPG.Provider getEPGProvider()
+	{
+		return FeatureEPG.Provider.rayv;
+	}
 
 	/**
 	 * Return stream url for specified channel
@@ -100,4 +111,16 @@ public class FeatureEPGRayV extends FeatureEPG
 		bundle.putInt("BITRATE", getPrefs().getInt(Param.RAYV_STREAM_BITRATE));
 		return getPrefs().getString(Param.RAYV_STREAM_URL_PATTERN, bundle);
 	}
+
+	@Override
+    public Program createProgram()
+    {
+	    return new ProgramRayV();
+    }
+
+	@Override
+    protected Channel createChannel()
+    {
+	    return new ChannelRayV();
+    }
 }
