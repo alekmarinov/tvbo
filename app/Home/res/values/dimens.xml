@@ -11,7 +11,7 @@
 	<dimen name="program_bar_height">250dip</dimen>
 	<dimen name="channel_bar_width">185dip</dimen>
 		
-	<dimen name="program_text_size_normal">28sp</dimen>
+	<dimen name="program_text_size_normal">23sp</dimen>
 	<dimen name="program_text_size_highlight">31sp</dimen>
 	<dimen name="message_fontsize">36sp</dimen>
 
