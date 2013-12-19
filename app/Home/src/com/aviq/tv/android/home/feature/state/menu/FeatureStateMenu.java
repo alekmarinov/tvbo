@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,5 +79,18 @@ public class FeatureStateMenu extends FeatureState
 	public FeatureName.State getStateName()
 	{
 		return FeatureName.State.MENU;
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
+		switch (keyCode)
+		{
+			case KeyEvent.KEYCODE_BACK:
+				// Hide overlay state
+                Environment.getInstance().getStateManager().hideStateOverlay();
+			break;
+		}
+		return false;
 	}
 }
