@@ -34,6 +34,7 @@ public class FeatureName
 		MENU,
 		TV,
 		EPG,
-		MESSAGE_BOX
+		MESSAGE_BOX,
+		TEST
 	}
 }
