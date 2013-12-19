@@ -37,16 +37,15 @@
 
             <TextView
                 android:id="@+id/date"
+                style="@style/ProgramText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="17dp"
                 android:drawableLeft="@drawable/ic_remaining_time"
                 android:drawablePadding="10dp"
                 android:singleLine="true"
                 android:text="Remaining time    20 min"
-                android:textColor="@color/program_text_normal"
                 android:textSize="26sp" />
         </LinearLayout>
     </RelativeLayout>
@@ -62,21 +61,19 @@
 
         <TextView
             android:id="@+id/title_primary"
+            style="@style/ProgramTextHighlight"
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/program_details_strip"
-            android:gravity="center_vertical"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="true"
-            android:text="Декстър"
-            android:textColor="@color/program_text_highlight"
-            android:textSize="30sp"
-            android:textStyle="bold" />
+            android:text="Декстър" />
 
-        <TextView style="@style/ProgramText"
+        <TextView
             android:id="@+id/title_secondary"
+            style="@style/ProgramText"
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:layout_gravity="center_vertical"
@@ -88,8 +85,9 @@
             android:text="сезон 2, епизод 12"
             android:textStyle="bold" />
 
-        <TextView style="@style/ProgramText"
+        <TextView
             android:id="@+id/time_range"
+            style="@style/ProgramText"
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:layout_gravity="center_vertical"
@@ -101,8 +99,9 @@
             android:text="14:30 - 15:10"
             android:textStyle="bold" />
 
-        <TextView style="@style/ProgramText"
+        <TextView
             android:id="@+id/summary"
+            style="@style/ProgramText"
             android:layout_width="match_parent"
             android:layout_height="382dp"
             android:layout_gravity="center_vertical"
@@ -113,22 +112,44 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="false"
-            android:text="Декстър преследва и брутално убива онези опасни убийци, които са успели да избягат от &quot;дългата ръка на закона&quot;. Той организира убийствата си съгласно &quot;Кодекса на Хари&quot;, който е създал..."
-		/>
+            android:text="Декстър преследва и брутално убива онези опасни убийци, които са успели да избягат от &quot;дългата ръка на закона&quot;. Той организира убийствата си съгласно &quot;Кодекса на Хари&quot;, който е създал..." />
     </LinearLayout>
 
     <TextView
         android:id="@+id/pager"
+        style="@style/ProgramText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="110dip"
-       	android:paddingLeft="404dip"
-       	android:gravity="center"
+        android:layout_marginBottom="75dip"
         android:drawableLeft="@drawable/ic_arrow_left"
         android:drawablePadding="10dip"
-        android:drawableRight="@drawable/ic_arrow_right" 
-        android:text="2/3"/>
+        android:drawableRight="@drawable/ic_arrow_right"
+        android:paddingLeft="404dip"
+        android:text="2/3" />
+
+    <TextView
+        style="@style/ProgramTextHighlight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="17dp"
+        android:layout_marginRight="40dp"
+        android:drawableLeft="@drawable/ic_back_blue"
+        android:drawablePadding="10dip"
+        android:gravity="right"
+        android:text="Назад"
+        android:textSize="26sp" />
+
+    <ListView
+        android:id="@+id/program_options_list"
+        android:layout_width="@dimen/epg_program_details_thumbnail_width"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/thumbnail_container"
+        android:layout_marginBottom="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="25dip" />
 
 </RelativeLayout>
