@@ -11,7 +11,7 @@
 package com.aviq.tv.android.home.core.feature;
 
 import com.aviq.tv.android.home.feature.FeatureHttpServer;
-import com.aviq.tv.android.home.feature.epg.FeatureEPGRayV;
+import com.aviq.tv.android.home.feature.epg.rayv.FeatureEPGRayV;
 import com.aviq.tv.android.home.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.home.feature.register.FeatureRegister;
 import com.aviq.tv.android.home.feature.scheduler.internet.FeatureInternet;
@@ -48,9 +48,11 @@ public class FeatureFactory
 		switch (featureId)
 		{
 			case EPG:
+				// return new FeatureEPGWilmaa();
 				return new FeatureEPGRayV();
 			case PLAYER:
 				return new FeaturePlayerRayV();
+				// return new FeaturePlayer();
 			case HTTP_SERVER:
 				return new FeatureHttpServer();
 			case REGISTER:

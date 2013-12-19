@@ -134,10 +134,9 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		for (int i = 0; i < _epgData.getChannelCount(); i++)
 		{
 			Bitmap bmp = _epgData.getChannelLogoBitmap(i);
-			if (bmp != null)
-				_zapperListView.addBitmap(bmp);
-			else
+			if (bmp == null)
 				Log.w(TAG, "Channel " + _epgData.getChannel(i).getChannelId() + " doesn't have image logo!");
+			_zapperListView.addBitmap(bmp);
 		}
 		onSelectChannelIndex(0);
 		return _viewGroup;
