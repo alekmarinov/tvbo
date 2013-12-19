@@ -7,4 +7,6 @@
     <string name="yesterday">Вчера</string>
     <string name="tomorrow">Утре</string>
     <string name="scheduleHeaderDateTimeFormat">MMM dd</string>
+    <string name="programInfoDateFormat">dd/MM/yyyy г.</string>
+    <string name="programInfoTimeFormat">kk:mm</string>
 </resources>
