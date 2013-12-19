@@ -140,7 +140,7 @@
         android:drawableLeft="@drawable/ic_back_blue"
         android:drawablePadding="10dip"
         android:gravity="right"
-        android:text="Назад"
+        android:text="@string/back"
         android:textSize="26sp" />
 
     <ListView
@@ -150,6 +150,10 @@
         android:layout_below="@+id/thumbnail_container"
         android:layout_marginBottom="25dp"
         android:layout_marginLeft="25dp"
-        android:layout_marginTop="25dip" />
+        android:layout_marginTop="25dip" 
+        android:dividerHeight="16dip"
+        android:divider="@color/transparent"
+        android:listSelector="@drawable/list_item_selector"
+      />
 
 </RelativeLayout>

@@ -7,4 +7,5 @@
     <string name="yesterday">Вчера</string>
     <string name="tomorrow">Утре</string>
     <string name="scheduleHeaderDateTimeFormat">MMM dd</string>
+    <string name="back">Назад</string>
 </resources>
