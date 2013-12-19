@@ -18,6 +18,7 @@ import com.aviq.tv.android.home.feature.scheduler.internet.FeatureInternet;
 import com.aviq.tv.android.home.feature.state.MessageBox;
 import com.aviq.tv.android.home.feature.state.epg.FeatureStateEPG;
 import com.aviq.tv.android.home.feature.state.tv.FeatureStateTV;
+import com.aviq.tv.android.home.feature.state.tv.FeatureStateTest;
 
 /**
  * Singleton with factory methods to create features by id
@@ -76,6 +77,8 @@ public class FeatureFactory
 				return new FeatureStateEPG();
 			case MESSAGE_BOX:
 				return new MessageBox();
+			case TEST:
+				return new FeatureStateTest();
 		}
 		throw new FeatureNotFoundException(featureId);
 	}

@@ -33,6 +33,7 @@ public class FeatureName
 	{
 		TV,
 		MESSAGE_BOX,
-		EPG
+		EPG,
+		TEST
 	}
 }
