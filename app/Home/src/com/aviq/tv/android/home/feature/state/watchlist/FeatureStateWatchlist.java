@@ -30,6 +30,7 @@ import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
 import com.aviq.tv.android.home.core.state.IStateMenuItem;
 import com.aviq.tv.android.home.feature.epg.Program;
+import com.aviq.tv.android.home.feature.epg.rayv.ProgramRayV;
 import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
 
 /**
@@ -81,7 +82,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		ArrayList<Program> items = new ArrayList<Program>();
 		for (int i = 0; i < 40; i++)
 		{
-			Program program = new Program();
+			Program program = new ProgramRayV();
 			program.setTitle("Title " + i);
 			items.add(program);
 		}
