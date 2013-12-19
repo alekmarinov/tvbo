@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/program_details_container"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/epg_program_details_thumbnail_height"
+    android:layout_marginBottom="15dp"
+    android:layout_marginLeft="100dp"
+    android:layout_marginRight="92dp"
+    android:layout_marginTop="22dp"
+    android:background="@android:color/transparent"
+    android:orientation="horizontal" >
+
+    <!-- Thumbnail and date/time container -->
+
+    <RelativeLayout
+        android:id="@+id/thumbnail_container"
+        android:layout_width="@dimen/epg_program_details_thumbnail_width"
+        android:layout_height="@dimen/epg_program_details_thumbnail_height"
+        android:background="@drawable/program_thumbnail_mask"
+        android:padding="1dp" >
+
+        <ImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/contentDescription"
+            android:scaleType="fitXY"
+            android:src="@drawable/test_epg_thumbnail"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/program_time_container"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/program_time_container"
+            android:gravity="center|center_horizontal"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="17dp"
+                android:drawableLeft="@drawable/ic_calendar"
+                android:drawablePadding="10dp"
+                android:singleLine="true"
+                android:text="22/10/2013 г."
+                android:textColor="@color/program_text_normal"
+                android:textSize="26sp" />
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="17dp"
+                android:drawableLeft="@drawable/ic_remaining_time"
+                android:drawablePadding="10dp"
+                android:singleLine="true"
+                android:text="20:00"
+                android:textColor="@color/program_text_normal"
+                android:textSize="26sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/program_details_info_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="8dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/title_primary"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/program_details_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:text="Декстър"
+            android:textColor="@color/program_text_highlight"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/title_secondary"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/program_details_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:text="сезон 2, епизод 12"
+            android:textColor="@color/program_text_normal"
+            android:textSize="23sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/summary"
+            android:layout_width="match_parent"
+            android:layout_height="99dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/program_details_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:singleLine="false"
+            android:text="Декстър преследва и брутално убива онези опасни убийци, които са успели да избягат от &quot;дългата ръка на закона&quot;. Той организира убийствата си съгласно &quot;Кодекса на Хари&quot;, който е създал..."
+            android:textColor="@color/program_text_normal"
+            android:textSize="23sp" />
+    </LinearLayout>
+
+</LinearLayout>
