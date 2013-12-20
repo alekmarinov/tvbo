@@ -35,6 +35,7 @@ public class FeatureName
 		TV,
 		EPG,
 		MESSAGE_BOX,
+		PROGRAM_INFO,
 		TEST
 	}
 }
