@@ -209,7 +209,7 @@ public abstract class FeatureEPG extends FeatureComponent
 	/**
 	 * @return create program instance
 	 */
-	protected abstract Program createProgram();
+	protected abstract Program createProgram(Channel channel);
 
 	private void retrieveChannels()
 	{
@@ -462,10 +462,11 @@ public abstract class FeatureEPG extends FeatureComponent
 
 		NavigableMap<String, Integer> programMap = new TreeMap<String, Integer>();
 		List<Program> programList = new ArrayList<Program>();
+		Channel channel = _epgDataBeingLoaded.getChannel(channelId);
 
 		for (int i = 0; i < data.length; i++)
 		{
-			Program program = createProgram();
+			Program program = createProgram(channel);
 			program.setTitle(data[i][metaData.metaTitle]);
 
 			try

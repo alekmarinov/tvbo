@@ -21,7 +21,8 @@ public class FeatureName
 		EPG,
 		PLAYER,
 		HTTP_SERVER,
-		REGISTER
+		REGISTER,
+		WATCHLIST
 	}
 
 	public static enum Scheduler

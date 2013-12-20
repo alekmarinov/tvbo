@@ -113,9 +113,9 @@ public class FeatureEPGRayV extends FeatureEPG
 	}
 
 	@Override
-    public Program createProgram()
+    protected Program createProgram(Channel channel)
     {
-	    return new ProgramRayV();
+	    return new ProgramRayV(channel);
     }
 
 	@Override

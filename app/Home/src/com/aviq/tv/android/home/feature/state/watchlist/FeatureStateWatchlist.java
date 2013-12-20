@@ -2,15 +2,13 @@
  * Copyright (c) 2007-2013, AVIQ Bulgaria Ltd
  *
  * Project:     Home
- * Filename:    FeatureTV.java
+ * Filename:    FeatureStateWatchlist.java
  * Author:      alek
  * Date:        1 Dec 2013
  * Description: TV state feature
  */
 
 package com.aviq.tv.android.home.feature.state.watchlist;
-
-import java.util.ArrayList;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -29,21 +27,24 @@ import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
 import com.aviq.tv.android.home.core.state.IStateMenuItem;
+import com.aviq.tv.android.home.feature.Watchlist;
 import com.aviq.tv.android.home.feature.epg.Program;
-import com.aviq.tv.android.home.feature.epg.rayv.ProgramRayV;
 import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
 
 /**
- * TV state feature
+ * Watchlist state feature
  */
 public class FeatureStateWatchlist extends FeatureState implements IStateMenuItem
 {
 	public static final String TAG = FeatureStateWatchlist.class.getSimpleName();
 
 	private ViewGroup _viewGroup;
+	private Watchlist _watchlist;
 
 	public FeatureStateWatchlist()
 	{
+		_dependencies.Components.add(FeatureName.Component.EPG);
+		_dependencies.Components.add(FeatureName.Component.WATCHLIST);
 		_dependencies.States.add(FeatureName.State.MENU);
 	}
 
@@ -59,9 +60,12 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		Log.i(TAG, ".initialize");
 		try
 		{
+			// insert in Menu
 			FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
 			        FeatureName.State.MENU);
 			featureStateMenu.addMenuItemState(this);
+
+			_watchlist = (Watchlist) Environment.getInstance().getFeatureComponent(FeatureName.Component.WATCHLIST);
 
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
@@ -78,22 +82,12 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		Log.i(TAG, ".onCreateView");
 		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_watchlist, container, false);
 
-		// init fake programs
-		ArrayList<Program> items = new ArrayList<Program>();
-		for (int i = 0; i < 40; i++)
-		{
-			Program program = new ProgramRayV();
-			program.setTitle("Title " + i);
-			items.add(program);
-		}
-
 		GridView gridView = (GridView) _viewGroup.findViewById(R.id.watchlist_grid);
-		GridViewAdapter<Program> adapter = new GridViewAdapter<Program>(Environment.getInstance().getContext(), items,
-		        R.layout.item_watchlist);
+		GridViewAdapter<Program> adapter = new GridViewAdapter<Program>(Environment.getInstance().getContext(),
+		        _watchlist.getWatchedPrograms(), R.layout.item_watchlist);
 		gridView.setAdapter(adapter);
 		gridView.setOnItemSelectedListener(new OnItemSelectedListener()
 		{
-
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View view, int position, long id)
 			{

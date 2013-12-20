@@ -13,9 +13,7 @@ package com.aviq.tv.android.home.feature.epg.rayv;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
+import com.aviq.tv.android.home.feature.epg.Channel;
 import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.epg.ProgramAttribute;
 import com.aviq.tv.android.home.utils.Log;
@@ -31,29 +29,9 @@ public class ProgramRayV extends Program
 	private static final String TAG = ProgramRayV.class.getSimpleName();
 	private JSONObject _detailsResponse;
 
-	public static final Parcelable.Creator<Program> CREATOR = new Parcelable.Creator<Program>()
+	public ProgramRayV(Channel channel)
 	{
-		@Override
-		public Program createFromParcel(Parcel in)
-		{
-			return new ProgramRayV(in);
-		}
-
-		@Override
-		public Program[] newArray(int size)
-		{
-			return new Program[size];
-		}
-	};
-
-	public ProgramRayV()
-	{
-		super();
-	}
-
-	public ProgramRayV(Parcel in)
-	{
-		super(in);
+		super(channel);
 	}
 
 	@Override

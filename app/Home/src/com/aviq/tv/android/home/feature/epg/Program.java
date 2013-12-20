@@ -18,20 +18,16 @@ import java.util.Locale;
 
 import org.json.JSONObject;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.aviq.tv.android.home.utils.Log;
-
 /**
  * Program data holder class
  */
-public abstract class Program implements Parcelable, Comparable<Program>
+public abstract class Program implements Comparable<Program>
 {
 	private static final String TAG = Program.class.getSimpleName();
 	private static final DateFormat EPG_DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
 
 	// Bean properties
+	private Channel _channel;
 	private String _startTime;
 	private String _stopTime;
 	private String _title;
@@ -69,49 +65,20 @@ public abstract class Program implements Parcelable, Comparable<Program>
 		return dateTime;
 	}
 
-	public Program()
+	public Program(Channel channel)
 	{
-	}
-
-	public Program(Parcel in)
-	{
-		this();
-
-		try
-		{
-			readFromParcel(in);
-		}
-		catch (ParseException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
-		}
-	}
-
-	public void readFromParcel(Parcel in) throws ParseException
-	{
-		setStartTime(in.readString());
-		setStopTime(in.readString());
-		setTitle(in.readString());
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags)
-	{
-		dest.writeString(_startTime);
-		dest.writeString(_stopTime);
-		dest.writeString(_title);
-	}
-
-	@Override
-	public int describeContents()
-	{
-		return 0;
+		_channel = channel;
 	}
 
 	@Override
 	public int compareTo(Program another)
 	{
 		return _startTime.compareTo(another._startTime);
+	}
+
+	public Channel getChannel()
+	{
+		return _channel;
 	}
 
 	public Calendar getStartTimeCalendar()
