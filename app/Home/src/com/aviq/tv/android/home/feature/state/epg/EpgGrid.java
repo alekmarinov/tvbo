@@ -29,7 +29,7 @@ public class EpgGrid
 
 	private static final int HEADER_POSITION_OFFSET = 0; //-1; //TODO:ZZ:set to 0 for testing
 
-	private enum NAVIGATION
+	public static enum NAVIGATION
 	{
 		LEFT, RIGHT, UP, DOWN
 	};
@@ -75,7 +75,7 @@ public class EpgGrid
 
 	private boolean _loadingEpgData = false;
 
-	private OnEpgGridItemSelectionListener _onEpgGridItemSelectionListener;
+	private OnEpgGridEventListener _onEpgGridItemSelectionListener;
 
 	public EpgGrid(Activity activity)
 	{
@@ -526,7 +526,7 @@ public class EpgGrid
 		return true;
 	}
 
-	public void setOnEpgGridItemSelection(OnEpgGridItemSelectionListener listener)
+	public void setOnEpgGridItemSelection(OnEpgGridEventListener listener)
 	{
 		_onEpgGridItemSelectionListener = listener;
 	}
@@ -816,10 +816,12 @@ public class EpgGrid
 		}
 	};
 
-	public interface OnEpgGridItemSelectionListener
+	public interface OnEpgGridEventListener
 	{
 		public void onEpgGridItemSelecting(Channel channel, Program program);
 
 		public void onEpgGridItemSelected(Channel channel, Program program);
+		
+		public void onEpgPageScroll(NAVIGATION direction);
 	}
 }

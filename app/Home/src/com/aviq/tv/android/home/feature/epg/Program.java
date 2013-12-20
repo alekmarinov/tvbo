@@ -165,5 +165,5 @@ public abstract class Program implements Comparable<Program>
 	 * @param metaData indexed meta data
 	 * @param attributes String array with the essential data positioned according the meta data indices
 	 */
-    public abstract void setAttributes(MetaData metaData, String[] attributes);
+    public abstract void setDetailAttributes(MetaData metaData, String[] attributes);
 }

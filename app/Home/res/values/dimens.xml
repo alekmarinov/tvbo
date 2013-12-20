@@ -12,7 +12,7 @@
 	<dimen name="channel_bar_width">185dip</dimen>
 		
 	<dimen name="program_text_size_normal">23sp</dimen>
-	<dimen name="program_text_size_highlight">30sp</dimen>
+	<dimen name="program_text_size_highlight">25sp</dimen>
 	<dimen name="message_fontsize">36sp</dimen>
 
 	<dimen name="channel_number">24sp</dimen>

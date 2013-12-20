@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="1175dip"
-    android:layout_height="625dip"
+    android:layout_width="900dip"
+    android:layout_height="480dip"
     android:layout_gravity="center"
     android:background="@drawable/program_info_background" >
 
@@ -9,11 +9,11 @@
 
     <RelativeLayout
         android:id="@+id/thumbnail_container"
-        android:layout_width="@dimen/epg_program_details_thumbnail_width"
-        android:layout_height="@dimen/epg_program_details_thumbnail_height"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="250dp"
+        android:layout_height="145dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
         android:background="@drawable/program_thumbnail_mask"
         android:padding="1dp" >
 
@@ -21,15 +21,16 @@
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="3dip"
             android:contentDescription="@string/contentDescription"
-            android:scaleType="fitXY"
-            android:src="@drawable/test_epg_thumbnail"
+            android:scaleType="center"
+            android:src="@drawable/epg_image_thumbnail"
             android:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/program_time_container"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="35dp"
             android:layout_alignParentBottom="true"
             android:background="@drawable/program_time_container"
             android:gravity="center|center_horizontal"
@@ -42,28 +43,43 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="17dp"
+                android:drawableLeft="@drawable/ic_calendar"
+                android:drawablePadding="10dp"
+                android:singleLine="true"
+                android:text="22/10/2013 г."
+                android:textSize="26sp" />
+
+            <!--  REMOVE ME -->
+            <TextView
+                android:id="@+id/time"
+                style="@style/ProgramText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="17dp"
                 android:drawableLeft="@drawable/ic_remaining_time"
                 android:drawablePadding="10dp"
                 android:singleLine="true"
-                android:text="Remaining time    20 min"
-                android:textSize="26sp" />
+                android:text="20:00"
+                android:textSize="26sp" 
+                android:visibility="gone"/>
         </LinearLayout>
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/program_details_info_container"
-        android:layout_width="750dip"
+        android:layout_width="600dip"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="15dp"
         android:orientation="vertical" >
 
         <TextView
             android:id="@+id/title_primary"
             style="@style/ProgramTextHighlight"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
+            android:layout_height="38dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/program_details_strip"
             android:paddingLeft="10dp"
@@ -75,7 +91,7 @@
             android:id="@+id/title_secondary"
             style="@style/ProgramText"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
+            android:layout_height="38dp"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="6dp"
             android:background="@drawable/program_details_strip"
@@ -89,7 +105,7 @@
             android:id="@+id/time_range"
             style="@style/ProgramText"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
+            android:layout_height="38dp"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="6dp"
             android:background="@drawable/program_details_strip"
@@ -103,16 +119,16 @@
             android:id="@+id/summary"
             style="@style/ProgramText"
             android:layout_width="match_parent"
-            android:layout_height="382dp"
+            android:layout_height="286dp"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="6dp"
             android:background="@drawable/program_details_strip"
             android:gravity="top"
-            android:paddingBottom="40dip"
+            android:paddingBottom="54dip"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="false"
-            android:text="Декстър преследва и брутално убива онези опасни убийци, които са успели да избягат от &quot;дългата ръка на закона&quot;. Той организира убийствата си съгласно &quot;Кодекса на Хари&quot;, който е създал..." />
+            android:text="Декстър\n Декстър\nДекстър\nДекстър\nДекстър\nДекстър\nДекстър\nпреследва и брутално убива онези опасни убийци, които са успели да избягат от &quot;дългата ръка на закона&quot;. Той организира убийствата си съгласно &quot;Кодекса на Хари&quot;, който е създал..." />
     </LinearLayout>
 
     <TextView
@@ -122,11 +138,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="75dip"
+        android:layout_marginBottom="44dip"
         android:drawableLeft="@drawable/ic_arrow_left"
         android:drawablePadding="10dip"
         android:drawableRight="@drawable/ic_arrow_right"
-        android:paddingLeft="404dip"
+        android:paddingLeft="270dip"
         android:text="2/3" />
 
     <TextView
@@ -135,25 +151,19 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="17dp"
-        android:layout_marginRight="40dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginRight="25dp"
         android:drawableLeft="@drawable/ic_back_blue"
         android:drawablePadding="10dip"
         android:gravity="right"
         android:text="@string/back"
-        android:textSize="26sp" />
+        android:textSize="26sp" /> 
 
-    <ListView
-        android:id="@+id/program_options_list"
-        android:layout_width="@dimen/epg_program_details_thumbnail_width"
-        android:layout_height="wrap_content"
+	<include layout="@layout/options_program_info"
         android:layout_below="@+id/thumbnail_container"
-        android:layout_marginBottom="25dp"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="25dip" 
-        android:dividerHeight="16dip"
-        android:divider="@color/transparent"
-        android:listSelector="@drawable/list_item_selector"
-      />
-
+        android:layout_width="250dp"
+   		android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="15dip" 
+	    android:id="@+id/options_container"/>
 </RelativeLayout>
