@@ -16,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.aviq.tv.android.home.R;
 import com.aviq.tv.android.home.core.Environment;
@@ -38,7 +39,7 @@ public class FeatureStateProgramInfo extends FeatureState
 
 	public static final String ARGS_CHANNEL_ID = "channelId";
 	public static final String ARGS_PROGRAM_ID = "programId";
-	
+
 	private FeatureEPG _featureEPG;
 	private FeaturePlayer _featurePlayer;
 
@@ -79,16 +80,18 @@ public class FeatureStateProgramInfo extends FeatureState
 		Log.i(TAG, ".onCreateView");
 
 		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_program_info, container, false);
-		
+
 		Bundle params = getArguments();
 		String channelId = params.getString(ARGS_CHANNEL_ID);
 		String programId = params.getString(ARGS_PROGRAM_ID);
 
 		EpgData epgData = _featureEPG.getEpgData();
-		
+
 		EpgProgramInfo programInfo = new EpgProgramInfo(getActivity(), viewGroup);
 		programInfo.updateDetails(channelId, epgData.getProgram(channelId, programId));
-		
+		Button optionsContainer = (Button)viewGroup.findViewById(R.id.btn_play);
+		optionsContainer.requestFocus();
+
 		return viewGroup;
 	}
 
