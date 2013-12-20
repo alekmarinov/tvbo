@@ -100,20 +100,6 @@ public class EpgData implements IEpgDataProvider
 	}
 
 	/**
-	 * @param index Channel position in the list
-	 * @return the Channel at location 'index' in the channel list
-	 */
-	public Channel getChannel(String channelId)
-	{
-		for (Channel channel : _channelList)
-		{
-			if (channel.getChannelId().equals(channelId))
-				return channel;
-		}
-		return null;
-	}
-	
-	/**
 	 * @return the number of channels
 	 */
 	@Override
