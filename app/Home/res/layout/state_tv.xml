@@ -59,7 +59,7 @@
        		android:layout_marginBottom="74dip"
             android:background="@drawable/tv_selected_channel_background"
         />
-        
+       
         <ImageView android:id="@+id/channel_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

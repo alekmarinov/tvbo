@@ -36,6 +36,7 @@ public class FeatureName
 		EPG,
 		MESSAGE_BOX,
 		PROGRAM_INFO,
+		WATCHLIST,
 		TEST
 	}
 }

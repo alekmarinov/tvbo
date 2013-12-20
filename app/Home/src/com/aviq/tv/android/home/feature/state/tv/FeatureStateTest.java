@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aviq.tv.android.home.R;
-import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureState;
 
@@ -38,14 +37,6 @@ public class FeatureStateTest extends FeatureState
 	}
 
 	@Override
-	public void initialize(final OnFeatureInitialized onFeatureInitialized)
-	{
-		super.initialize(onFeatureInitialized);
-		Log.i(TAG, ".initialize");
-		onFeatureInitialized.onInitialized(this, ResultCode.OK);
-	}
-
-	@Override
 	public FeatureName.State getStateName()
 	{
 		return FeatureName.State.TEST;
@@ -55,7 +46,7 @@ public class FeatureStateTest extends FeatureState
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		Log.i(TAG, ".onCreateView");
-		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_program_info, container, false);
+		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_watchlist, container, false);
 		return _viewGroup;
 	}
 

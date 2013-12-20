@@ -53,7 +53,7 @@ public class Environment
 		/**
 		 * Timeout in seconds for feature initialization
 		 */
-		FEATURE_INITIALIZE_TIMEOUT(55);
+		FEATURE_INITIALIZE_TIMEOUT(30);
 
 		Param(int value)
 		{
@@ -153,7 +153,7 @@ public class Environment
 				_eventMessenger.postDelayed(this, _timeout * 1000);
 				_initStartedTime = System.currentTimeMillis();
 				IFeature feature = _features.get(_nFeature);
-				Log.i(TAG, "Initializing " + feature.getName() + " " + feature.getType() + " with timeout " + _timeout
+				Log.i(TAG, "Initializing " + feature.getName() + " " + feature.getType() + " (" + feature.getClass().getName() + ") with timeout " + _timeout
 				        + " secs");
 				feature.initialize(this);
 			}
@@ -480,6 +480,11 @@ public class Environment
 	public void setHomeState(FeatureName.State featureName)
 	{
 		_homeFeatureState = featureName;
+	}
+
+	public FeatureName.State getHomeState()
+	{
+		return _homeFeatureState;
 	}
 
 	private void useDependencies(IFeature feature) throws FeatureNotFoundException

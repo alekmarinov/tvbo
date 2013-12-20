@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
+import org.json.JSONObject;
+
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.os.Bundle;
@@ -32,6 +34,7 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureComponent;
@@ -47,13 +50,13 @@ public abstract class FeatureEPG extends FeatureComponent
 {
 	public static final String TAG = FeatureEPG.class.getSimpleName();
 
+	public enum Provider
+	{
+		rayv, wilmaa
+	}
+
 	public enum Param
 	{
-		/**
-		 * The name of the EPG provider, e.g. rayv, wilmaa, generic
-		 */
-		EPG_PROVIDER("rayv"),
-
 		/**
 		 * The main url to the EPG server
 		 */
@@ -80,6 +83,11 @@ public abstract class FeatureEPG extends FeatureComponent
 		EPG_PROGRAMS_URL("${SERVER}/v${VERSION}/programs/${PROVIDER}/${CHANNEL}"),
 
 		/**
+		 * EPG program details url format
+		 */
+		EPG_PROGRAM_DETAILS_URL("${SERVER}/v${VERSION}/programs/${PROVIDER}/${CHANNEL}/${ID}"),
+
+		/**
 		 * Channel logo width
 		 */
 		CHANNEL_LOGO_WIDTH(80),
@@ -100,6 +108,16 @@ public abstract class FeatureEPG extends FeatureComponent
 		}
 	}
 
+	/**
+	 * Callback interface invoked when program details are loaded
+	 */
+	public interface IOnProgramDetails
+	{
+		void onProgramDetails(Program program);
+
+		void onError(int resultCode);
+	}
+
 	private RequestQueue _httpQueue;
 	private OnFeatureInitialized _onFeatureInitialized;
 	private int _epgVersion;
@@ -117,20 +135,17 @@ public abstract class FeatureEPG extends FeatureComponent
 
 	private EpgData _epgData;
 	private EpgData _epgDataBeingLoaded;
-	private ChannelMetaData _channelsMeta = new ChannelMetaData();
-	private ProgramMetaData _programsMeta = new ProgramMetaData();
 
 	@Override
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		Log.i(TAG, ".initialize");
 
-		super.initialize(onFeatureInitialized);
 		_onFeatureInitialized = onFeatureInitialized;
 
+		_epgProvider = getEPGProvider().name();
 		_epgVersion = getPrefs().getInt(Param.EPG_VERSION);
 		_epgServer = getPrefs().getString(Param.EPG_SERVER);
-		_epgProvider = getPrefs().getString(Param.EPG_PROVIDER);
 		_channelLogoWidth = getPrefs().getInt(Param.CHANNEL_LOGO_WIDTH);
 		_channelLogoHeight = getPrefs().getInt(Param.CHANNEL_LOGO_HEIGHT);
 
@@ -139,7 +154,62 @@ public abstract class FeatureEPG extends FeatureComponent
 		retrieveChannels();
 	}
 
+	public EpgData getEpgData()
+	{
+		return _epgData;
+	}
+
+	/**
+	 * Fill program details in program object
+	 *
+	 * @param channelId
+	 * @param program
+	 * @param onProgramDetails
+	 */
+	public void getProgramDetails(String channelId, Program program, IOnProgramDetails onProgramDetails)
+	{
+		if (program.hasDetails())
+		{
+			onProgramDetails.onProgramDetails(program);
+			return;
+		}
+
+		String programDetailsUrl = getProgramDetailsUrl(channelId, program.getId());
+		Log.i(TAG, "Retrieving program details of " + program.getTitle() + ", id = " + program.getId() + " from "
+		        + programDetailsUrl);
+		ProgramDetailsResponseCallback responseCallback = new ProgramDetailsResponseCallback(program, onProgramDetails);
+		JsonObjectRequest programDetailsRequest = new JsonObjectRequest(Request.Method.GET, programDetailsUrl, null,
+		        responseCallback, responseCallback);
+		_httpQueue.add(programDetailsRequest);
+	}
+
+	@Override
+	public Component getComponentName()
+	{
+		return FeatureName.Component.EPG;
+	}
+
+	/**
+	 * @return the name of EPG provider implementation, e.g. rayv, wilmaa,
+	 *         generic
+	 */
+	protected abstract Provider getEPGProvider();
+
+	/**
+	 * @param channelIndex
+	 * @return URL to video stream corresponding to the requested channel index
+	 */
 	public abstract String getChannelStreamUrl(int channelIndex);
+
+	/**
+	 * @return create channel instance
+	 */
+	protected abstract Channel createChannel();
+
+	/**
+	 * @return create program instance
+	 */
+	protected abstract Program createProgram();
 
 	private void retrieveChannels()
 	{
@@ -188,8 +258,9 @@ public abstract class FeatureEPG extends FeatureComponent
 		@Override
 		public void onResponse(ChannelListResponse response)
 		{
-			parseChannelListMetaData(response.meta);
-			parseChannelData(response.data);
+			Channel.MetaData metaData = createChannelMetaData();
+			indexChannelMetaData(metaData, response.meta);
+			parseChannelData(metaData, response.data);
 
 			final int nChannels = _epgDataBeingLoaded.getChannelCount();
 			Log.i(TAG, "Response with " + nChannels + " channels received");
@@ -260,8 +331,9 @@ public abstract class FeatureEPG extends FeatureComponent
 		public void onResponse(ProgramsResponse response)
 		{
 			Log.d(TAG, "Received programs for channel " + _channelId);
-			parseProgramsMetaData(response.meta);
-			parseProgramsData(_channelId, response.data);
+			Program.MetaData metaData = createProgramMetaData();
+			indexProgramMetaData(metaData, response.meta);
+			parseProgramsData(metaData, _channelId, response.data);
 			programsProcessed();
 		}
 
@@ -279,6 +351,34 @@ public abstract class FeatureEPG extends FeatureComponent
 		}
 	}
 
+	private class ProgramDetailsResponseCallback implements Response.Listener<JSONObject>, Response.ErrorListener
+	{
+		private IOnProgramDetails _onProgramDetails;
+		private Program _program;
+
+		ProgramDetailsResponseCallback(Program program, IOnProgramDetails onProgramDetails)
+		{
+			_program = program;
+			_onProgramDetails = onProgramDetails;
+		}
+
+		@Override
+		public void onResponse(JSONObject response)
+		{
+			_program.setDetails(response);
+			_onProgramDetails.onProgramDetails(_program);
+		}
+
+		@Override
+		public void onErrorResponse(VolleyError error)
+		{
+			int resultCode = ResultCode.GENERAL_FAILURE;
+			if (error.networkResponse != null)
+				resultCode = error.networkResponse.statusCode;
+			_onProgramDetails.onError(resultCode);
+		}
+	}
+
 	private void checkInitializeFinished()
 	{
 		int numChannels = _epgDataBeingLoaded.getChannelCount();
@@ -290,7 +390,8 @@ public abstract class FeatureEPG extends FeatureComponent
 			// free up the memory.
 
 			_epgData = _epgDataBeingLoaded;
-// TODO: Uncomment this if "parseProgramData()" is going to work without the AsyncTask logic
+			// TODO: Uncomment this if "parseProgramData()" is going to work
+			// without the AsyncTask logic
 			_epgDataBeingLoaded = null;
 			_retrievedChannelPrograms = 0;
 			_retrievedChannelLogos = 0;
@@ -299,130 +400,64 @@ public abstract class FeatureEPG extends FeatureComponent
 		}
 	}
 
-	private void parseChannelListMetaData(String[] meta)
+	protected Channel.MetaData createChannelMetaData()
 	{
-		if (meta == null)
-		{
-			Log.e(TAG, "Channel meta data is NULL.");
-			return;
-		}
+		return new Channel.MetaData();
+	}
 
+	protected Program.MetaData createProgramMetaData()
+	{
+		return new Program.MetaData();
+	}
+
+	protected void indexChannelMetaData(Channel.MetaData metaData, String[] meta)
+	{
 		for (int j = 0; j < meta.length; j++)
 		{
 			String key = meta[j];
 
 			if ("id".equals(key))
-				_channelsMeta.metaChannelId = j;
+				metaData.metaChannelId = j;
 			else if ("title".equals(key))
-				_channelsMeta.metaChannelTitle = j;
+				metaData.metaChannelTitle = j;
 			else if ("thumbnail".equals(key))
-				_channelsMeta.metaChannelThumbnail = j;
-			else
-				Log.w(TAG, "Unknown channel column `" + key + "`");
+				metaData.metaChannelThumbnail = j;
 		}
 	}
 
-	private void parseChannelData(String[][] data)
+	private void parseChannelData(Channel.MetaData metaData, String[][] data)
 	{
 		List<Channel> newChannelList = new ArrayList<Channel>();
 		for (int i = 0; i < data.length; i++)
 		{
-			Channel channel = new Channel();
-			channel.setChannelId(data[i][_channelsMeta.metaChannelId]);
-			channel.setTitle(data[i][_channelsMeta.metaChannelTitle]);
-			channel.setThumbnail(data[i][_channelsMeta.metaChannelThumbnail]);
+			Channel channel = createChannel();
+			channel.setChannelId(data[i][metaData.metaChannelId]);
+			channel.setTitle(data[i][metaData.metaChannelTitle]);
+			channel.setThumbnail(data[i][metaData.metaChannelThumbnail]);
+			channel.setAttributes(metaData, data[i]);
 			newChannelList.add(channel);
 		}
 
 		_epgDataBeingLoaded = new EpgData(newChannelList);
 	}
 
-	private void parseProgramsMetaData(String[] meta)
+	protected void indexProgramMetaData(Program.MetaData metaData, String[] meta)
 	{
-		if (meta == null)
-		{
-			Log.e(TAG, "Programs meta data is NULL.");
-			return;
-		}
-
 		for (int j = 0; j < meta.length; j++)
 		{
 			String key = meta[j];
 
 			if ("start".equals(key))
-				_programsMeta.metaStart = j;
+				metaData.metaStart = j;
 			else if ("stop".equals(key))
-				_programsMeta.metaStop = j;
+				metaData.metaStop = j;
 			else if ("title".equals(key))
-				_programsMeta.metaTitle = j;
-			else
-				Log.w(TAG, "Unknown program column `" + key + "`");
+				metaData.metaTitle = j;
 		}
 	}
 
-	private void parseProgramsData(final String channelId, final String[][] data)
+	private void parseProgramsData(Program.MetaData metaData, final String channelId, final String[][] data)
 	{
-//		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>()
-//		{
-//			private NavigableMap<String, Integer> _programMap = new TreeMap<String, Integer>();
-//			private List<Program> _programList = new ArrayList<Program>();
-//			private long _processStart;
-//			private long _processEnd;
-//
-//			@Override
-//            protected Void doInBackground(Void... params)
-//            {
-//				_processStart = System.nanoTime();
-//
-//				for (int i = 0; i < data.length; i++)
-//				{
-//					Program program = new Program();
-//					program.setTitle(data[i][_programsMeta.metaTitle]);
-//
-//					try
-//					{
-//						program.setStartTime(data[i][_programsMeta.metaStart]);
-//					}
-//					catch (ParseException e)
-//					{
-//						Log.w(TAG, "Undefined start time for program: " + program.getTitle() + " on channel: " + channelId);
-//					}
-//
-//					try
-//					{
-//						program.setStopTime(data[i][_programsMeta.metaStop]);
-//					}
-//					catch (ParseException e)
-//					{
-//						Log.w(TAG, "Undefined stop time for program: " + program.getTitle() + " on channel: " + channelId);
-//					}
-//
-//					_programList.add(program);
-//					_programMap.put(program.getStartTime(), i);
-//				}
-//
-//	            return null;
-//            }
-//
-//			@Override
-//			protected void onPostExecute(Void result)
-//			{
-//				if (_epgDataBeingLoaded == null)
-//				{
-//					Log.e(TAG, "_epgDataBeingLoaded is NULL");
-//					return;
-//				}
-//				_epgDataBeingLoaded.addProgramNavigableMap(channelId, _programMap);
-//				_epgDataBeingLoaded.addProgramList(channelId, _programList);
-//
-//				_processEnd = System.nanoTime();
-//				double processTime = (_processEnd - _processStart) / 1000000000.0;
-//				Log.e(TAG, "Parsed " + data.length + " program items for channel " + channelId + " for " + processTime + " sec");
-//			}
-//		};
-//
-//		task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, (Void) null);
-
 		long processStart = System.nanoTime();
 
 		NavigableMap<String, Integer> programMap = new TreeMap<String, Integer>();
@@ -430,12 +465,12 @@ public abstract class FeatureEPG extends FeatureComponent
 
 		for (int i = 0; i < data.length; i++)
 		{
-			Program program = new Program();
-			program.setTitle(data[i][_programsMeta.metaTitle]);
+			Program program = createProgram();
+			program.setTitle(data[i][metaData.metaTitle]);
 
 			try
 			{
-				program.setStartTime(data[i][_programsMeta.metaStart]);
+				program.setStartTime(data[i][metaData.metaStart]);
 			}
 			catch (ParseException e)
 			{
@@ -444,13 +479,15 @@ public abstract class FeatureEPG extends FeatureComponent
 
 			try
 			{
-				program.setStopTime(data[i][_programsMeta.metaStop]);
+				program.setStopTime(data[i][metaData.metaStop]);
 			}
 			catch (ParseException e)
 			{
 				Log.w(TAG, "Undefined stop time for program: " + program.getTitle() + " on channel: " + channelId);
 			}
 
+			// set custom provider attributes
+			program.setAttributes(metaData, data[i]);
 			programList.add(program);
 			programMap.put(program.getStartTime(), i);
 		}
@@ -462,7 +499,7 @@ public abstract class FeatureEPG extends FeatureComponent
 		Log.d(TAG, "Parsed " + data.length + " program items for channel " + channelId + " for " + processTime + " sec");
 	}
 
-	private String getChannelsUrl()
+	protected String getChannelsUrl()
 	{
 		Bundle bundle = new Bundle();
 		bundle.putString("SERVER", _epgServer);
@@ -495,29 +532,16 @@ public abstract class FeatureEPG extends FeatureComponent
 		return getPrefs().getString(Param.EPG_PROGRAMS_URL, bundle);
 	}
 
-	public EpgData getEpgData()
+	private String getProgramDetailsUrl(String channelId, String programId)
 	{
-		return _epgData;
-	}
+		Bundle bundle = new Bundle();
+		bundle.putString("SERVER", _epgServer);
+		bundle.putInt("VERSION", _epgVersion);
+		bundle.putString("PROVIDER", _epgProvider);
+		bundle.putString("CHANNEL", channelId);
+		bundle.putString("ID", programId);
 
-	@Override
-	public Component getComponentName()
-	{
-		return FeatureName.Component.EPG;
-	}
-
-	private static class ChannelMetaData
-	{
-		public int metaChannelId;
-		public int metaChannelTitle;
-		public int metaChannelThumbnail;
-	}
-
-	private static class ProgramMetaData
-	{
-		public int metaStart;
-		public int metaStop;
-		public int metaTitle;
+		return getPrefs().getString(Param.EPG_PROGRAM_DETAILS_URL, bundle);
 	}
 
 	// GSON entity class of channel list response

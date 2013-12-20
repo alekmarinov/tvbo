@@ -11,7 +11,7 @@
 package com.aviq.tv.android.home.core.feature;
 
 import com.aviq.tv.android.home.feature.FeatureHttpServer;
-import com.aviq.tv.android.home.feature.epg.FeatureEPGRayV;
+import com.aviq.tv.android.home.feature.epg.rayv.FeatureEPGRayV;
 import com.aviq.tv.android.home.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.home.feature.register.FeatureRegister;
 import com.aviq.tv.android.home.feature.scheduler.internet.FeatureInternet;
@@ -21,6 +21,7 @@ import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.home.feature.state.programinfo.FeatureStateProgramInfo;
 import com.aviq.tv.android.home.feature.state.tv.FeatureStateTV;
 import com.aviq.tv.android.home.feature.state.tv.FeatureStateTest;
+import com.aviq.tv.android.home.feature.state.watchlist.FeatureStateWatchlist;
 
 /**
  * Singleton with factory methods to create features by id
@@ -48,9 +49,11 @@ public class FeatureFactory
 		switch (featureId)
 		{
 			case EPG:
+				// return new FeatureEPGWilmaa();
 				return new FeatureEPGRayV();
 			case PLAYER:
 				return new FeaturePlayerRayV();
+				// return new FeaturePlayer();
 			case HTTP_SERVER:
 				return new FeatureHttpServer();
 			case REGISTER:
@@ -83,6 +86,8 @@ public class FeatureFactory
 				return new MessageBox();
 			case PROGRAM_INFO:
 				return new FeatureStateProgramInfo();
+			case WATCHLIST:
+				return new FeatureStateWatchlist();
 			case TEST:
 				return new FeatureStateTest();
 		}

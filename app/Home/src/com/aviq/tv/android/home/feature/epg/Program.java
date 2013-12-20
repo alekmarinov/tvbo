@@ -1,3 +1,12 @@
+/**
+ * Copyright (c) 2007-2013, AVIQ Bulgaria Ltd
+ *
+ * Project:     Home
+ * Filename:    Program.java
+ * Author:      alek
+ * Date:        19 Dec 2013
+ * Description: Program data holder class
+ */
 package com.aviq.tv.android.home.feature.epg;
 
 import java.text.DateFormat;
@@ -7,11 +16,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import org.json.JSONObject;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Program implements Parcelable, Comparable<Program>
+import com.aviq.tv.android.home.utils.Log;
+
+/**
+ * Program data holder class
+ */
+public abstract class Program implements Parcelable, Comparable<Program>
 {
+	private static final String TAG = Program.class.getSimpleName();
 	private static final DateFormat EPG_DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
 
 	// Bean properties
@@ -23,6 +40,35 @@ public class Program implements Parcelable, Comparable<Program>
 	private Calendar _startTimeCalendar;
 	private Calendar _stopTimeCalendar;
 
+	public static class MetaData
+	{
+		public int metaStart;
+		public int metaStop;
+		public int metaTitle;
+	}
+
+	public static Calendar getEpgTime(String epgTime)
+	{
+		Calendar cal;
+		try
+		{
+			Date dte = EPG_DATE_FORMAT.parse(epgTime);
+			cal = Calendar.getInstance();
+			cal.setTime(dte);
+		}
+		catch (ParseException e)
+		{
+			return null;
+		}
+		return cal;
+	}
+
+	public static String getEpgTime(Calendar cal)
+	{
+		String dateTime = EPG_DATE_FORMAT.format(cal.getTime());
+		return dateTime;
+	}
+
 	public Program()
 	{
 	}
@@ -32,12 +78,13 @@ public class Program implements Parcelable, Comparable<Program>
 		this();
 
 		try
-        {
-	        readFromParcel(in);
-        }
-        catch (ParseException e)
-        {
-        }
+		{
+			readFromParcel(in);
+		}
+		catch (ParseException e)
+		{
+			Log.e(TAG, e.getMessage(), e);
+		}
 	}
 
 	public void readFromParcel(Parcel in) throws ParseException
@@ -61,26 +108,11 @@ public class Program implements Parcelable, Comparable<Program>
 		return 0;
 	}
 
-	public static final Parcelable.Creator<Program> CREATOR = new Parcelable.Creator<Program>()
-	{
-		@Override
-		public Program createFromParcel(Parcel in)
-		{
-			return new Program(in);
-		}
-
-		@Override
-		public Program[] newArray(int size)
-		{
-			return new Program[size];
-		}
-	};
-
 	@Override
-    public int compareTo(Program another)
-    {
-	    return _startTime.compareTo(another._startTime);
-    }
+	public int compareTo(Program another)
+	{
+		return _startTime.compareTo(another._startTime);
+	}
 
 	public Calendar getStartTimeCalendar()
 	{
@@ -100,32 +132,10 @@ public class Program implements Parcelable, Comparable<Program>
 		return _stopTimeCalendar;
 	}
 
-	public static Calendar getEpgTime(String epgTime)
-	{
-		Calendar cal;
-        try
-        {
-	        Date dte = EPG_DATE_FORMAT.parse(epgTime);
-	        cal = Calendar.getInstance();
-	        cal.setTime(dte);
-        }
-        catch (ParseException e)
-        {
-	        return null;
-        }
-        return cal;
-	}
-
-	public static String getEpgTime(Calendar cal)
-	{
-    	String dateTime = EPG_DATE_FORMAT.format(cal.getTime());
-        return dateTime;
-	}
-
 	public static String getEpgTime(long millis)
 	{
-    	String dateTime = EPG_DATE_FORMAT.format(new Date(millis));
-        return dateTime;
+		String dateTime = EPG_DATE_FORMAT.format(new Date(millis));
+		return dateTime;
 	}
 
 	public String getId()
@@ -141,7 +151,6 @@ public class Program implements Parcelable, Comparable<Program>
 	public void setStartTime(String startTime) throws ParseException
 	{
 		_startTime = startTime;
-        // _startTimeCalendar = getEpgTime(_startTime);
 	}
 
 	public String getStopTime()
@@ -152,7 +161,6 @@ public class Program implements Parcelable, Comparable<Program>
 	public void setStopTime(String stopTime) throws ParseException
 	{
 		_stopTime = stopTime;
-		// _stopTimeCalendar = getEpgTime(_stopTime);
 	}
 
 	public String getTitle()
@@ -164,4 +172,31 @@ public class Program implements Parcelable, Comparable<Program>
 	{
 		_title = title;
 	}
+
+	/**
+	 * @return true if program detail attributes has been set
+	 */
+	public abstract boolean hasDetails();
+
+	/**
+	 * Set program detail attributes
+	 *
+	 * @param JSONObject with program detail attributes
+	 */
+	public abstract void setDetails(JSONObject details);
+
+	/**
+	 * @param programAttribute
+	 *
+	 * @return attribute string value
+	 */
+	public abstract String getDetailAttribute(ProgramAttribute programAttribute);
+
+	/**
+	 * Sets provider's specific program attributes
+	 *
+	 * @param metaData indexed meta data
+	 * @param attributes String array with the essential data positioned according the meta data indices
+	 */
+    public abstract void setAttributes(MetaData metaData, String[] attributes);
 }
