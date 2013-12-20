@@ -35,7 +35,8 @@ import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
 import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.player.FeaturePlayer;
-import com.aviq.tv.android.home.feature.state.epg.EpgGrid.OnEpgGridItemSelectionListener;
+import com.aviq.tv.android.home.feature.state.epg.EpgGrid.NAVIGATION;
+import com.aviq.tv.android.home.feature.state.epg.EpgGrid.OnEpgGridEventListener;
 import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.home.feature.state.programinfo.FeatureStateProgramInfo;
 
@@ -143,9 +144,12 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 				FeatureStateProgramInfo programInfo = (FeatureStateProgramInfo) Environment.getInstance()
 				        .getFeatureState(FeatureName.State.PROGRAM_INFO);
 				
+				String channelId = _epgGrid.getSelectedChannel().getChannelId();
+				String programId = ((Program) _epgGrid.getSelectedProgramList().getSelectedItem()).getId();
+				
 				Bundle featureParams = new Bundle();
-				featureParams.putParcelable(FeatureStateProgramInfo.ARGS_PROGRAM, (Program) _epgGrid
-				        .getSelectedProgramList().getSelectedItem());
+				featureParams.putString(FeatureStateProgramInfo.ARGS_CHANNEL_ID, channelId);
+				featureParams.putString(FeatureStateProgramInfo.ARGS_PROGRAM_ID, programId);
 				
 				Environment.getInstance().getStateManager().setStateOverlay((BaseState) programInfo, featureParams);
 			}
@@ -223,7 +227,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		_gridHeader.setAbsoluteTimeMax(absMax);
 	}
 	
-	private final OnEpgGridItemSelectionListener _onEpgGridItemSelectionListener = new OnEpgGridItemSelectionListener()
+	private final OnEpgGridEventListener _onEpgGridItemSelectionListener = new OnEpgGridEventListener()
 	{
 		@Override
 		public void onEpgGridItemSelecting(Channel channel, Program program)
@@ -237,7 +241,13 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 			Log.v(TAG, "channel = " + channel.getChannelId() + ", program start = " + program.getStartTime()
 			        + ", stop = " + program.getStopTime());
 			
-			_programInfo.updateBrief(program);
+			_programInfo.updateBrief(channel.getChannelId(), program);
+		}
+		
+		@Override
+		public void onEpgPageScroll(NAVIGATION direction)
+		{
+			
 		}
 	};
 	

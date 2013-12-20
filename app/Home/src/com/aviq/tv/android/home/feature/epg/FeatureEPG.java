@@ -487,7 +487,7 @@ public abstract class FeatureEPG extends FeatureComponent
 			}
 
 			// set custom provider attributes
-			program.setAttributes(metaData, data[i]);
+			program.setDetailAttributes(metaData, data[i]);
 			programList.add(program);
 			programMap.put(program.getStartTime(), i);
 		}

@@ -158,7 +158,7 @@ public class ProgramWilmaa extends Program
 	}
 
 	@Override
-    public void setAttributes(MetaData metaData, String[] attributes)
+    public void setDetailAttributes(MetaData metaData, String[] attributes)
     {
 		// no Wilmaa specific channel attributes
     }

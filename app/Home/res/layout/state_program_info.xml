@@ -21,9 +21,10 @@
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="3dip"
             android:contentDescription="@string/contentDescription"
-            android:scaleType="fitXY"
-            android:src="@drawable/test_epg_thumbnail"
+            android:scaleType="center"
+            android:src="@drawable/epg_image_thumbnail"
             android:visibility="visible" />
 
         <LinearLayout
@@ -36,7 +37,20 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/remaining_time"
+                android:id="@+id/date"
+                style="@style/ProgramText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="17dp"
+                android:drawableLeft="@drawable/ic_calendar"
+                android:drawablePadding="10dp"
+                android:singleLine="true"
+                android:text="22/10/2013 г."
+                android:textSize="26sp" />
+
+            <TextView
+                android:id="@+id/time"
                 style="@style/ProgramText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -45,7 +59,7 @@
                 android:drawableLeft="@drawable/ic_remaining_time"
                 android:drawablePadding="10dp"
                 android:singleLine="true"
-                android:text="Remaining time    20 min"
+                android:text="20:00"
                 android:textSize="26sp" />
         </LinearLayout>
     </RelativeLayout>

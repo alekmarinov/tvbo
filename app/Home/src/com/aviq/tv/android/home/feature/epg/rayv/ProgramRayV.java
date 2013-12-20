@@ -158,7 +158,7 @@ public class ProgramRayV extends Program
 	}
 
 	@Override
-    public void setAttributes(MetaData metaData, String[] attributes)
+    public void setDetailAttributes(MetaData metaData, String[] attributes)
     {
 		// no RayV specific channel attributes
     }
