@@ -43,6 +43,7 @@ public class FeatureStateProgramInfo extends FeatureState
 
 	private FeatureEPG _featureEPG;
 	private FeaturePlayer _featurePlayer;
+	private EpgProgramInfo _programInfo;
 
 	public FeatureStateProgramInfo()
 	{
@@ -88,9 +89,9 @@ public class FeatureStateProgramInfo extends FeatureState
 
 		EpgData epgData = _featureEPG.getEpgData();
 
-		EpgProgramInfo programInfo = new EpgProgramInfo(getActivity(), viewGroup);
-		programInfo.updateDetails(channelId, epgData.getProgram(channelId, programId));
-		Button watchlistBtn = (Button)viewGroup.findViewById(R.id.btn_watchlist);
+		_programInfo = new EpgProgramInfo(getActivity(), viewGroup);
+		_programInfo.updateDetails(channelId, epgData.getProgram(channelId, programId));
+		Button watchlistBtn = (Button) viewGroup.findViewById(R.id.btn_watchlist);
 		watchlistBtn.requestFocus();
 
 		watchlistBtn.setOnClickListener(new OnClickListener()
@@ -114,10 +115,19 @@ public class FeatureStateProgramInfo extends FeatureState
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
-		if (keyCode == KeyEvent.KEYCODE_BACK)
+		switch (keyCode)
 		{
-			Environment.getInstance().getStateManager().hideStateOverlay();
+			case KeyEvent.KEYCODE_BACK:
+				Environment.getInstance().getStateManager().hideStateOverlay();
+				return true;
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+				_programInfo.showPrevPage();
+				return true;
+			case KeyEvent.KEYCODE_DPAD_RIGHT:
+				_programInfo.showNextPage();
+				return true;
 		}
+
 		return super.onKeyDown(keyCode, event);
 	}
 

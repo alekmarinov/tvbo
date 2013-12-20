@@ -115,7 +115,19 @@
             android:text="14:30 - 15:10"
             android:textStyle="bold" />
 
-        <TextView
+        <ViewFlipper
+            android:id="@+id/details_flipper"
+            android:layout_width="match_parent"
+            android:layout_height="286dp" 
+            android:layout_marginTop="6dp"
+            android:background="@drawable/program_details_strip"
+            android:gravity="top"
+            android:paddingBottom="54dip"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+        />
+        
+        <!-- <TextView
             android:id="@+id/summary"
             style="@style/ProgramText"
             android:layout_width="match_parent"
@@ -129,6 +141,7 @@
             android:paddingRight="10dp"
             android:singleLine="false"
             android:text="Декстър\n Декстър\nДекстър\nДекстър\nДекстър\nДекстър\nДекстър\nпреследва и брутално убива онези опасни убийци, които са успели да избягат от &quot;дългата ръка на закона&quot;. Той организира убийствата си съгласно &quot;Кодекса на Хари&quot;, който е създал..." />
+         -->
     </LinearLayout>
 
     <TextView
