@@ -49,6 +49,7 @@
                 android:text="22/10/2013 г."
                 android:textSize="26sp" />
 
+            <!--  REMOVE ME -->
             <TextView
                 android:id="@+id/time"
                 style="@style/ProgramText"
@@ -60,7 +61,8 @@
                 android:drawablePadding="10dp"
                 android:singleLine="true"
                 android:text="20:00"
-                android:textSize="26sp" />
+                android:textSize="26sp" 
+                android:visibility="gone"/>
         </LinearLayout>
     </RelativeLayout>
 
@@ -77,7 +79,7 @@
             android:id="@+id/title_primary"
             style="@style/ProgramTextHighlight"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="38dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/program_details_strip"
             android:paddingLeft="10dp"
@@ -89,7 +91,7 @@
             android:id="@+id/title_secondary"
             style="@style/ProgramText"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="38dp"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="6dp"
             android:background="@drawable/program_details_strip"
@@ -103,7 +105,7 @@
             android:id="@+id/time_range"
             style="@style/ProgramText"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="38dp"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="6dp"
             android:background="@drawable/program_details_strip"
@@ -117,12 +119,12 @@
             android:id="@+id/summary"
             style="@style/ProgramText"
             android:layout_width="match_parent"
-            android:layout_height="280dp"
+            android:layout_height="286dp"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="6dp"
             android:background="@drawable/program_details_strip"
             android:gravity="top"
-            android:paddingBottom="48dip"
+            android:paddingBottom="54dip"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="false"
@@ -136,7 +138,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dip"
+        android:layout_marginBottom="44dip"
         android:drawableLeft="@drawable/ic_arrow_left"
         android:drawablePadding="10dip"
         android:drawableRight="@drawable/ic_arrow_right"

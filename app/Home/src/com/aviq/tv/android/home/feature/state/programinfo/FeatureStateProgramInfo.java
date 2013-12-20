@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 
@@ -82,15 +83,24 @@ public class FeatureStateProgramInfo extends FeatureState
 		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_program_info, container, false);
 
 		Bundle params = getArguments();
-		String channelId = params.getString(ARGS_CHANNEL_ID);
-		String programId = params.getString(ARGS_PROGRAM_ID);
+		final String channelId = params.getString(ARGS_CHANNEL_ID);
+		final String programId = params.getString(ARGS_PROGRAM_ID);
 
 		EpgData epgData = _featureEPG.getEpgData();
 
 		EpgProgramInfo programInfo = new EpgProgramInfo(getActivity(), viewGroup);
 		programInfo.updateDetails(channelId, epgData.getProgram(channelId, programId));
-		Button optionsContainer = (Button)viewGroup.findViewById(R.id.btn_play);
-		optionsContainer.requestFocus();
+		Button watchlistBtn = (Button)viewGroup.findViewById(R.id.btn_watchlist);
+		watchlistBtn.requestFocus();
+
+		watchlistBtn.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				Log.d(TAG, ".onClick: btn watchlist clicked on channel = " + channelId + ", programID " + programId);
+			}
+		});
 
 		return viewGroup;
 	}
