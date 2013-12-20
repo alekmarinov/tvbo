@@ -11,6 +11,7 @@
 package com.aviq.tv.android.home.core.feature;
 
 import com.aviq.tv.android.home.feature.FeatureHttpServer;
+import com.aviq.tv.android.home.feature.FeatureWatchlist;
 import com.aviq.tv.android.home.feature.epg.rayv.FeatureEPGRayV;
 import com.aviq.tv.android.home.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.home.feature.register.FeatureRegister;
@@ -58,6 +59,10 @@ public class FeatureFactory
 				return new FeatureHttpServer();
 			case REGISTER:
 				return new FeatureRegister();
+			case WATCHLIST:
+				return new FeatureWatchlist();
+			default:
+				break;
 		}
 		throw new FeatureNotFoundException(featureId);
 	}

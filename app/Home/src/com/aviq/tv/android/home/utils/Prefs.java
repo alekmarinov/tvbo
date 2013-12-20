@@ -39,6 +39,18 @@ public class Prefs
 	}
 
 	/**
+	 * Checks if key exists in the preferences
+	 *
+	 * @param key
+	 *            parameter name
+	 * @return true if the key is set in preferences
+	 */
+	public boolean has(Object key)
+	{
+		return _prefs.contains(key.toString());
+	}
+
+	/**
 	 * Returns string parameter from preferences
 	 *
 	 * @param key

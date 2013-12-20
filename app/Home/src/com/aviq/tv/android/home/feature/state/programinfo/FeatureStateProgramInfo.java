@@ -25,8 +25,10 @@ import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
+import com.aviq.tv.android.home.feature.FeatureWatchlist;
 import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
+import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.player.FeaturePlayer;
 import com.aviq.tv.android.home.feature.state.epg.EpgProgramInfo;
 import com.aviq.tv.android.home.feature.state.epg.FeatureStateEPG;
@@ -43,10 +45,12 @@ public class FeatureStateProgramInfo extends FeatureState
 
 	private FeatureEPG _featureEPG;
 	private FeaturePlayer _featurePlayer;
+	private FeatureWatchlist _watchlist;
 
 	public FeatureStateProgramInfo()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
+		_dependencies.Components.add(FeatureName.Component.WATCHLIST);
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
 	}
 
@@ -59,7 +63,8 @@ public class FeatureStateProgramInfo extends FeatureState
 			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
-
+			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
+			        FeatureName.Component.WATCHLIST);
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
 		catch (FeatureNotFoundException e)
@@ -89,8 +94,9 @@ public class FeatureStateProgramInfo extends FeatureState
 		EpgData epgData = _featureEPG.getEpgData();
 
 		EpgProgramInfo programInfo = new EpgProgramInfo(getActivity(), viewGroup);
-		programInfo.updateDetails(channelId, epgData.getProgram(channelId, programId));
-		Button watchlistBtn = (Button)viewGroup.findViewById(R.id.btn_watchlist);
+		final Program program = epgData.getProgram(channelId, programId);
+		programInfo.updateDetails(channelId, program);
+		Button watchlistBtn = (Button) viewGroup.findViewById(R.id.btn_watchlist);
 		watchlistBtn.requestFocus();
 
 		watchlistBtn.setOnClickListener(new OnClickListener()
@@ -99,6 +105,7 @@ public class FeatureStateProgramInfo extends FeatureState
 			public void onClick(View v)
 			{
 				Log.d(TAG, ".onClick: btn watchlist clicked on channel = " + channelId + ", programID " + programId);
+				_watchlist.addWatchlist(program);
 			}
 		});
 

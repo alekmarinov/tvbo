@@ -27,7 +27,7 @@ import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
 import com.aviq.tv.android.home.core.state.IStateMenuItem;
-import com.aviq.tv.android.home.feature.Watchlist;
+import com.aviq.tv.android.home.feature.FeatureWatchlist;
 import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
 
@@ -39,7 +39,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	public static final String TAG = FeatureStateWatchlist.class.getSimpleName();
 
 	private ViewGroup _viewGroup;
-	private Watchlist _watchlist;
+	private FeatureWatchlist _watchlist;
 
 	public FeatureStateWatchlist()
 	{
@@ -65,7 +65,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 			        FeatureName.State.MENU);
 			featureStateMenu.addMenuItemState(this);
 
-			_watchlist = (Watchlist) Environment.getInstance().getFeatureComponent(FeatureName.Component.WATCHLIST);
+			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(FeatureName.Component.WATCHLIST);
 
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}

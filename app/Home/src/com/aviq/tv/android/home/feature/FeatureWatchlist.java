@@ -24,25 +24,28 @@ import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
 import com.aviq.tv.android.home.feature.epg.Program;
+import com.aviq.tv.android.home.utils.Prefs;
 
 /**
  * Component feature managing programs watchlist
  */
-public class Watchlist extends FeatureComponent
+public class FeatureWatchlist extends FeatureComponent
 {
-	public static final String TAG = Watchlist.class.getSimpleName();
+	public static final String TAG = FeatureWatchlist.class.getSimpleName();
 
 	public enum Param
 	{
 		/**
-		 * List of program identifier keys
+		 * List of program identifier keys formatted as
+		 * <channel_id>/<program_id>
 		 */
 		WATCHLIST
 	}
 
 	private ArrayList<Program> _watchedPrograms = new ArrayList<Program>();
+	private Prefs _userPrefs;
 
-	public Watchlist()
+	public FeatureWatchlist()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
 	}
@@ -53,9 +56,11 @@ public class Watchlist extends FeatureComponent
 		Log.i(TAG, ".initialize");
 		try
 		{
-			FeatureEPG featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
+			_userPrefs = Environment.getInstance().getUserPrefs();
+			FeatureEPG featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(
+			        FeatureName.Component.EPG);
 			_watchedPrograms = loadWatchlist(featureEPG.getEpgData());
-			super.initialize(onFeatureInitialized);
+			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
 		catch (FeatureNotFoundException e)
 		{
@@ -97,7 +102,7 @@ public class Watchlist extends FeatureComponent
 	 */
 	public boolean isWatched(Program program)
 	{
-		for (Program watchedProgram: _watchedPrograms)
+		for (Program watchedProgram : _watchedPrograms)
 		{
 			if (program.equals(watchedProgram))
 				return true;
@@ -123,7 +128,7 @@ public class Watchlist extends FeatureComponent
 	private void saveWatchlist(List<Program> programs)
 	{
 		StringBuffer buffer = new StringBuffer();
-		for (Program program: programs)
+		for (Program program : programs)
 		{
 			if (buffer.length() > 0)
 				buffer.append(',');
@@ -131,16 +136,18 @@ public class Watchlist extends FeatureComponent
 			buffer.append('/');
 			buffer.append(program.getId());
 		}
-		getPrefs().put(Param.WATCHLIST, buffer.toString());
+		_userPrefs.put(Param.WATCHLIST, buffer.toString());
 	}
 
 	// Loads programs list from watchlist settings
 	private ArrayList<Program> loadWatchlist(EpgData epgData)
 	{
 		ArrayList<Program> programs = new ArrayList<Program>();
-		String buffer = getPrefs().getString(Param.WATCHLIST);
+		if (!_userPrefs.has(Param.WATCHLIST))
+			return programs;
+		String buffer = _userPrefs.getString(Param.WATCHLIST);
 		String[] programIds = buffer.split(",");
-		for (String programId: programIds)
+		for (String programId : programIds)
 		{
 			String[] idElements = programId.split("/");
 			if (idElements.length != 2)
