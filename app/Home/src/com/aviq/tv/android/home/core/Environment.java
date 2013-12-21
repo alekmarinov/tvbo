@@ -20,6 +20,7 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Bundle;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -47,6 +48,8 @@ import com.aviq.tv.android.home.utils.Prefs;
 public class Environment
 {
 	public static final String TAG = Environment.class.getSimpleName();
+	public static final int ON_LOADING = EventMessenger.ID();
+	public static final int ON_LOADED = EventMessenger.ID();
 
 	public enum Param
 	{
@@ -78,7 +81,7 @@ public class Environment
 	private ImageLoader _imageLoader;
 	private List<IFeature> _features = new ArrayList<IFeature>();
 	private EventMessenger _eventMessenger = new EventMessenger();
-	private FeatureName.State _homeFeatureState;
+	private FeatureName.State _splashFeatureName;
 	private Map<FeatureName.Component, Prefs> _componentPrefs = new HashMap<FeatureName.Component, Prefs>();
 	private Map<FeatureName.Scheduler, Prefs> _schedulerPrefs = new HashMap<FeatureName.Scheduler, Prefs>();
 	private Map<FeatureName.State, Prefs> _statePrefs = new HashMap<FeatureName.State, Prefs>();
@@ -99,8 +102,10 @@ public class Environment
 
 	/**
 	 * Initialize environment
+	 * @throws FeatureNotFoundException
+	 * @throws StateException
 	 */
-	public void initialize(Activity activity)
+	public void initialize(Activity activity) throws FeatureNotFoundException, StateException
 	{
 		// initializes environment context
 		_activity = activity;
@@ -117,6 +122,14 @@ public class Environment
 		int cacheSize = 1024 * 1024 * memClass / 8;
 		_imageLoader = new ImageLoader(_requestQueue, new BitmapLruCache(cacheSize));
 
+		// Show splash sate
+		if (_splashFeatureName == null)
+		{
+			throw new RuntimeException("Splash state is not defined");
+		}
+		FeatureState splashFeatureState = getFeatureState(_splashFeatureName);
+		_stateManager.setStateMain(splashFeatureState, null);
+
 		// initializes features
 		Log.i(TAG, "Sorting features tolologically based on their declared dependencies");
 		_features = topologicalSort(_features);
@@ -130,7 +143,7 @@ public class Environment
 		onFeatureInitialized.initializeNext();
 	}
 
-	private class FeatureInitializeTimeout implements Runnable, IFeature.OnFeatureInitialized
+	private class FeatureInitializeCallBack implements Runnable, IFeature.OnFeatureInitialized
 	{
 		private int _nFeature = -1;
 		private int _nInitialized = -1;
@@ -153,35 +166,13 @@ public class Environment
 				_eventMessenger.postDelayed(this, _timeout * 1000);
 				_initStartedTime = System.currentTimeMillis();
 				IFeature feature = _features.get(_nFeature);
-				Log.i(TAG, "Initializing " + feature.getName() + " " + feature.getType() + " (" + feature.getClass().getName() + ") with timeout " + _timeout
-				        + " secs");
+				Log.i(TAG, "Initializing " + feature.getName() + " " + feature.getType() + " ("
+				        + feature.getClass().getName() + ") with timeout " + _timeout + " secs");
 				feature.initialize(this);
 			}
 			else
 			{
-				// all features initialized, display home state feature
-				if (_homeFeatureState == null)
-				{
-					Log.e(TAG, "No home state feature defined! First used state feature will be used as home. "
-					        + "Check your environment for missing use declarations");
-				}
-				else
-				{
-					Log.i(TAG, "Setting main feature state " + _homeFeatureState);
-					try
-					{
-						FeatureState featureState = getFeatureState(_homeFeatureState);
-						_stateManager.setStateMain(featureState, null);
-					}
-					catch (FeatureNotFoundException e)
-					{
-						Log.e(TAG, e.getMessage(), e);
-					}
-					catch (StateException e)
-					{
-						Log.e(TAG, e.getMessage(), e);
-					}
-				}
+				_eventMessenger.trigger(ON_LOADED);
 			}
 		}
 
@@ -198,6 +189,7 @@ public class Environment
 		@Override
 		public void onInitialized(IFeature feature, int resultCode)
 		{
+			onInitializeProgress(feature, 1.0f);
 			String featureName = feature.getName() + " " + feature.getType();
 			if (_nInitialized == _nFeature)
 			{
@@ -208,12 +200,24 @@ public class Environment
 			        + (System.currentTimeMillis() - _initStartedTime) + " ms with result " + resultCode);
 			initializeNext();
 		}
+
+		@Override
+		public void onInitializeProgress(IFeature feature, float progress)
+		{
+			float totalProgress = (_nFeature + progress) / _features.size();
+
+			Bundle bundle = new Bundle();
+			bundle.putFloat("totalProgress", totalProgress);
+			bundle.putFloat("featureProgress", progress);
+			bundle.putString("featureName", feature.getType().name() + " " + feature.getName());
+			_eventMessenger.trigger(ON_LOADING, bundle);
+		}
 	}
 
 	/**
 	 * Chain based features initializer
 	 */
-	private FeatureInitializeTimeout onFeatureInitialized = new FeatureInitializeTimeout();
+	private FeatureInitializeCallBack onFeatureInitialized = new FeatureInitializeCallBack();
 
 	/**
 	 * @return main application context
@@ -365,10 +369,16 @@ public class Environment
 	{
 		Log.i(TAG, ".use: State " + featureName);
 
+		// Sets first used feature state as splash state
+		if (_splashFeatureName == null)
+		{
+			_splashFeatureName = featureName;
+		}
+
 		try
 		{
 			// Check if feature is already used
-			getFeatureState(featureName);
+			FeatureState featureState = getFeatureState(featureName);
 		}
 		catch (FeatureNotFoundException e)
 		{
@@ -377,9 +387,6 @@ public class Environment
 			useDependencies(feature);
 			_features.add(feature);
 		}
-
-		// Sets last used feature state as home state
-		_homeFeatureState = featureName;
 	}
 
 	/**
@@ -475,16 +482,6 @@ public class Environment
 	public Prefs getUserPrefs()
 	{
 		return _userPrefs;
-	}
-
-	public void setHomeState(FeatureName.State featureName)
-	{
-		_homeFeatureState = featureName;
-	}
-
-	public FeatureName.State getHomeState()
-	{
-		return _homeFeatureState;
 	}
 
 	private void useDependencies(IFeature feature) throws FeatureNotFoundException

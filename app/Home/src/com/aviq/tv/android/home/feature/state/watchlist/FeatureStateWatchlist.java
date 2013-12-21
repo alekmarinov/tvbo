@@ -100,7 +100,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		_gridView.setAdapter(_adapter);
 		_gridView.setOnItemSelectedListener(_onItemSelectedListener);
 		_gridView.setOnItemClickListener(_onItemClickListener);
-//		_viewGroup.requestFocus();
+		_viewGroup.requestFocus();
 
 		// Initial refresh of the program info widget
 		if (_adapter.getCount() > 0)

@@ -16,6 +16,7 @@ import com.aviq.tv.android.home.feature.epg.rayv.FeatureEPGRayV;
 import com.aviq.tv.android.home.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.home.feature.register.FeatureRegister;
 import com.aviq.tv.android.home.feature.scheduler.internet.FeatureInternet;
+import com.aviq.tv.android.home.feature.state.FeatureStateLoading;
 import com.aviq.tv.android.home.feature.state.MessageBox;
 import com.aviq.tv.android.home.feature.state.channels.FeatureStateChannels;
 import com.aviq.tv.android.home.feature.state.epg.FeatureStateEPG;
@@ -84,6 +85,8 @@ public class FeatureFactory
 		{
 			case MENU:
 				return new FeatureStateMenu();
+			case LOADING:
+				return new FeatureStateLoading();
 			case TV:
 				return new FeatureStateTV();
 			case EPG:

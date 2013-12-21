@@ -395,8 +395,13 @@ public abstract class FeatureEPG extends FeatureComponent
 			_epgDataBeingLoaded = null;
 			_retrievedChannelPrograms = 0;
 			_retrievedChannelLogos = 0;
-
 			_onFeatureInitialized.onInitialized(FeatureEPG.this, ResultCode.OK);
+		}
+		else
+		{
+			float processedCount = _retrievedChannelPrograms + _retrievedChannelLogos;
+			float totalCount = 2 * numChannels; // The number of all programs and logos queries
+			_onFeatureInitialized.onInitializeProgress(FeatureEPG.this, processedCount / totalCount);
 		}
 	}
 

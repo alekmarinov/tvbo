@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.application.IApplication;
 
 /**
@@ -33,7 +32,6 @@ public class MainActivity extends Activity
 		Log.i(TAG, ".onCreate");
         _application = (IApplication)getApplication();
         _application.onActivityCreate(this);
-		Environment.getInstance().initialize(this);
 	}
 
 	@Override

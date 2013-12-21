@@ -28,6 +28,7 @@ public interface IFeature
 	public interface OnFeatureInitialized
 	{
 		public void onInitialized(IFeature feature, int resultCode);
+		public void onInitializeProgress(IFeature feature, float progress);
 	}
 
 	/**

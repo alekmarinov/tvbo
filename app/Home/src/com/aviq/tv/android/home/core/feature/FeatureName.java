@@ -33,6 +33,7 @@ public class FeatureName
 	public static enum State
 	{
 		MENU,
+		LOADING,
 		TV,
 		EPG,
 		MESSAGE_BOX,

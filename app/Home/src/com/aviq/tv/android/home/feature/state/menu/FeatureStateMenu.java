@@ -37,12 +37,14 @@ public class FeatureStateMenu extends FeatureState
 {
 	private static final String TAG = FeatureStateMenu.class.getSimpleName();
 	private List<IStateMenuItem> _menuItemStates = new ArrayList<IStateMenuItem>();
-	private ViewGroup _rootView;
+	private ViewGroup _menuContainer;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		_rootView = (ViewGroup) inflater.inflate(R.layout.state_menu, container, false);
+		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_menu, container, false);
+		_menuContainer = (ViewGroup)viewGroup.findViewById(R.id.menu_container);
+
 		for (final IStateMenuItem menuItemState : _menuItemStates)
 		{
 			ImageView imageView = new ImageButton(Environment.getInstance().getContext());
@@ -63,11 +65,11 @@ public class FeatureStateMenu extends FeatureState
 					}
 				}
 			});
-			_rootView.addView(imageView);
+			_menuContainer.addView(imageView);
 			Log.i(TAG, "Created menu item " + menuItemState.getMenuItemCaption());
 		}
-		_rootView.requestFocus();
-		return _rootView;
+		_menuContainer.requestFocus();
+		return viewGroup;
 	}
 
 	public void addMenuItemState(IStateMenuItem menuItemState)

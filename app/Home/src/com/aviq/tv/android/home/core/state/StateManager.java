@@ -40,6 +40,8 @@ public class StateManager
 	private final Stack<BaseState> _activeStates = new Stack<BaseState>();
 	private final Activity _activity;
 	private final Handler _handler = new Handler();
+	private int _overlayBackgroundColor;
+	private int _overlayBackgroundImage = 0;
 
 	public enum StateLayer
 	{
@@ -127,11 +129,12 @@ public class StateManager
 						_activeStates.add(newState);
 						showState(newState, StateLayer.OVERLAY, params);
 					}
-else
-{
-	_activity.findViewById(R.id.main_fragment).requestFocus();
-	//_activeStates.elementAt(_activeStates.size() - 1).getView().requestFocus(); 
-}
+					else
+					{
+						// !!! This breaks the EPG grid
+						//_activity.findViewById(R.id.main_fragment).requestFocus();
+						//_activeStates.elementAt(_activeStates.size() - 1).getView().requestFocus(); 
+					}
 				}
 				else
 				{
@@ -232,8 +235,25 @@ else
 				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 				ft.commit();
 
-				// notify state is shown
-				state.onShow();
+				_handler.post(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						if (stateLayer.equals(StateLayer.OVERLAY))
+						{
+							if (_overlayBackgroundImage != 0)
+								state.getView().setBackgroundResource(_overlayBackgroundImage);
+							else
+								state.getView().setBackgroundColor(_overlayBackgroundColor);
+						}
+						
+//						state.getView().requestFocus();
+
+						// notify state is shown
+						state.onShow();
+					}
+				});
 			}
 		};
 		if (state.isAdded())
@@ -391,5 +411,15 @@ else
 			// notify state is hidden
 			state.onHide();
 		}
+	}
+
+	public void setOverlayBackgroundColor(int overlayBackgroundColor)
+	{
+		_overlayBackgroundColor = overlayBackgroundColor;
+	}
+
+	public void setOverlayBackgroundImage(int overlayBackgroundImage)
+	{
+		_overlayBackgroundImage = overlayBackgroundImage;
 	}
 }
