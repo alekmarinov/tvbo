@@ -40,9 +40,9 @@ public class ApplicationAVIQTV extends Application implements IApplication
 		{
 			Environment.getInstance().use(FeatureName.State.LOADING);
 			Environment.getInstance().use(FeatureName.State.EPG);
-			Environment.getInstance().use(FeatureName.State.WATCHLIST);
-			Environment.getInstance().use(FeatureName.State.TV);
 			Environment.getInstance().use(FeatureName.State.CHANNELS);
+			Environment.getInstance().use(FeatureName.State.TV);
+			Environment.getInstance().use(FeatureName.State.WATCHLIST);
 			Environment.getInstance().initialize(activity);
 			Environment.getInstance().getStateManager()
 			        .setOverlayBackgroundColor(activity.getResources().getColor(R.color.overlay_background));

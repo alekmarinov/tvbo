@@ -56,7 +56,7 @@
                 android:gravity="left"
                 android:listSelector="@android:color/transparent"
                 android:scrollingCache="false"
-                aviqtv:visibleItems="7" >
+                aviqtv:visibleItems="7">
             </com.aviq.tv.android.home.feature.state.epg.EpgListView>
 
             <View

@@ -34,5 +34,7 @@ public class ContextButton extends Button
 		
 		if (textResId > 0)
 			setCompoundDrawablesWithIntrinsicBounds(iconResId, 0, 0, 0);
+		
+		setId(textResId);
 	}
 }

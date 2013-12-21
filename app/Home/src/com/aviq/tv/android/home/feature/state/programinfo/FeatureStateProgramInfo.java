@@ -29,6 +29,7 @@ import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
 import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.player.FeaturePlayer;
+import com.aviq.tv.android.home.feature.state.ContextButton;
 import com.aviq.tv.android.home.feature.state.ContextButtonGroup;
 import com.aviq.tv.android.home.feature.state.epg.EpgProgramInfo;
 
@@ -99,24 +100,29 @@ public class FeatureStateProgramInfo extends FeatureState
 		_channelId = params.getString(ARGS_CHANNEL_ID);
 		_programId = params.getString(ARGS_PROGRAM_ID);
 
+		Program program = _epgData.getProgram(_channelId, _programId);
+
 		// Show detailed program info
 		_programInfo = new EpgProgramInfo(getActivity(), viewGroup);
-		_programInfo.updateDetails(_channelId, _epgData.getProgram(_channelId, _programId));
+		_programInfo.updateDetails(_channelId, program);
 
 		// Create program options group of buttons
 		_contextButtonGroup = (ContextButtonGroup) viewGroup.findViewById(R.id.program_options_list);
 		_contextButtonGroup.setButtonOnClickListener(_contextButtonGroupOnClickListener);
+
+		// Context button "Play"
 		_contextButtonGroup.createButton(R.drawable.ic_option_btn_play, R.string.play);
-		_contextButtonGroup.createButton(R.drawable.ic_option_btn_favorite, R.string.addToWatchlist);
+
+		// Context button "Add to watchlist" / "Remove from watchlist"
+		if (_watchlist.isWatched(program))
+			_contextButtonGroup.createButton(R.drawable.ic_option_btn_favorite, R.string.removeFromWatchlist);
+		else
+			_contextButtonGroup.createButton(R.drawable.ic_option_btn_favorite, R.string.addToWatchlist);
+
+		// Context button "Like" / "Unlike"
 		_contextButtonGroup.createButton(R.drawable.ic_option_btn_like, R.string.like);
 
 		return viewGroup;
-	}
-
-	@Override
-	public void onResume()
-	{
-		super.onResume();
 	}
 
 	@Override
@@ -155,11 +161,29 @@ public class FeatureStateProgramInfo extends FeatureState
 				break;
 
 				case R.string.addToWatchlist:
+				{
 					Program program = _epgData.getProgram(_channelId, _programId);
 
 					Log.d(TAG, ".onClick: btn watchlist clicked on channel = " + _channelId + ", programID "
 					        + _programId);
 					_watchlist.addWatchlist(program);
+
+					ContextButton button = (ContextButton) view;
+					button.setContent(R.drawable.ic_option_btn_favorite, R.string.removeFromWatchlist);
+				}
+				break;
+
+				case R.string.removeFromWatchlist:
+				{
+					Program program = _epgData.getProgram(_channelId, _programId);
+
+					Log.d(TAG, ".onClick: btn watchlist clicked on channel = " + _channelId + ", programID "
+					        + _programId);
+					_watchlist.removeWatchlist(program);
+
+					ContextButton button = (ContextButton) view;
+					button.setContent(R.drawable.ic_option_btn_favorite, R.string.addToWatchlist);
+				}
 				break;
 
 				case R.string.like:

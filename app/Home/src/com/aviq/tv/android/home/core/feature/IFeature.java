@@ -61,7 +61,7 @@ public interface IFeature
 	/**
 	 * @return an event messenger associated with this feature
 	 */
-	EventMessenger getEventMessanger();
+	EventMessenger getEventMessenger();
 
 	/**
 	 * Inherit this method to receive messages

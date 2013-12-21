@@ -129,6 +129,12 @@ public class StateManager
 						_activeStates.add(newState);
 						showState(newState, StateLayer.OVERLAY, params);
 					}
+					else
+					{
+						// !!! This breaks the EPG grid
+						//_activity.findViewById(R.id.main_fragment).requestFocus();
+						//_activeStates.elementAt(_activeStates.size() - 1).getView().requestFocus(); 
+					}
 				}
 				else
 				{
@@ -241,6 +247,8 @@ public class StateManager
 							else
 								state.getView().setBackgroundColor(_overlayBackgroundColor);
 						}
+						
+//						state.getView().requestFocus();
 
 						// notify state is shown
 						state.onShow();
@@ -310,6 +318,7 @@ public class StateManager
 	{
 		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode + ", state = " + getMainState() + ", overlay = "
 		        + getOverlayState());
+
 		if (_activeStates.size() > 0)
 			return _activeStates.get(_activeStates.size() - 1).onKeyDown(keyCode, event);
 

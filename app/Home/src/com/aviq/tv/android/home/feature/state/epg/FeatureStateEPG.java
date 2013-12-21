@@ -51,7 +51,6 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 	private FeaturePlayer _featurePlayer;
 	private EpgGrid _epgGrid;
 	private EpgHeaderView _gridHeader;
-	private int _gridHeaderWidth = 0;
 	private EpgListView _gridList;
 	private TextView _dateTimeView;
 	private EpgProgramInfo _programInfo;
@@ -129,12 +128,6 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 	}
 	
 	@Override
-	public void onResume()
-	{
-		super.onResume();
-	}
-	
-	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
@@ -176,7 +169,6 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 			public void onGlobalLayout()
 			{
 				_gridHeader.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-				_gridHeaderWidth = _gridHeader.getWidth();
 				
 				// This method relies on the width of the _gridHeader widget. In
 				// onResume() it is still zero, therefore, we get it from the

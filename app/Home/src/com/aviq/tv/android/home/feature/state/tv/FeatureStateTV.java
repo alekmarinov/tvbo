@@ -171,7 +171,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		{
 			subscribe(FeatureStateTV.this, ON_TIMER);
 			_programBarUpdater.run();
-			getEventMessanger().trigger(ON_TIMER, 1000);
+			getEventMessenger().trigger(ON_TIMER, 1000);
 		}
 	};
 
@@ -334,7 +334,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			// Log.i(TAG, ".onEvent: Updating on timer event");
 			_programBarUpdater.run();
 			updateClock();
-			getEventMessanger().trigger(ON_TIMER, 1000);
+			getEventMessenger().trigger(ON_TIMER, 1000);
 		}
 	}
 
