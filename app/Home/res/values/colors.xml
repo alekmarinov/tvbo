@@ -5,4 +5,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00000000</color>
     <color name="epg_grid_divider_bar">#586084</color>
+    <color name="overlay_background">#CC000000</color>
 </resources>

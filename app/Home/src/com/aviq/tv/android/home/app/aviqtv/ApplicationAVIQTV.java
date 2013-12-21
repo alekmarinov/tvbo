@@ -42,16 +42,19 @@ public class ApplicationAVIQTV extends Application implements IApplication
 			Environment.getInstance().use(FeatureName.State.EPG);
 			Environment.getInstance().use(FeatureName.State.WATCHLIST);
 			Environment.getInstance().use(FeatureName.State.TV);
+			Environment.getInstance().use(FeatureName.State.CHANNELS);
 			Environment.getInstance().initialize(activity);
+			Environment.getInstance().getStateManager()
+			        .setOverlayBackgroundColor(activity.getResources().getColor(R.color.overlay_background));
 		}
 		catch (FeatureNotFoundException e)
 		{
 			Log.e(TAG, e.getMessage(), e);
 		}
-        catch (StateException e)
-        {
+		catch (StateException e)
+		{
 			Log.e(TAG, e.getMessage(), e);
-        }
+		}
 	}
 
 	@Override
@@ -82,25 +85,25 @@ public class ApplicationAVIQTV extends Application implements IApplication
 
 		switch (keyCode)
 		{
-			// Menu
+		// Menu
 			case KeyEvent.KEYCODE_F2:
 			{
 				FeatureState menuFeatureState;
-                try
-                {
-	                menuFeatureState = Environment.getInstance().getFeatureState(FeatureName.State.MENU);
+				try
+				{
+					menuFeatureState = Environment.getInstance().getFeatureState(FeatureName.State.MENU);
 					Environment.getInstance().getStateManager().setStateOverlay(menuFeatureState, null);
-                }
-                catch (FeatureNotFoundException e)
-                {
-                	Log.e(TAG, e.getMessage(), e);
-                }
-                catch (StateException e)
-                {
-                	Log.e(TAG, e.getMessage(), e);
-                }
+				}
+				catch (FeatureNotFoundException e)
+				{
+					Log.e(TAG, e.getMessage(), e);
+				}
+				catch (StateException e)
+				{
+					Log.e(TAG, e.getMessage(), e);
+				}
 			}
-			return true;
+				return true;
 		}
 		return false;
 	}

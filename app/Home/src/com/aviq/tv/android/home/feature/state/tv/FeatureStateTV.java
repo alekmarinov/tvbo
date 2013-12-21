@@ -364,7 +364,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	@Override
 	public int getMenuItemResourceId()
 	{
-		return R.drawable.ic_menu_my_channels;
+		return R.drawable.ic_menu_tv;
 	}
 
 	@Override
