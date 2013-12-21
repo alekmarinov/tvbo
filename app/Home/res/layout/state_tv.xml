@@ -230,6 +230,27 @@
                 android:singleLine="true"
                 android:text="11:05" />
         </LinearLayout>
+        
+        <include android:id="@+id/program_navigator" 
+            layout="@layout/programbar_navigator"
+            android:layout_width="@dimen/program_navigator_width"
+            android:layout_height="@dimen/program_navigator_width"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40dip"
+            android:layout_centerVertical="true"
+            android:visibility="visible"
+        />
+        
+        <include android:id="@+id/program_spooler" 
+            layout="@layout/programbar_spooler"
+            android:layout_width="@dimen/program_navigator_width"
+            android:layout_height="@dimen/program_navigator_width"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40dip"
+            android:layout_centerVertical="true"
+            android:visibility="invisible"
+        />
+            
     </RelativeLayout>
 
 </RelativeLayout>

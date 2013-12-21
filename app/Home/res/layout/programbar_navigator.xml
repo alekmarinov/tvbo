@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="210dp"
-    android:layout_height="210dp"
+    android:layout_width="@dimen/program_navigator_width"
+    android:layout_height="@dimen/program_navigator_width"
     android:background="@drawable/tv_programbar_navigator" >
 
     <ImageButton
