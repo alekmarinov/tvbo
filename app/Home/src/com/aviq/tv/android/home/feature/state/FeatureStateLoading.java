@@ -30,6 +30,7 @@ import com.aviq.tv.android.home.core.state.StateException;
  */
 public class FeatureStateLoading extends FeatureState
 {
+	public static final String TAG = FeatureStateLoading.class.getSimpleName();
 	private ProgressBar _progressBar;
 
 	public enum Param
@@ -89,7 +90,7 @@ public class FeatureStateLoading extends FeatureState
 	private void updateLoadingInfo(String featureName, float totalProgress, float featureProgress)
 	{
 		int progress = (int) (100 * totalProgress);
-		Log.i(TAG, "set progress " + progress);
+		Log.d(TAG, "load progress " + progress + "%");
 		_progressBar.setProgress(progress);
 	}
 
