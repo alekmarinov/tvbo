@@ -30,4 +30,8 @@
     <!-- watchlist -->
     <dimen name="watchlist_item_width">174dp</dimen>
     <dimen name="watchlist_item_height">133dp</dimen>
+    
+    <!-- program info -->
+    <dimen name="details_area_width">600dp</dimen>
+    <dimen name="details_area_height">240dp</dimen>
 </resources>

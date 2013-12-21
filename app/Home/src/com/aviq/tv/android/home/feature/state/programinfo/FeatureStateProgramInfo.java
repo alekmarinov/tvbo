@@ -24,8 +24,10 @@ import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
+import com.aviq.tv.android.home.feature.FeatureWatchlist;
 import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
+import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.player.FeaturePlayer;
 import com.aviq.tv.android.home.feature.state.ContextButtonGroup;
 import com.aviq.tv.android.home.feature.state.epg.EpgProgramInfo;
@@ -42,11 +44,17 @@ public class FeatureStateProgramInfo extends FeatureState
 	
 	private FeatureEPG _featureEPG;
 	private FeaturePlayer _featurePlayer;
+	private FeatureWatchlist _watchlist;
+	private EpgProgramInfo _programInfo;
 	private ContextButtonGroup _contextButtonGroup;
+	private EpgData _epgData;
+	private String _channelId;
+	private String _programId;
 	
 	public FeatureStateProgramInfo()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
+		_dependencies.Components.add(FeatureName.Component.WATCHLIST);
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
 	}
 	
@@ -59,7 +67,8 @@ public class FeatureStateProgramInfo extends FeatureState
 			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
-			
+			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
+			        FeatureName.Component.WATCHLIST);
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
 		catch (FeatureNotFoundException e)
@@ -82,19 +91,19 @@ public class FeatureStateProgramInfo extends FeatureState
 		
 		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_program_info, container, false);
 		
+		_epgData = _featureEPG.getEpgData();
+		
 		// Extract fragment parameters
 		
 		Bundle params = getArguments();
-		String channelId = params.getString(ARGS_CHANNEL_ID);
-		String programId = params.getString(ARGS_PROGRAM_ID);
+		_channelId = params.getString(ARGS_CHANNEL_ID);
+		_programId = params.getString(ARGS_PROGRAM_ID);
 		
 		// Show detailed program info
-		EpgData epgData = _featureEPG.getEpgData();
-		EpgProgramInfo programInfo = new EpgProgramInfo(getActivity(), viewGroup);
-		programInfo.updateDetails(channelId, epgData.getProgram(channelId, programId));
+		_programInfo = new EpgProgramInfo(getActivity(), viewGroup);
+		_programInfo.updateDetails(_channelId, _epgData.getProgram(_channelId, _programId));
 		
 		// Create program options group of buttons
-		
 		_contextButtonGroup = (ContextButtonGroup) viewGroup.findViewById(R.id.program_options_list);
 		_contextButtonGroup.setButtonOnClickListener(_contextButtonGroupOnClickListener);
 		_contextButtonGroup.createButton(R.drawable.ic_btn_play, R.string.play);
@@ -113,15 +122,23 @@ public class FeatureStateProgramInfo extends FeatureState
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
-		Log.e(TAG, ".onKeyDown: keyCode = " + keyCode);
-		
-		if (keyCode == KeyEvent.KEYCODE_BACK)
+		switch (keyCode)
 		{
-			Environment.getInstance().getStateManager().hideStateOverlay();
-		}
-		else if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
-		{
-			return _contextButtonGroup.onKeyDown(keyCode, event);
+			case KeyEvent.KEYCODE_BACK:
+				Environment.getInstance().getStateManager().hideStateOverlay();
+				return true;
+				
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+				_programInfo.showPrevPage();
+				return true;
+				
+			case KeyEvent.KEYCODE_DPAD_RIGHT:
+				_programInfo.showNextPage();
+				return true;
+				
+			case KeyEvent.KEYCODE_DPAD_UP:
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+				return _contextButtonGroup.onKeyDown(keyCode, event);
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -138,7 +155,11 @@ public class FeatureStateProgramInfo extends FeatureState
 				break;
 				
 				case R.string.addToWatchlist:
-					Log.e(TAG, "-----: ADD TO WATCHLIST");
+					Program program = _epgData.getProgram(_channelId, _programId);
+					
+					Log.d(TAG, ".onClick: btn watchlist clicked on channel = " + _channelId + ", programID "
+					        + _programId);
+					_watchlist.addWatchlist(program);
 				break;
 				
 				case R.string.like:
@@ -146,7 +167,8 @@ public class FeatureStateProgramInfo extends FeatureState
 				break;
 				
 				default:
-				break;
+					Log.w(TAG, "Unknown context button clicked. No action taken.");
+					break;
 			}
 		}
 	};

@@ -18,4 +18,5 @@
     <string name="play">Play</string>
     <string name="addToWatchlist">Add to watchlist</string>
     <string name="like">Like</string>
+    <string name="loading">Зареждане...</string>
 </resources>

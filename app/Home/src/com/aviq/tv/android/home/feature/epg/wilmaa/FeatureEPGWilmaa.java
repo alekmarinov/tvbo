@@ -77,8 +77,8 @@ public class FeatureEPGWilmaa extends FeatureEPG
     }
 
 	@Override
-	protected Program createProgram()
+	protected Program createProgram(Channel channel)
     {
-	    return new ProgramWilmaa();
+	    return new ProgramWilmaa(channel);
     }
 }
