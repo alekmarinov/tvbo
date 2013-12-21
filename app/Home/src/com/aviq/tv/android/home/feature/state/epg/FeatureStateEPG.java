@@ -137,6 +137,8 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
+		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
+
 		if (keyCode == KeyEvent.KEYCODE_ENTER)
 		{
 			try

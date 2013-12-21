@@ -47,6 +47,7 @@ public class FeatureStateMenu extends FeatureState
 		{
 			ImageView imageView = new ImageButton(Environment.getInstance().getContext());
 			imageView.setImageResource(menuItemState.getMenuItemResourceId());
+			// FIXME: add background selector
 			imageView.setOnClickListener(new View.OnClickListener()
 			{
 				@Override

@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.aviq.tv.android.home.R;
@@ -26,28 +27,29 @@ import com.aviq.tv.android.home.core.feature.FeatureState;
 import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
 import com.aviq.tv.android.home.feature.player.FeaturePlayer;
+import com.aviq.tv.android.home.feature.state.ContextButtonGroup;
 import com.aviq.tv.android.home.feature.state.epg.EpgProgramInfo;
-import com.aviq.tv.android.home.feature.state.epg.FeatureStateEPG;
 
 /**
  * Program info state feature
  */
 public class FeatureStateProgramInfo extends FeatureState
 {
-	public static final String TAG = FeatureStateEPG.class.getSimpleName();
-
+	public static final String TAG = FeatureStateProgramInfo.class.getSimpleName();
+	
 	public static final String ARGS_CHANNEL_ID = "channelId";
 	public static final String ARGS_PROGRAM_ID = "programId";
 	
 	private FeatureEPG _featureEPG;
 	private FeaturePlayer _featurePlayer;
-
+	private ContextButtonGroup _contextButtonGroup;
+	
 	public FeatureStateProgramInfo()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
 	}
-
+	
 	@Override
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
@@ -57,7 +59,7 @@ public class FeatureStateProgramInfo extends FeatureState
 			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
-
+			
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
 		catch (FeatureNotFoundException e)
@@ -66,46 +68,86 @@ public class FeatureStateProgramInfo extends FeatureState
 			onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
 		}
 	}
-
+	
 	@Override
 	public FeatureName.State getStateName()
 	{
 		return FeatureName.State.PROGRAM_INFO;
 	}
-
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		Log.i(TAG, ".onCreateView");
-
+		
 		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_program_info, container, false);
+		
+		// Extract fragment parameters
 		
 		Bundle params = getArguments();
 		String channelId = params.getString(ARGS_CHANNEL_ID);
 		String programId = params.getString(ARGS_PROGRAM_ID);
-
-		EpgData epgData = _featureEPG.getEpgData();
 		
+		// Show detailed program info
+		EpgData epgData = _featureEPG.getEpgData();
 		EpgProgramInfo programInfo = new EpgProgramInfo(getActivity(), viewGroup);
 		programInfo.updateDetails(channelId, epgData.getProgram(channelId, programId));
 		
+		// Create program options group of buttons
+		
+		_contextButtonGroup = (ContextButtonGroup) viewGroup.findViewById(R.id.program_options_list);
+		_contextButtonGroup.setButtonOnClickListener(_contextButtonGroupOnClickListener);
+		_contextButtonGroup.createButton(R.drawable.ic_btn_play, R.string.play);
+		_contextButtonGroup.createButton(R.drawable.ic_btn_add_favorite, R.string.addToWatchlist);
+		_contextButtonGroup.createButton(R.drawable.ic_btn_like, R.string.like);
+		
 		return viewGroup;
 	}
-
+	
 	@Override
 	public void onResume()
 	{
 		super.onResume();
 	}
-
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
+		Log.e(TAG, ".onKeyDown: keyCode = " + keyCode);
+		
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
 			Environment.getInstance().getStateManager().hideStateOverlay();
 		}
+		else if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
+		{
+			return _contextButtonGroup.onKeyDown(keyCode, event);
+		}
 		return super.onKeyDown(keyCode, event);
 	}
-
+	
+	private OnClickListener _contextButtonGroupOnClickListener = new OnClickListener()
+	{
+		@Override
+		public void onClick(View view)
+		{
+			switch (view.getId())
+			{
+				case R.string.play:
+					Log.e(TAG, "-----: PLAY");
+				break;
+				
+				case R.string.addToWatchlist:
+					Log.e(TAG, "-----: ADD TO WATCHLIST");
+				break;
+				
+				case R.string.like:
+					Log.e(TAG, "-----: LIKE");
+				break;
+				
+				default:
+				break;
+			}
+		}
+	};
 }
