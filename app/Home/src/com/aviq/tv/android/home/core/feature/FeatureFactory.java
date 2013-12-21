@@ -18,6 +18,7 @@ import com.aviq.tv.android.home.feature.register.FeatureRegister;
 import com.aviq.tv.android.home.feature.scheduler.internet.FeatureInternet;
 import com.aviq.tv.android.home.feature.state.FeatureStateLoading;
 import com.aviq.tv.android.home.feature.state.MessageBox;
+import com.aviq.tv.android.home.feature.state.channels.FeatureStateChannels;
 import com.aviq.tv.android.home.feature.state.epg.FeatureStateEPG;
 import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.home.feature.state.programinfo.FeatureStateProgramInfo;
@@ -96,6 +97,8 @@ public class FeatureFactory
 				return new FeatureStateProgramInfo();
 			case WATCHLIST:
 				return new FeatureStateWatchlist();
+			case CHANNELS:
+				return new FeatureStateChannels();
 			case TEST:
 				return new FeatureStateTest();
 		}

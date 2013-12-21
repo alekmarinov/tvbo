@@ -21,8 +21,8 @@
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="3dip"
             android:contentDescription="@string/contentDescription"
+            android:padding="3dip"
             android:scaleType="center"
             android:src="@drawable/epg_image_thumbnail"
             android:visibility="visible" />
@@ -126,22 +126,6 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
         />
-        
-        <!-- <TextView
-            android:id="@+id/summary"
-            style="@style/ProgramText"
-            android:layout_width="match_parent"
-            android:layout_height="286dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="6dp"
-            android:background="@drawable/program_details_strip"
-            android:gravity="top"
-            android:paddingBottom="54dip"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:singleLine="false"
-            android:text="Декстър\n Декстър\nДекстър\nДекстър\nДекстър\nДекстър\nДекстър\nпреследва и брутално убива онези опасни убийци, които са успели да избягат от &quot;дългата ръка на закона&quot;. Той организира убийствата си съгласно &quot;Кодекса на Хари&quot;, който е създал..." />
-         -->
     </LinearLayout>
 
     <TextView
@@ -172,11 +156,16 @@
         android:text="@string/back"
         android:textSize="26sp" /> 
 
-	<include layout="@layout/options_program_info"
-        android:layout_below="@+id/thumbnail_container"
+    <com.aviq.tv.android.home.feature.state.ContextButtonGroup
+        xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.home"
+        android:id="@+id/program_options_list"
         android:layout_width="250dp"
-   		android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="15dip" 
-	    android:id="@+id/options_container"/>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/thumbnail_container"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dip"
+        android:focusable="true"
+        android:orientation="vertical" />
+      />
 </RelativeLayout>

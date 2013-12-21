@@ -8,7 +8,7 @@
  * Description: TV state feature
  */
 
-package com.aviq.tv.android.home.feature.state.watchlist;
+package com.aviq.tv.android.home.feature.state.channels;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -27,31 +27,33 @@ import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
 import com.aviq.tv.android.home.core.state.IStateMenuItem;
-import com.aviq.tv.android.home.feature.FeatureWatchlist;
-import com.aviq.tv.android.home.feature.epg.Program;
+import com.aviq.tv.android.home.feature.epg.Channel;
+import com.aviq.tv.android.home.feature.epg.EpgData;
+import com.aviq.tv.android.home.feature.epg.FeatureEPG;
 import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
+import com.aviq.tv.android.home.feature.state.watchlist.GridViewAdapter;
 
 /**
  * Watchlist state feature
  */
-public class FeatureStateWatchlist extends FeatureState implements IStateMenuItem
+public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 {
-	public static final String TAG = FeatureStateWatchlist.class.getSimpleName();
+	public static final String TAG = FeatureStateChannels.class.getSimpleName();
 
 	private ViewGroup _viewGroup;
-	private FeatureWatchlist _watchlist;
+	private FeatureEPG _featureEPG;
+	private EpgData _epgData;
 
-	public FeatureStateWatchlist()
+	public FeatureStateChannels()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
-		_dependencies.Components.add(FeatureName.Component.WATCHLIST);
 		_dependencies.States.add(FeatureName.State.MENU);
 	}
 
 	@Override
 	public FeatureName.State getStateName()
 	{
-		return FeatureName.State.WATCHLIST;
+		return FeatureName.State.CHANNELS;
 	}
 
 	@Override
@@ -60,12 +62,12 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		Log.i(TAG, ".initialize");
 		try
 		{
+			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
+
 			// insert in Menu
 			FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
 			        FeatureName.State.MENU);
 			featureStateMenu.addMenuItemState(this);
-
-			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(FeatureName.Component.WATCHLIST);
 
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
@@ -80,13 +82,22 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		Log.i(TAG, ".onCreateView");
-		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_watchlist, container, false);
+		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_channels, container, false);
 
-		GridView gridView = (GridView) _viewGroup.findViewById(R.id.watchlist_grid);
-		GridViewAdapter<Program> adapter = new GridViewAdapter<Program>(Environment.getInstance().getContext(),
-		        _watchlist.getWatchedPrograms(), R.layout.grid_item_watchlist);
-		gridView.setAdapter(adapter);
-		gridView.setOnItemSelectedListener(new OnItemSelectedListener()
+		GridView allchannelsGrid = (GridView) _viewGroup.findViewById(R.id.allchannels_grid);
+		GridView mychannelsGrid = (GridView) _viewGroup.findViewById(R.id.mychannels_grid);
+
+		_epgData = _featureEPG.getEpgData();
+		GridViewAdapter<Channel> allChannelsAdapter = new GridViewAdapter<Channel>(Environment.getInstance().getContext(),
+				_epgData.getAllChannels(), R.layout.grid_item_channel);
+
+		GridViewAdapter<Channel> myChannelsAdapter = new GridViewAdapter<Channel>(Environment.getInstance().getContext(),
+				_epgData.getAllChannels(), R.layout.grid_item_channel);
+
+		allchannelsGrid.setAdapter(allChannelsAdapter);
+		mychannelsGrid.setAdapter(myChannelsAdapter);
+
+		allchannelsGrid.setOnItemSelectedListener(new OnItemSelectedListener()
 		{
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View view, int position, long id)
@@ -100,7 +111,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 				// TODO Auto-generated method stub
 			}
 		});
-		gridView.requestFocus();
+		allchannelsGrid.requestFocus();
 
 		return _viewGroup;
 	}
@@ -119,7 +130,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	@Override
 	public int getMenuItemResourceId()
 	{
-		return R.drawable.ic_menu_watchlist;
+		return R.drawable.ic_menu_my_channels;
 	}
 
 	@Override

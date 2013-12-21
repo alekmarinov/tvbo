@@ -1,6 +1,5 @@
 package com.aviq.tv.android.home.feature.state.watchlist;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -12,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aviq.tv.android.home.R;
+import com.aviq.tv.android.home.feature.epg.Channel;
 import com.aviq.tv.android.home.feature.epg.Program;
 
 public class GridViewAdapter<T> extends BaseAdapter
@@ -20,7 +20,7 @@ public class GridViewAdapter<T> extends BaseAdapter
 	private Context _context;
 	private int _itemLayoutId;;
 
-	public GridViewAdapter(Context context, ArrayList<T> items, int layoutId)
+	public GridViewAdapter(Context context, List<T> items, int layoutId)
 	{
 		_items = items;
 		_context = context;
@@ -67,6 +67,16 @@ public class GridViewAdapter<T> extends BaseAdapter
 		Object obj = _items.get(position);
 		if (obj instanceof Program)
 			holder.textView.setText(((Program)obj).getTitle());
+
+		else if (obj instanceof Channel)
+		{
+			holder.textView.setText(position + " " + ((Channel)obj).getTitle());
+
+//			Bitmap bmp = ((Channel)obj).getChannelLogoBitmap(i);
+//			if (bmp == null)
+//				Log.w(TAG, "Channel " + _epgData.getChannel(i).getChannelId() + " doesn't have image logo!");
+//			holder.image.setImageBitmap(bmp);
+		}
 
 		if (holder.image != null)
 		{
