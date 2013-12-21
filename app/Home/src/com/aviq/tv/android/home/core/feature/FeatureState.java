@@ -66,7 +66,7 @@ public abstract class FeatureState extends BaseState implements IFeature
 	 * @return an event messenger associated with this feature
 	 */
 	@Override
-	public EventMessenger getEventMessanger()
+	public EventMessenger getEventMessenger()
 	{
 		return Environment.getInstance().getEventMessenger();
 	}
@@ -99,7 +99,7 @@ public abstract class FeatureState extends BaseState implements IFeature
 		if (isShown())
 		{
 			// register immediately if the state is already shown
-			featureTo.getEventMessanger().register(this, msgId);
+			featureTo.getEventMessenger().register(this, msgId);
 		}
 	}
 
@@ -123,7 +123,7 @@ public abstract class FeatureState extends BaseState implements IFeature
 				if (isShown())
 				{
 					// if already shown unregister immediately
-					featureFrom.getEventMessanger().unregister(this, msgId);
+					featureFrom.getEventMessenger().unregister(this, msgId);
 				}
 				return;
 			}
@@ -170,7 +170,7 @@ public abstract class FeatureState extends BaseState implements IFeature
 		{
 			Log.i(TAG, "Register " + subscription.Feature.getName() + " " + subscription.Feature.getType()
 			        + " to event id = " + subscription.MsgId);
-			subscription.Feature.getEventMessanger().register(this, subscription.MsgId);
+			subscription.Feature.getEventMessenger().register(this, subscription.MsgId);
 		}
 	}
 
@@ -185,7 +185,7 @@ public abstract class FeatureState extends BaseState implements IFeature
 		{
 			Log.i(TAG, "Unregister " + subscription.Feature.getName() + " " + subscription.Feature.getType()
 			        + " to event id = " + subscription.MsgId);
-			subscription.Feature.getEventMessanger().unregister(this, subscription.MsgId);
+			subscription.Feature.getEventMessenger().unregister(this, subscription.MsgId);
 		}
 	}
 

@@ -34,4 +34,8 @@
     <!-- program info -->
     <dimen name="details_area_width">600dp</dimen>
     <dimen name="details_area_height">240dp</dimen>
+    
+    <!-- channels -->
+    <dimen name="mychannel_item_width">174dp</dimen>
+    <dimen name="mychannel_item_height">133dp</dimen>
 </resources>

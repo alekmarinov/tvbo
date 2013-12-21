@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.GridView;
 
@@ -26,11 +27,14 @@ import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
+import com.aviq.tv.android.home.core.state.BaseState;
 import com.aviq.tv.android.home.core.state.IStateMenuItem;
+import com.aviq.tv.android.home.core.state.StateException;
 import com.aviq.tv.android.home.feature.FeatureWatchlist;
 import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.state.epg.EpgProgramInfo;
 import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
+import com.aviq.tv.android.home.feature.state.programinfo.FeatureStateProgramInfo;
 
 /**
  * Watchlist state feature
@@ -42,6 +46,8 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	private ViewGroup _viewGroup;
 	private FeatureWatchlist _watchlist;
 	private EpgProgramInfo _programInfo;
+	private GridView _gridView;
+	private GridViewAdapter<Program> _adapter;
 
 	public FeatureStateWatchlist()
 	{
@@ -88,40 +94,73 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		ViewGroup programInfoContainer = (ViewGroup) _viewGroup.findViewById(R.id.program_details_container);
 		_programInfo = new EpgProgramInfo(getActivity(), programInfoContainer);
 		
-		GridView gridView = (GridView) _viewGroup.findViewById(R.id.watchlist_grid);
-		final GridViewAdapter<Program> adapter = new GridViewAdapter<Program>(Environment.getInstance().getContext(),
-		        _watchlist.getWatchedPrograms(), R.layout.item_watchlist);
-		gridView.setAdapter(adapter);
-		gridView.setOnItemSelectedListener(new OnItemSelectedListener()
+		_gridView = (GridView) _viewGroup.findViewById(R.id.watchlist_grid);
+		_adapter = new GridViewAdapter<Program>(Environment.getInstance().getContext(),
+		        _watchlist.getWatchedPrograms(), R.layout.grid_item_watchlist);
+		_gridView.setAdapter(_adapter);
+		_gridView.setOnItemSelectedListener(_onItemSelectedListener);
+		_gridView.setOnItemClickListener(_onItemClickListener);
+//		_viewGroup.requestFocus();
+
+		// Initial refresh of the program info widget
+		if (_adapter.getCount() > 0)
 		{
-			@Override
-			public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id)
-			{
-				Log.d(TAG, "onItemSelected " + position);
-				
-				Program program = (Program) adapter.getItem(position);
-				_programInfo.updateBrief(program.getChannel().getChannelId(), program);
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0)
-			{
-			}
-		});
-		gridView.requestFocus();
-
+			Program program = (Program) _adapter.getItem(0);
+			_programInfo.updateBrief(program.getChannel().getChannelId(), program);
+		}
+		
 		return _viewGroup;
 	}
+	
+	private OnItemSelectedListener _onItemSelectedListener = new OnItemSelectedListener()
+	{
+		@Override
+		public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id)
+		{
+			Program program = (Program) _adapter.getItem(position);
+			_programInfo.updateBrief(program.getChannel().getChannelId(), program);
+		}
 
+		@Override
+		public void onNothingSelected(AdapterView<?> arg0)
+		{
+		}
+	};
+	
+	private OnItemClickListener _onItemClickListener = new OnItemClickListener()
+	{
+		@Override
+        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+        {
+			try
+			{
+				FeatureStateProgramInfo programInfo = (FeatureStateProgramInfo) Environment.getInstance()
+				        .getFeatureState(FeatureName.State.PROGRAM_INFO);
+				
+				Program program = (Program) _gridView.getSelectedItem();
+				String channelId = program.getChannel().getChannelId();
+				
+				Bundle featureParams = new Bundle();
+				featureParams.putString(FeatureStateProgramInfo.ARGS_CHANNEL_ID, channelId);
+				featureParams.putString(FeatureStateProgramInfo.ARGS_PROGRAM_ID, program.getId());
+				
+				Environment.getInstance().getStateManager().setStateOverlay((BaseState) programInfo, featureParams);
+			}
+			catch (FeatureNotFoundException e)
+			{
+				Log.e(TAG, e.getMessage(), e);
+			}
+			catch (StateException e)
+			{
+				Log.e(TAG, e.getMessage(), e);
+			}
+        }
+	};
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
-		switch (keyCode)
-		{
-			case KeyEvent.KEYCODE_ENTER:
-				return true;
-		}
-		return false;
+		return _gridView.onKeyDown(keyCode, event);
 	}
 
 	@Override

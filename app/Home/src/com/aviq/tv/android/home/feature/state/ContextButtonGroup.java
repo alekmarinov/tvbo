@@ -49,19 +49,14 @@ public class ContextButtonGroup extends LinearLayout
 	public ContextButton createButton(int iconResId, int textResId)
 	{
 		ContextButton button = (ContextButton) _layoutInflator.inflate(R.layout.context_button, this, false);
-		button.setId(textResId);
-		
-		if (iconResId > 0)
-			button.setText(textResId);
-		
-		if (textResId > 0)
-			button.setCompoundDrawablesWithIntrinsicBounds(iconResId, 0, 0, 0);
-		
+		button.setContent(iconResId, textResId);
+
 		if (_buttonOnClickListener != null)
 			button.setOnClickListener(_buttonOnClickListener);
 		
 		addView(button);
 		getChildAt(0).requestFocus();
+
 		return button;
 	}
 	

@@ -21,23 +21,25 @@
         android:layout_marginLeft="100dp"
         android:layout_marginRight="80dp"
         android:layout_marginTop="7dp"
-        android:paddingRight="10dip"
         android:baselineAligned="false"
         android:columnWidth="@dimen/watchlist_item_width"
+        android:fadeScrollbars="false"
         android:horizontalSpacing="6dp"
-        android:verticalSpacing="6dp" 
         android:numColumns="6"
-        android:stretchMode="spacingWidth"
-        android:scrollbars="vertical"
+        android:paddingRight="10dip"
+        android:scrollbarSize="6dp"
         android:scrollbarStyle="outsideInset"
         android:scrollbarThumbVertical="@drawable/img_vert_scrollbar"
-        android:scrollbarSize="6dp"
-        android:fadeScrollbars="false"/>
+        android:scrollbars="vertical"
+        android:stretchMode="spacingWidth"
+        android:verticalSpacing="6dp" >
+        <requestFocus />
+    </GridView>
 
     <!-- Contextual button bar -->
 
     <include
         android:id="@+id/button_bar_container"
-        layout="@layout/epg_button_bar" />
+        layout="@layout/epg_status_bar" />
 
 </RelativeLayout>

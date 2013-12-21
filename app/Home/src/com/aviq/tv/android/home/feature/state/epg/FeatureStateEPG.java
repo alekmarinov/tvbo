@@ -128,12 +128,6 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 	}
 	
 	@Override
-	public void onResume()
-	{
-		super.onResume();
-	}
-	
-	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);

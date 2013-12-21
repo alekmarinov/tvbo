@@ -62,7 +62,7 @@ public abstract class FeatureComponent implements IFeature
 	 * @return an event messenger associated with this feature
 	 */
 	@Override
-	public EventMessenger getEventMessanger()
+	public EventMessenger getEventMessenger()
 	{
 		return Environment.getInstance().getEventMessenger();
 	}

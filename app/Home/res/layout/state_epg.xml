@@ -56,7 +56,8 @@
                 android:gravity="left"
                 android:listSelector="@android:color/transparent"
                 android:scrollingCache="false"
-                aviqtv:visibleItems="7" >
+                aviqtv:visibleItems="7" 
+                android:focusable="false">
             </com.aviq.tv.android.home.feature.state.epg.EpgListView>
 
             <View
@@ -87,7 +88,7 @@
 
     <include
         android:id="@+id/button_bar_container"
-        layout="@layout/epg_button_bar"
+        layout="@layout/epg_status_bar"
     />
 
 </RelativeLayout>

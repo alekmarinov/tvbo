@@ -38,6 +38,7 @@ public class FeatureName
 		MESSAGE_BOX,
 		PROGRAM_INFO,
 		WATCHLIST,
+		CHANNELS,
 		TEST
 	}
 }
