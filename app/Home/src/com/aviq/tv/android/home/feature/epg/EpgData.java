@@ -121,6 +121,12 @@ public class EpgData implements IEpgDataProvider
 	}
 
 	@Override
+	public List<Channel> getAllChannels()
+	{
+		return _channelList;
+	}
+
+	@Override
     public List<Program> getProgramList(String channelId, String startTime, String endTime)
 	{
 		if (startTime.compareTo(endTime) > 0)

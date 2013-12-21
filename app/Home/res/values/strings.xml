@@ -16,4 +16,6 @@
     <string name="programInfoTimeRange">%1$s - %2$s</string>
     <string name="programInfoPager">%1$d/%2$d</string>
     <string name="loading">Зареждане...</string>
+    <string name="all_channels">Всички Канали</string>
+    <string name="my_channels">Мои Канали</string>
 </resources>

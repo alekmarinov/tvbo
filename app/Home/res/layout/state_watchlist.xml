@@ -38,6 +38,6 @@
 
     <include
         android:id="@+id/button_bar_container"
-        layout="@layout/epg_button_bar" />
+        layout="@layout/epg_status_bar" />
 
 </RelativeLayout>

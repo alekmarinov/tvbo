@@ -16,13 +16,14 @@ public interface IEpgDataProvider
 //	public Program getCurrentProgramForChannel(String channelGuid);
 //	public List<Channel> getChannelList();
 //	public boolean isUseFavorites();
-	
+
 	public int getChannelCount();
 	public Channel getChannel(int index);
 	public int getChannelIndex(Channel channel);
 	public Bitmap getChannelLogoBitmap(int index);
 	public Program getProgram(String channelId, String dateTime);
 	public Program getProgram(String channelId, Calendar when);
+	public List<Channel> getAllChannels();
 	public List<Program> getProgramList(String channelId, String timeStart, String timeEnd);
 	public Calendar getMaxEpgStopTime();
 }
