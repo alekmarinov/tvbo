@@ -21,8 +21,8 @@
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="3dip"
             android:contentDescription="@string/contentDescription"
+            android:padding="3dip"
             android:scaleType="center"
             android:src="@drawable/epg_image_thumbnail"
             android:visibility="visible" />
@@ -172,11 +172,16 @@
         android:text="@string/back"
         android:textSize="26sp" /> 
 
-	<include layout="@layout/options_program_info"
+    <com.aviq.tv.android.home.feature.state.ContextButtonGroup
+        xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.home"
+        android:id="@+id/program_options_list"
+        android:layout_width="@dimen/epg_program_details_thumbnail_width"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/thumbnail_container"
-        android:layout_width="250dp"
-   		android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="15dip" 
-	    android:id="@+id/options_container"/>
+        android:layout_marginBottom="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="25dip"
+        android:focusable="true"
+        android:orientation="vertical" />
+      />
 </RelativeLayout>
