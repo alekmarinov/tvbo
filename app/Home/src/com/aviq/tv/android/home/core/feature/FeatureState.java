@@ -180,7 +180,7 @@ public abstract class FeatureState extends BaseState implements IFeature
 	@Override
 	protected void onHide()
 	{
-		Log.i(TAG, ".onHide");
+		Log.i(TAG, getName() + ".onHide");
 		for (Subscription subscription : _subscriptions)
 		{
 			Log.i(TAG, "Unregister " + subscription.Feature.getName() + " " + subscription.Feature.getType()

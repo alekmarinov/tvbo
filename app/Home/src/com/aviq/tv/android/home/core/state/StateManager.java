@@ -131,9 +131,10 @@ public class StateManager
 					}
 					else
 					{
+						_activeStates.get(0).onShow();
 						// !!! This breaks the EPG grid
 						//_activity.findViewById(R.id.main_fragment).requestFocus();
-						//_activeStates.elementAt(_activeStates.size() - 1).getView().requestFocus(); 
+						//_activeStates.elementAt(_activeStates.size() - 1).getView().requestFocus();
 					}
 				}
 				else
@@ -246,9 +247,9 @@ public class StateManager
 								state.getView().setBackgroundResource(_overlayBackgroundImage);
 							else
 								state.getView().setBackgroundColor(_overlayBackgroundColor);
+
+							_activeStates.get(0).onHide();
 						}
-						
-//						state.getView().requestFocus();
 
 						// notify state is shown
 						state.onShow();

@@ -30,7 +30,7 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_arrow_up_big" />
 
-        <GridView
+        <com.aviq.tv.android.home.feature.state.Grid
             android:id="@+id/allchannels_grid"
             android:layout_width="match_parent"
             android:layout_height="459dp"
@@ -89,7 +89,7 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_arrow_up_big" />
 
-        <GridView
+        <com.aviq.tv.android.home.feature.state.Grid
             android:id="@+id/mychannels_grid"
             android:layout_width="wrap_content"
             android:layout_height="459dp"

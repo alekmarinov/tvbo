@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.GridView;
 
 import com.aviq.tv.android.home.R;
 import com.aviq.tv.android.home.core.Environment;
@@ -27,11 +26,10 @@ import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureState;
 import com.aviq.tv.android.home.core.state.IStateMenuItem;
-import com.aviq.tv.android.home.feature.epg.Channel;
 import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
+import com.aviq.tv.android.home.feature.state.Grid;
 import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
-import com.aviq.tv.android.home.feature.state.watchlist.GridViewAdapter;
 
 /**
  * Watchlist state feature
@@ -84,18 +82,16 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 		Log.i(TAG, ".onCreateView");
 		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_channels, container, false);
 
-		GridView allchannelsGrid = (GridView) _viewGroup.findViewById(R.id.allchannels_grid);
-		GridView mychannelsGrid = (GridView) _viewGroup.findViewById(R.id.mychannels_grid);
+		Grid allchannelsGrid = (Grid) _viewGroup.findViewById(R.id.allchannels_grid);
+		Grid mychannelsGrid = (Grid) _viewGroup.findViewById(R.id.mychannels_grid);
 
 		_epgData = _featureEPG.getEpgData();
-		GridViewAdapter<Channel> allChannelsAdapter = new GridViewAdapter<Channel>(Environment.getInstance().getContext(),
-				_epgData.getAllChannels(), R.layout.grid_item_channel);
 
-		GridViewAdapter<Channel> myChannelsAdapter = new GridViewAdapter<Channel>(Environment.getInstance().getContext(),
-				_epgData.getAllChannels(), R.layout.grid_item_channel);
-
-		allchannelsGrid.setAdapter(allChannelsAdapter);
-		mychannelsGrid.setAdapter(myChannelsAdapter);
+		allchannelsGrid.setGridItemResourceLayout(R.layout.grid_item_channel);
+		for (int i = 0; i < _epgData.getChannelCount(); i++)
+		{
+			allchannelsGrid.addGridItem(_epgData.getChannelLogoBitmap(i), _epgData.getChannel(i).getTitle());
+		}
 
 		allchannelsGrid.setOnItemSelectedListener(new OnItemSelectedListener()
 		{
@@ -114,6 +110,13 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 		allchannelsGrid.requestFocus();
 
 		return _viewGroup;
+	}
+
+	@Override
+    public void onShow()
+	{
+		super.onShow();
+		_viewGroup.requestFocus();
 	}
 
 	@Override

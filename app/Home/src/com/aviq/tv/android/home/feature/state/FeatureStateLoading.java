@@ -90,7 +90,7 @@ public class FeatureStateLoading extends FeatureState
 	private void updateLoadingInfo(String featureName, float totalProgress, float featureProgress)
 	{
 		int progress = (int) (100 * totalProgress);
-		Log.d(TAG, "load progress " + progress + "%");
+		Log.d(TAG, featureName + " load progress " + (int)(100 * featureProgress) + "%, total " + progress + "%");
 		_progressBar.setProgress(progress);
 	}
 
