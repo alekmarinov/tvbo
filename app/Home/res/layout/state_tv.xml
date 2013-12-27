@@ -19,7 +19,7 @@
 
 
 	<!-- Channel Bar -->
-    <com.aviq.tv.android.home.feature.state.tv.ZapperListView
+    <com.aviq.tv.android.home.app.aviqtv.state.tv.ZapperListView
         xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.home"
         android:id="@+id/tv_channel_bar"
         android:layout_width="@dimen/channel_bar_width"
@@ -36,7 +36,7 @@
         aviqtv:itemVerticalPadding="10dip"
         aviqtv:itemTextSize="20sp"
         android:background="@drawable/tv_channel_bar">
-    </com.aviq.tv.android.home.feature.state.tv.ZapperListView>
+    </com.aviq.tv.android.home.app.aviqtv.state.tv.ZapperListView>
 
     <!-- Program Bar -->
 

@@ -8,7 +8,7 @@
  * Description: TV state feature
  */
 
-package com.aviq.tv.android.home.feature.state.epg;
+package com.aviq.tv.android.home.app.aviqtv.state.epg;
 
 import java.util.Calendar;
 
@@ -22,6 +22,10 @@ import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.aviq.tv.android.home.R;
+import com.aviq.tv.android.home.app.aviqtv.state.epg.EpgGrid.NAVIGATION;
+import com.aviq.tv.android.home.app.aviqtv.state.epg.EpgGrid.OnEpgGridEventListener;
+import com.aviq.tv.android.home.app.aviqtv.state.menu.FeatureStateMenu;
+import com.aviq.tv.android.home.app.aviqtv.state.programinfo.FeatureStateProgramInfo;
 import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
@@ -35,10 +39,6 @@ import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
 import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.player.FeaturePlayer;
-import com.aviq.tv.android.home.feature.state.epg.EpgGrid.NAVIGATION;
-import com.aviq.tv.android.home.feature.state.epg.EpgGrid.OnEpgGridEventListener;
-import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
-import com.aviq.tv.android.home.feature.state.programinfo.FeatureStateProgramInfo;
 
 /**
  * EPG state feature

@@ -30,7 +30,7 @@
             android:scaleType="fitCenter"/>
     </RelativeLayout>
 
-    <com.aviq.tv.android.home.feature.state.epg.EpgRowView
+    <com.aviq.tv.android.home.app.aviqtv.state.epg.EpgRowView
         android:id="@+id/program_list"
         android:layout_width="match_parent"
         android:layout_height="@dimen/epg_grid_row_height"

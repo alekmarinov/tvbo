@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.aviq.tv.android.home.feature.state.epg.TimeBasedRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.aviq.tv.android.home.app.aviqtv.state.epg.TimeBasedRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.home"
     android:id="@+id/epg_program_container"
     android:layout_width="wrap_content"
@@ -21,4 +21,4 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-</com.aviq.tv.android.home.feature.state.epg.TimeBasedRelativeLayout>
+</com.aviq.tv.android.home.app.aviqtv.state.epg.TimeBasedRelativeLayout>

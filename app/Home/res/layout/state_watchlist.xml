@@ -13,7 +13,7 @@
 
     <!-- Watchlist layout -->
 
-    <com.aviq.tv.android.home.feature.state.Grid
+    <com.aviq.tv.android.home.feature.state.ThumbnailsView
         android:id="@+id/watchlist_grid"
         android:layout_width="match_parent"
         android:layout_height="411dp"
@@ -34,7 +34,7 @@
         android:stretchMode="spacingWidth"
         android:verticalSpacing="6dp" >
         <requestFocus />
-    </com.aviq.tv.android.home.feature.state.Grid>
+    </com.aviq.tv.android.home.feature.state.ThumbnailsView>
 
     <!-- Contextual button bar -->
 

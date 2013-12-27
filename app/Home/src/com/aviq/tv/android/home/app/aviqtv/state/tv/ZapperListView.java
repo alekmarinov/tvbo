@@ -8,7 +8,7 @@
  * Description: Channel bar widget
  */
 
-package com.aviq.tv.android.home.feature.state.tv;
+package com.aviq.tv.android.home.app.aviqtv.state.tv;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

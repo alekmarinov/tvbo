@@ -31,7 +31,7 @@
     <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
-        android:name="com.aviq.tv.android.home.app.aviqtv.ApplicationAVIQTV"
+        android:name="com.aviq.tv.android.home.app.aviqtv.App"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >

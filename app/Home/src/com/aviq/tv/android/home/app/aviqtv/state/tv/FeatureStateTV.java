@@ -8,7 +8,7 @@
  * Description: TV state feature
  */
 
-package com.aviq.tv.android.home.feature.state.tv;
+package com.aviq.tv.android.home.app.aviqtv.state.tv;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -27,6 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.aviq.tv.android.home.R;
+import com.aviq.tv.android.home.app.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.event.EventMessenger;
@@ -39,7 +40,6 @@ import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
 import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.player.FeaturePlayer;
-import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
 
 /**
  * TV state feature

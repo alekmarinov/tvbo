@@ -29,16 +29,16 @@ import com.aviq.tv.android.home.R;
 /**
  * Grid view
  */
-public class Grid extends GridView
+public class ThumbnailsView extends GridView
 {
-	public static final String TAG = Grid.class.getSimpleName();
+	public static final String TAG = ThumbnailsView.class.getSimpleName();
 	private GridAdapter _gridAdapter = new GridAdapter();
 	private int _gridItemResourceLayout;
 
 	/**
 	 * @param context
 	 */
-	public Grid(Context context)
+	public ThumbnailsView(Context context)
 	{
 		super(context);
 	}
@@ -47,7 +47,7 @@ public class Grid extends GridView
 	 * @param context
 	 * @param attrs
 	 */
-	public Grid(Context context, AttributeSet attrs)
+	public ThumbnailsView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
 	}
@@ -57,7 +57,7 @@ public class Grid extends GridView
 	 * @param attrs
 	 * @param defStyle
 	 */
-	public Grid(Context context, AttributeSet attrs, int defStyle)
+	public ThumbnailsView(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
 	}

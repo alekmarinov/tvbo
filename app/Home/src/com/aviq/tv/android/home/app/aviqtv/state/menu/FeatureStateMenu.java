@@ -8,7 +8,7 @@
  * Description: Menu state implementation
  */
 
-package com.aviq.tv.android.home.feature.state.menu;
+package com.aviq.tv.android.home.app.aviqtv.state.menu;
 
 import java.util.ArrayList;
 import java.util.List;

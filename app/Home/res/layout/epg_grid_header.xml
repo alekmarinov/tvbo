@@ -17,7 +17,7 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <com.aviq.tv.android.home.feature.state.epg.EpgHeaderView
+    <com.aviq.tv.android.home.app.aviqtv.state.epg.EpgHeaderView
         android:id="@+id/time_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

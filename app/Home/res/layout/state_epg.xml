@@ -37,7 +37,7 @@
             Otherwise, you get lots of getView() calls to constantly recalculate the ListView height.
             -->
 
-            <com.aviq.tv.android.home.feature.state.epg.EpgListView
+            <com.aviq.tv.android.home.app.aviqtv.state.epg.EpgListView
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.home"
                 android:id="@+id/gridList"
@@ -57,7 +57,7 @@
                 android:listSelector="@android:color/transparent"
                 android:scrollingCache="false"
                 aviqtv:visibleItems="7">
-            </com.aviq.tv.android.home.feature.state.epg.EpgListView>
+            </com.aviq.tv.android.home.app.aviqtv.state.epg.EpgListView>
 
             <View
                 android:layout_width="1dp"

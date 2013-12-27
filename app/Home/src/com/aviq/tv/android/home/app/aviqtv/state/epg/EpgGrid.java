@@ -1,4 +1,4 @@
-package com.aviq.tv.android.home.feature.state.epg;
+package com.aviq.tv.android.home.app.aviqtv.state.epg;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

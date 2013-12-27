@@ -26,9 +26,9 @@ import com.aviq.tv.android.home.core.state.StateException;
 /**
  * AVIQ TV main application class
  */
-public class ApplicationAVIQTV extends Application implements IApplication
+public class App extends Application implements IApplication
 {
-	public static final String TAG = ApplicationAVIQTV.class.getSimpleName();
+	public static final String TAG = App.class.getSimpleName();
 
 	@Override
 	public void onActivityCreate(Activity activity)
@@ -36,16 +36,19 @@ public class ApplicationAVIQTV extends Application implements IApplication
 		activity.setContentView(R.layout.activity_main);
 		Log.i(TAG, ".onActivityCreate");
 
+		Environment env = Environment.getInstance();
 		try
 		{
-			Environment.getInstance().use(FeatureName.State.LOADING);
-			Environment.getInstance().use(FeatureName.State.EPG);
-			Environment.getInstance().use(FeatureName.State.CHANNELS);
-			Environment.getInstance().use(FeatureName.State.TV);
-			Environment.getInstance().use(FeatureName.State.WATCHLIST);
-			Environment.getInstance().initialize(activity);
-			Environment.getInstance().getStateManager()
-			        .setOverlayBackgroundColor(activity.getResources().getColor(R.color.overlay_background));
+			// Sets application specific feature factory
+			FeatureFactory featureFactory = new FeatureFactory();
+			env.setFeatureFactory(featureFactory);
+			env.use(FeatureName.State.LOADING);
+			env.use(FeatureName.State.EPG);
+			env.use(FeatureName.State.CHANNELS);
+			env.use(FeatureName.State.TV);
+			env.use(FeatureName.State.WATCHLIST);
+			env.initialize(activity);
+			env.getStateManager().setOverlayBackgroundColor(activity.getResources().getColor(R.color.overlay_background));
 		}
 		catch (FeatureNotFoundException e)
 		{
@@ -85,9 +88,7 @@ public class ApplicationAVIQTV extends Application implements IApplication
 
 		switch (keyCode)
 		{
-		// Menu
-			case KeyEvent.KEYCODE_F2:
-			{
+			case KeyEvent.KEYCODE_F2:// Menu
 				FeatureState menuFeatureState;
 				try
 				{
@@ -102,7 +103,6 @@ public class ApplicationAVIQTV extends Application implements IApplication
 				{
 					Log.e(TAG, e.getMessage(), e);
 				}
-			}
 				return true;
 		}
 		return false;

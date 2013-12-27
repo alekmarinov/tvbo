@@ -8,7 +8,7 @@
  * Description: TV state feature
  */
 
-package com.aviq.tv.android.home.feature.state.channels;
+package com.aviq.tv.android.home.app.aviqtv.state.channels;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.aviq.tv.android.home.R;
+import com.aviq.tv.android.home.app.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
@@ -28,8 +29,7 @@ import com.aviq.tv.android.home.core.feature.FeatureState;
 import com.aviq.tv.android.home.core.state.IStateMenuItem;
 import com.aviq.tv.android.home.feature.epg.EpgData;
 import com.aviq.tv.android.home.feature.epg.FeatureEPG;
-import com.aviq.tv.android.home.feature.state.Grid;
-import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
+import com.aviq.tv.android.home.feature.state.ThumbnailsView;
 
 /**
  * Watchlist state feature
@@ -82,8 +82,8 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 		Log.i(TAG, ".onCreateView");
 		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_channels, container, false);
 
-		Grid allchannelsGrid = (Grid) _viewGroup.findViewById(R.id.allchannels_grid);
-		Grid mychannelsGrid = (Grid) _viewGroup.findViewById(R.id.mychannels_grid);
+		ThumbnailsView allchannelsGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.allchannels_grid);
+		ThumbnailsView mychannelsGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.mychannels_grid);
 
 		_epgData = _featureEPG.getEpgData();
 

@@ -8,7 +8,7 @@
  * Description: TV state feature
  */
 
-package com.aviq.tv.android.home.feature.state.watchlist;
+package com.aviq.tv.android.home.app.aviqtv.state.watchlist;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +19,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.aviq.tv.android.home.R;
+import com.aviq.tv.android.home.app.aviqtv.state.epg.EpgProgramInfo;
+import com.aviq.tv.android.home.app.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
@@ -27,9 +29,7 @@ import com.aviq.tv.android.home.core.feature.FeatureState;
 import com.aviq.tv.android.home.core.state.IStateMenuItem;
 import com.aviq.tv.android.home.feature.FeatureWatchlist;
 import com.aviq.tv.android.home.feature.epg.Program;
-import com.aviq.tv.android.home.feature.state.Grid;
-import com.aviq.tv.android.home.feature.state.epg.EpgProgramInfo;
-import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
+import com.aviq.tv.android.home.feature.state.ThumbnailsView;
 
 /**
  * Watchlist state feature
@@ -89,7 +89,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		ViewGroup programInfoContainer = (ViewGroup) _viewGroup.findViewById(R.id.program_details_container);
 		_programInfo = new EpgProgramInfo(getActivity(), programInfoContainer);
 
-		Grid watchlistGrid = (Grid) _viewGroup.findViewById(R.id.watchlist_grid);
+		ThumbnailsView watchlistGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.watchlist_grid);
 		watchlistGrid.setGridItemResourceLayout(R.layout.grid_item_watchlist);
 		for (Program program: _watchlist.getWatchedPrograms())
 		{

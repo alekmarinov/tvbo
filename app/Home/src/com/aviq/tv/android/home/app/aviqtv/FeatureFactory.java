@@ -5,11 +5,21 @@
  * Filename:    FeatureFactory.java
  * Author:      alek
  * Date:        1 Dec 2013
- * Description: Singleton with factory methods to create features by id
+ * Description: AVIQTV specific feature factory
  */
 
-package com.aviq.tv.android.home.core.feature;
+package com.aviq.tv.android.home.app.aviqtv;
 
+import com.aviq.tv.android.home.app.aviqtv.state.channels.FeatureStateChannels;
+import com.aviq.tv.android.home.app.aviqtv.state.epg.FeatureStateEPG;
+import com.aviq.tv.android.home.app.aviqtv.state.menu.FeatureStateMenu;
+import com.aviq.tv.android.home.app.aviqtv.state.programinfo.FeatureStateProgramInfo;
+import com.aviq.tv.android.home.app.aviqtv.state.tv.FeatureStateTV;
+import com.aviq.tv.android.home.app.aviqtv.state.watchlist.FeatureStateWatchlist;
+import com.aviq.tv.android.home.core.feature.FeatureName;
+import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
+import com.aviq.tv.android.home.core.feature.IFeature;
+import com.aviq.tv.android.home.core.feature.IFeatureFactory;
 import com.aviq.tv.android.home.feature.FeatureHttpServer;
 import com.aviq.tv.android.home.feature.FeatureWatchlist;
 import com.aviq.tv.android.home.feature.epg.rayv.FeatureEPGRayV;
@@ -18,36 +28,14 @@ import com.aviq.tv.android.home.feature.register.FeatureRegister;
 import com.aviq.tv.android.home.feature.scheduler.internet.FeatureInternet;
 import com.aviq.tv.android.home.feature.state.FeatureStateLoading;
 import com.aviq.tv.android.home.feature.state.MessageBox;
-import com.aviq.tv.android.home.feature.state.channels.FeatureStateChannels;
-import com.aviq.tv.android.home.feature.state.epg.FeatureStateEPG;
-import com.aviq.tv.android.home.feature.state.menu.FeatureStateMenu;
-import com.aviq.tv.android.home.feature.state.programinfo.FeatureStateProgramInfo;
-import com.aviq.tv.android.home.feature.state.tv.FeatureStateTV;
-import com.aviq.tv.android.home.feature.state.tv.FeatureStateTest;
-import com.aviq.tv.android.home.feature.state.watchlist.FeatureStateWatchlist;
 
 /**
- * Singleton with factory methods to create features by id
- *
+ * AVIQTV specific feature factory
  */
-public class FeatureFactory
+public class FeatureFactory implements IFeatureFactory
 {
-	private static FeatureFactory _instance;
-
-	private FeatureFactory()
-	{
-	}
-
-	public static synchronized FeatureFactory getInstance()
-	{
-		if (_instance == null)
-		{
-			_instance = new FeatureFactory();
-		}
-		return _instance;
-	}
-
-	public IFeature createComponent(FeatureName.Component featureId) throws FeatureNotFoundException
+	@Override
+    public IFeature createComponent(FeatureName.Component featureId) throws FeatureNotFoundException
 	{
 		switch (featureId)
 		{
@@ -69,7 +57,8 @@ public class FeatureFactory
 		throw new FeatureNotFoundException(featureId);
 	}
 
-	public IFeature createScheduler(FeatureName.Scheduler featureId) throws FeatureNotFoundException
+	@Override
+    public IFeature createScheduler(FeatureName.Scheduler featureId) throws FeatureNotFoundException
 	{
 		switch (featureId)
 		{
@@ -79,7 +68,8 @@ public class FeatureFactory
 		throw new FeatureNotFoundException(featureId);
 	}
 
-	public IFeature createState(FeatureName.State featureId) throws FeatureNotFoundException
+	@Override
+    public IFeature createState(FeatureName.State featureId) throws FeatureNotFoundException
 	{
 		switch (featureId)
 		{
@@ -99,8 +89,6 @@ public class FeatureFactory
 				return new FeatureStateWatchlist();
 			case CHANNELS:
 				return new FeatureStateChannels();
-			case TEST:
-				return new FeatureStateTest();
 		}
 		throw new FeatureNotFoundException(featureId);
 	}

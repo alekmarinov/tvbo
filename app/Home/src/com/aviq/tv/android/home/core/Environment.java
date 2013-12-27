@@ -27,13 +27,13 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.aviq.tv.android.home.core.event.EventMessenger;
 import com.aviq.tv.android.home.core.feature.FeatureComponent;
-import com.aviq.tv.android.home.core.feature.FeatureFactory;
 import com.aviq.tv.android.home.core.feature.FeatureName;
 import com.aviq.tv.android.home.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.home.core.feature.FeatureScheduler;
 import com.aviq.tv.android.home.core.feature.FeatureSet;
 import com.aviq.tv.android.home.core.feature.FeatureState;
 import com.aviq.tv.android.home.core.feature.IFeature;
+import com.aviq.tv.android.home.core.feature.IFeatureFactory;
 import com.aviq.tv.android.home.core.service.ServiceController;
 import com.aviq.tv.android.home.core.state.StateException;
 import com.aviq.tv.android.home.core.state.StateManager;
@@ -85,6 +85,9 @@ public class Environment
 	private Map<FeatureName.Component, Prefs> _componentPrefs = new HashMap<FeatureName.Component, Prefs>();
 	private Map<FeatureName.Scheduler, Prefs> _schedulerPrefs = new HashMap<FeatureName.Scheduler, Prefs>();
 	private Map<FeatureName.State, Prefs> _statePrefs = new HashMap<FeatureName.State, Prefs>();
+	private IFeatureFactory _featureFactory;
+	// Chain based features initializer
+	private FeatureInitializeCallBack onFeatureInitialized = new FeatureInitializeCallBack();
 
 	/**
 	 * Environment constructor method
@@ -215,11 +218,6 @@ public class Environment
 	}
 
 	/**
-	 * Chain based features initializer
-	 */
-	private FeatureInitializeCallBack onFeatureInitialized = new FeatureInitializeCallBack();
-
-	/**
 	 * @return main application context
 	 */
 	public Context getContext()
@@ -329,7 +327,7 @@ public class Environment
 		}
 		catch (FeatureNotFoundException e)
 		{
-			IFeature feature = FeatureFactory.getInstance().createComponent(featureName);
+			IFeature feature = _featureFactory.createComponent(featureName);
 			useDependencies(feature);
 			_features.add(feature);
 		}
@@ -352,7 +350,7 @@ public class Environment
 		}
 		catch (FeatureNotFoundException e)
 		{
-			IFeature feature = FeatureFactory.getInstance().createScheduler(featureName);
+			IFeature feature = _featureFactory.createScheduler(featureName);
 			useDependencies(feature);
 			_features.add(feature);
 		}
@@ -368,6 +366,8 @@ public class Environment
 	public void use(FeatureName.State featureName) throws FeatureNotFoundException
 	{
 		Log.i(TAG, ".use: State " + featureName);
+		if (_featureFactory == null)
+			throw new RuntimeException("Set IFeatureFactory with setFeatureFactory before declaring feature usages");
 
 		// Sets first used feature state as splash state
 		if (_splashFeatureName == null)
@@ -383,7 +383,7 @@ public class Environment
 		catch (FeatureNotFoundException e)
 		{
 			// Use feature
-			IFeature feature = FeatureFactory.getInstance().createState(featureName);
+			IFeature feature = _featureFactory.createState(featureName);
 			useDependencies(feature);
 			_features.add(feature);
 		}
@@ -483,6 +483,11 @@ public class Environment
 	{
 		return _userPrefs;
 	}
+
+	public void setFeatureFactory(IFeatureFactory featureFactory)
+    {
+	    _featureFactory = featureFactory;
+    }
 
 	private void useDependencies(IFeature feature) throws FeatureNotFoundException
 	{

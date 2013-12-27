@@ -8,7 +8,7 @@
  * Description: TV state feature
  */
 
-package com.aviq.tv.android.home.feature.state.programinfo;
+package com.aviq.tv.android.home.app.aviqtv.state.programinfo;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.aviq.tv.android.home.R;
+import com.aviq.tv.android.home.app.aviqtv.state.epg.EpgProgramInfo;
 import com.aviq.tv.android.home.core.Environment;
 import com.aviq.tv.android.home.core.ResultCode;
 import com.aviq.tv.android.home.core.feature.FeatureName;
@@ -31,7 +32,6 @@ import com.aviq.tv.android.home.feature.epg.Program;
 import com.aviq.tv.android.home.feature.player.FeaturePlayer;
 import com.aviq.tv.android.home.feature.state.ContextButton;
 import com.aviq.tv.android.home.feature.state.ContextButtonGroup;
-import com.aviq.tv.android.home.feature.state.epg.EpgProgramInfo;
 
 /**
  * Program info state feature
