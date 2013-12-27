@@ -1,0 +1,93 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:background="#CC000000" >
+
+    <!-- Program details layout -->
+
+    <include
+        android:id="@+id/program_details_container"
+        layout="@layout/epg_program_details" />
+
+    <!-- EPG grid layout -->
+
+    <LinearLayout
+        android:id="@+id/epg_grid"
+        android:layout_width="match_parent"
+        android:layout_height="378dp"
+        android:layout_below="@id/program_details_container"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginTop="15dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <include
+                android:id="@+id/epg_grid_header"
+                layout="@layout/epg_grid_header" />
+
+            <!--
+            It's very important to keep this attribute as is: android:layout_height="fill_parent". 
+            Otherwise, you get lots of getView() calls to constantly recalculate the ListView height.
+            -->
+
+            <com.aviq.tv.android.aviqtv.state.epg.EpgListView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.aviqtv"
+                android:id="@+id/gridList"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/epg_grid_header"
+                android:layout_gravity="center"
+                android:layout_marginLeft="0dip"
+                android:layout_marginRight="0dip"
+                android:addStatesFromChildren="true"
+                android:background="@drawable/epg_grid_background"
+                android:cacheColorHint="@android:color/transparent"
+                android:divider="@color/epg_grid_divider_bar"
+                android:dividerHeight="1dp"
+                android:fadingEdge="none"
+                android:gravity="left"
+                android:listSelector="@android:color/transparent"
+                android:scrollingCache="false"
+                aviqtv:visibleItems="7">
+            </com.aviq.tv.android.aviqtv.state.epg.EpgListView>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/epg_channel_info_width"
+                android:layout_marginTop="15dp"
+                android:background="@color/epg_grid_divider_bar" />
+
+            <TextView
+                android:id="@+id/rcu_channel_selection"
+                android:layout_width="140dp"
+                android:layout_height="120dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="45dp"
+                android:singleLine="true"
+                android:textColor="#0000ff"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <!-- Contextual button bar -->
+
+    <include
+        android:id="@+id/button_bar_container"
+        layout="@layout/epg_status_bar"
+    />
+
+</RelativeLayout>
