@@ -124,11 +124,11 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	{
 		Log.i(TAG, ".onCreateView");
 		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_tv, container, false);
-		_clockTextView =  (TextView) _viewGroup.findViewById(R.id.clock);
-		_zapperListView =  (ZapperListView) _viewGroup.findViewById(R.id.tv_channel_bar);
-		_channelNoTextView =  (TextView) _viewGroup.findViewById(R.id.channel_no);
-		_channelLogoImageView =  (ImageView) _viewGroup.findViewById(R.id.channel_logo);
-		_programBar =  new ProgramBar((ViewGroup) _viewGroup.findViewById(R.id.tv_program_bar));
+		_clockTextView = (TextView) _viewGroup.findViewById(R.id.clock);
+		_zapperListView = (ZapperListView) _viewGroup.findViewById(R.id.tv_channel_bar);
+		_channelNoTextView = (TextView) _viewGroup.findViewById(R.id.channel_no);
+		_channelLogoImageView = (ImageView) _viewGroup.findViewById(R.id.channel_logo);
+		_programBar = new ProgramBar((ViewGroup) _viewGroup.findViewById(R.id.tv_program_bar));
 
 		_epgData = _featureEPG.getEpgData();
 		for (int i = 0; i < _epgData.getChannelCount(); i++)
@@ -236,16 +236,16 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		private ProgramBar(ViewGroup parent)
 		{
 			ChannelTitle = (TextView) _viewGroup.findViewById(R.id.channel_title);
-			PreviousProgramTime = null; // FIXME: uncomment this(TextView) _viewGroup.findViewById(R.id.previous_program_time);
-			PreviousProgramTitle = null; // FIXME: uncomment this(TextView) _viewGroup.findViewById(R.id.previous_program_title);
-			ProgramImage = null; // FIXME: uncomment this(ImageView) _viewGroup.findViewById(R.id.program_image);
-			CurrentProgramTime = null; // FIXME: uncomment this(TextView) _viewGroup.findViewById(R.id.current_program_time);
-			CurrentProgramTitle = null; // FIXME: uncomment this(TextView) _viewGroup.findViewById(R.id.current_program_title);
-			NextProgramTime = null; // FIXME: uncomment this(TextView) _viewGroup.findViewById(R.id.next_program_time);
-			NextProgramTitle = null; // FIXME: uncomment this(TextView) _viewGroup.findViewById(R.id.next_program_title);
-			ProgressStartTime = null; // FIXME: uncomment this(TextView) _viewGroup.findViewById(R.id.program_start);
-			ProgressEndTime = null; // FIXME: uncomment this(TextView) _viewGroup.findViewById(R.id.program_end);
-			ProgramProgress = null; // FIXME: uncomment this(ProgressBar) _viewGroup.findViewById(R.id.program_progress);
+			PreviousProgramTime = (TextView) _viewGroup.findViewById(R.id.previous_program_time);
+			PreviousProgramTitle = (TextView) _viewGroup.findViewById(R.id.previous_program_title);
+			ProgramImage = (ImageView) _viewGroup.findViewById(R.id.program_image);
+			CurrentProgramTime = (TextView) _viewGroup.findViewById(R.id.current_program_time);
+			CurrentProgramTitle = (TextView) _viewGroup.findViewById(R.id.current_program_title);
+			NextProgramTime = (TextView) _viewGroup.findViewById(R.id.next_program_time);
+			NextProgramTitle = (TextView) _viewGroup.findViewById(R.id.next_program_title);
+			ProgressStartTime = (TextView) _viewGroup.findViewById(R.id.program_start);
+			ProgressEndTime = (TextView) _viewGroup.findViewById(R.id.program_end);
+			ProgramProgress = (ProgressBar) _viewGroup.findViewById(R.id.program_progress);
 		}
 
 		private void setPrograms(Calendar When, Program previousProgram, Program currentProgram, Program nextProgram)
