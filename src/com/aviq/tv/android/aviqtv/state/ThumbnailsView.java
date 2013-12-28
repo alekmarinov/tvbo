@@ -2,10 +2,10 @@
  * Copyright (c) 2007-2013, AVIQ Bulgaria Ltd
  *
  * Project:     AVIQTV
- * Filename:    Grid.java
+ * Filename:    ThumbnailsView.java
  * Author:      alek
  * Date:        21 Dec 2013
- * Description: Grid view
+ * Description: View with thumbnails grid
  */
 
 package com.aviq.tv.android.aviqtv.state;
@@ -14,26 +14,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.aviq.tv.android.aviqtv.R;
+import com.aviq.tv.android.sdk.core.Log;
 
 /**
- * Grid view
+ * View with thumbnails grid
  */
 public class ThumbnailsView extends GridView
 {
 	public static final String TAG = ThumbnailsView.class.getSimpleName();
-	private GridAdapter _gridAdapter = new GridAdapter();
-	private int _gridItemResourceLayout;
+	private ThumbAdapter _thumbAdapter = new ThumbAdapter();
+	private boolean _isAttached = false;
+	private ThumbItemCreater _thumbItemCreater;
+
+	public interface ThumbItemCreater
+	{
+		View createView(LayoutInflater inflator);
+
+		void updateView(View view, Object object);
+	}
 
 	/**
 	 * @param context
@@ -62,94 +67,81 @@ public class ThumbnailsView extends GridView
 		super(context, attrs, defStyle);
 	}
 
-	public void setGridItemResourceLayout(int gridItemResourceLayout)
+	public void setThumbItemCreater(ThumbItemCreater thumbItemCreater)
 	{
-		_gridItemResourceLayout = gridItemResourceLayout;
+		_thumbItemCreater = thumbItemCreater;
 	}
 
-	public void addGridItem(Bitmap bitmap, String text)
-    {
-		_gridAdapter.addGridItem(bitmap, text);
-    }
-
-	private class GridAdapter extends BaseAdapter
+	public void addThumbItem(Object item, int position)
 	{
-		private List<GridItem> _gridItems = new ArrayList<GridItem>();
+		_thumbAdapter._thumbItems.add(position, item);
+		Log.i(TAG, "Added " + item + " at index " + (_thumbAdapter._thumbItems.size() - 1));
+		if (_isAttached)
+		{
+			_thumbAdapter.notifyDataSetChanged();
+			setSelection(position);
+		}
+	}
+
+	public void addThumbItem(Object item)
+	{
+		int position = _thumbAdapter._thumbItems.size() - 1;
+		if (position < 0) position = 0;
+		addThumbItem(item, position);
+	}
+
+	public void removeThumbAt(int position)
+	{
+		Object item = _thumbAdapter._thumbItems.remove(position);
+		Log.i(TAG, "Removed " + item + " from index " + position);
+		if (_isAttached)
+			_thumbAdapter.notifyDataSetChanged();
+	}
+
+	private class ThumbAdapter extends BaseAdapter
+	{
+		private LayoutInflater _inflator = (LayoutInflater) getContext().getSystemService(
+		        Context.LAYOUT_INFLATER_SERVICE);
+		private List<Object> _thumbItems = new ArrayList<Object>();
 
 		@Override
-        public int getCount()
-        {
-	        return _gridItems.size();
-        }
+		public int getCount()
+		{
+			return _thumbItems.size();
+		}
 
 		@Override
-        public Object getItem(int position)
-        {
-	        return _gridItems.get(position);
-        }
+		public Object getItem(int position)
+		{
+			return _thumbItems.get(position);
+		}
 
 		@Override
-        public long getItemId(int position)
-        {
-	        return _gridItems.get(position).hashCode();
-        }
+		public long getItemId(int position)
+		{
+			return _thumbItems.get(position).hashCode();
+		}
 
 		@Override
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
-			ViewHolder holder;
+		public View getView(int position, View convertView, ViewGroup parent)
+		{
 			if (convertView == null)
-			{
-				LayoutInflater inflator = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				convertView = inflator.inflate(_gridItemResourceLayout, null);
-
-				holder = new ViewHolder();
-				holder.textView = (TextView) convertView.findViewById(R.id.title);
-				holder.imageView = (ImageView) convertView.findViewById(R.id.thumbnail);
-				convertView.setTag(holder);
-			}
-			else
-			{
-				holder = (ViewHolder) convertView.getTag();
-			}
-
-			GridItem item = _gridItems.get(position);
-			holder.textView.setText(item.title);
-			holder.imageView.setImageBitmap(item.thumbnail);
-
+				convertView = _thumbItemCreater.createView(_inflator);
+			Object item = _thumbItems.get(position);
+			convertView.setTag(item);
+			Log.i(TAG, ".getView: " + item + " at index " + position);
+			_thumbItemCreater.updateView(convertView, item);
 			return convertView;
-        }
-
-		private void addGridItem(Bitmap bitmap, String text)
-	    {
-			_gridItems.add(new GridItem(bitmap, text));
-	    }
+		}
 	}
 
 	@Override
-    protected void onAttachedToWindow()
+	protected void onAttachedToWindow()
 	{
 		if (getAdapter() == null)
-			setAdapter(_gridAdapter);
-		else
-			_gridAdapter.notifyDataSetChanged();
-	}
-
-	private class ViewHolder
-	{
-		TextView textView;
-		ImageView imageView;
-	}
-
-	private class GridItem
-	{
-		Bitmap thumbnail;
-		String title;
-
-		GridItem(Bitmap thumbnail, String title)
 		{
-			this.thumbnail = thumbnail;
-			this.title = title;
+			setAdapter(_thumbAdapter);
+			_isAttached = true;
 		}
 	}
 }

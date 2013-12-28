@@ -17,7 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.aviqtv.state.ThumbnailsView;
@@ -28,6 +31,8 @@ import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
+import com.aviq.tv.android.sdk.feature.channels.FeatureChannels;
+import com.aviq.tv.android.sdk.feature.epg.Channel;
 import com.aviq.tv.android.sdk.feature.epg.EpgData;
 import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
 
@@ -39,12 +44,13 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	public static final String TAG = FeatureStateChannels.class.getSimpleName();
 
 	private ViewGroup _viewGroup;
-	private FeatureEPG _featureEPG;
+	private FeatureChannels _featureChannels;
 	private EpgData _epgData;
 
 	public FeatureStateChannels()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
+		_dependencies.Components.add(FeatureName.Component.CHANNELS);
 		_dependencies.States.add(FeatureName.State.MENU);
 	}
 
@@ -60,7 +66,11 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 		Log.i(TAG, ".initialize");
 		try
 		{
-			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
+			FeatureEPG featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(
+			        FeatureName.Component.EPG);
+			_epgData = featureEPG.getEpgData();
+			_featureChannels = (FeatureChannels) Environment.getInstance().getFeatureComponent(
+			        FeatureName.Component.CHANNELS);
 
 			// insert in Menu
 			FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
@@ -82,21 +92,51 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 		Log.i(TAG, ".onCreateView");
 		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_channels, container, false);
 
-		ThumbnailsView allchannelsGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.allchannels_grid);
-		ThumbnailsView mychannelsGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.mychannels_grid);
+		final ThumbnailsView allchannelsGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.allchannels_grid);
+		final ThumbnailsView mychannelsGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.mychannels_grid);
+		allchannelsGrid.setThumbItemCreater(_thumbnailCreater);
+		mychannelsGrid.setThumbItemCreater(_thumbnailCreater);
 
-		_epgData = _featureEPG.getEpgData();
-
-		allchannelsGrid.setGridItemResourceLayout(R.layout.grid_item_channel);
+		// Distribute favorite and non favorite channels
 		for (int i = 0; i < _epgData.getChannelCount(); i++)
 		{
-			allchannelsGrid.addGridItem(_epgData.getChannelLogoBitmap(i), _epgData.getChannel(i).getTitle());
+			Channel channel = _epgData.getChannel(i);
+			if (_featureChannels.isChannelFavorite(channel))
+				mychannelsGrid.addThumbItem(channel);
+			else
+				allchannelsGrid.addThumbItem(channel);
 		}
+
+		allchannelsGrid.setOnItemClickListener(new OnItemClickListener()
+		{
+			@Override
+			public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
+			{
+				Channel channel = (Channel)view.getTag();
+				_featureChannels.setChannelFavorite(channel, true);
+				allchannelsGrid.removeThumbAt(position);
+				mychannelsGrid.addThumbItem(channel, 0);
+				mychannelsGrid.smoothScrollBy(0,  0);
+			}
+		});
+
+		mychannelsGrid.setOnItemClickListener(new OnItemClickListener()
+		{
+			@Override
+			public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
+			{
+				Channel channel = (Channel)view.getTag();
+				_featureChannels.setChannelFavorite(channel, false);
+				mychannelsGrid.removeThumbAt(position);
+				allchannelsGrid.addThumbItem(channel, 0);
+				allchannelsGrid.smoothScrollBy(0,  0);
+			}
+		});
 
 		allchannelsGrid.setOnItemSelectedListener(new OnItemSelectedListener()
 		{
 			@Override
-			public void onItemSelected(AdapterView<?> arg0, View view, int position, long id)
+			public void onItemSelected(AdapterView<?> adapter, View view, int position, long id)
 			{
 				Log.d(TAG, "onItemSelected " + position);
 			}
@@ -113,7 +153,7 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	}
 
 	@Override
-    public void onShow()
+	public void onShow()
 	{
 		super.onShow();
 		_viewGroup.requestFocus();
@@ -141,4 +181,23 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	{
 		return getStateName().name();
 	}
+
+	private ThumbnailsView.ThumbItemCreater _thumbnailCreater = new ThumbnailsView.ThumbItemCreater()
+	{
+		@Override
+        public View createView(LayoutInflater inflator)
+        {
+			return inflator.inflate(R.layout.grid_item_channel, null);
+        }
+
+		@Override
+        public void updateView(View view, Object object)
+        {
+			Channel channel = (Channel)object;
+			ImageView thumbView = (ImageView)view.findViewById(R.id.thumbnail);
+			TextView titleView = (TextView)view.findViewById(R.id.title);
+			thumbView.setImageBitmap(_epgData.getChannelLogoBitmap(_epgData.getChannelIndex(channel)));
+			titleView.setText(channel.getTitle());
+        }
+	};
 }

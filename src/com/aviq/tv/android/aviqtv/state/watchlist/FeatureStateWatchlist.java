@@ -17,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.aviqtv.state.ThumbnailsView;
@@ -90,10 +92,10 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		_programInfo = new EpgProgramInfo(getActivity(), programInfoContainer);
 
 		ThumbnailsView watchlistGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.watchlist_grid);
-		watchlistGrid.setGridItemResourceLayout(R.layout.grid_item_watchlist);
+		watchlistGrid.setThumbItemCreater(_thumbnailCreater);
 		for (Program program: _watchlist.getWatchedPrograms())
 		{
-			watchlistGrid.addGridItem(null, program.getTitle());
+			watchlistGrid.addThumbItem(program);
 		}
 
 //		_adapter = new GridViewAdapter<Program>(Environment.getInstance().getContext(),
@@ -183,4 +185,23 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	{
 		return getStateName().name();
 	}
+
+	private ThumbnailsView.ThumbItemCreater _thumbnailCreater = new ThumbnailsView.ThumbItemCreater()
+	{
+		@Override
+        public View createView(LayoutInflater inflator)
+        {
+			return inflator.inflate(R.layout.grid_item_watchlist, null);
+        }
+
+		@Override
+        public void updateView(View view, Object object)
+        {
+			Program program = (Program)object;
+			ImageView thumbView = (ImageView)view.findViewById(R.id.thumbnail);
+			TextView titleView = (TextView)view.findViewById(R.id.title);
+			// thumbView.setImageBitmap();
+			titleView.setText(program.getTitle());
+        }
+	};
 }

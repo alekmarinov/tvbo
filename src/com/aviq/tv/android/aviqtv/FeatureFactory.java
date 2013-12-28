@@ -24,6 +24,7 @@ import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureScheduler;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.feature.IFeatureFactory;
+import com.aviq.tv.android.sdk.feature.channels.FeatureChannels;
 import com.aviq.tv.android.sdk.feature.epg.rayv.FeatureEPGRayV;
 import com.aviq.tv.android.sdk.feature.httpserver.FeatureHttpServer;
 import com.aviq.tv.android.sdk.feature.player.rayv.FeaturePlayerRayV;
@@ -44,6 +45,8 @@ public class FeatureFactory implements IFeatureFactory
 			case EPG:
 				// return new FeatureEPGWilmaa();
 				return new FeatureEPGRayV();
+			case CHANNELS:
+				return new FeatureChannels();
 			case PLAYER:
 				return new FeaturePlayerRayV();
 				// return new FeaturePlayer();
