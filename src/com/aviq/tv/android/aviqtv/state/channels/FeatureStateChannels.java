@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
+import com.aviq.tv.android.aviqtv.state.StatusBar;
 import com.aviq.tv.android.aviqtv.state.ThumbnailsView;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.sdk.core.Environment;
@@ -112,11 +113,11 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 			@Override
 			public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
 			{
-				Channel channel = (Channel)view.getTag();
+				Channel channel = (Channel) view.getTag();
 				_featureChannels.setChannelFavorite(channel, true);
 				allchannelsGrid.removeThumbAt(position);
 				mychannelsGrid.addThumbItem(channel, 0);
-				mychannelsGrid.smoothScrollBy(0,  0);
+				mychannelsGrid.smoothScrollBy(0, 0);
 			}
 		});
 
@@ -125,11 +126,11 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 			@Override
 			public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
 			{
-				Channel channel = (Channel)view.getTag();
+				Channel channel = (Channel) view.getTag();
 				_featureChannels.setChannelFavorite(channel, false);
 				mychannelsGrid.removeThumbAt(position);
 				allchannelsGrid.addThumbItem(channel, 0);
-				allchannelsGrid.smoothScrollBy(0,  0);
+				allchannelsGrid.smoothScrollBy(0, 0);
 			}
 		});
 
@@ -148,6 +149,9 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 			}
 		});
 		allchannelsGrid.requestFocus();
+
+		new StatusBar(_viewGroup.findViewById(R.id.status_bar)).enable(StatusBar.Element.NAVIGATION).enable(
+		        StatusBar.Element.ADD).enable(StatusBar.Element.REORDER);
 
 		return _viewGroup;
 	}
@@ -185,19 +189,19 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	private ThumbnailsView.ThumbItemCreater _thumbnailCreater = new ThumbnailsView.ThumbItemCreater()
 	{
 		@Override
-        public View createView(LayoutInflater inflator)
-        {
+		public View createView(LayoutInflater inflator)
+		{
 			return inflator.inflate(R.layout.grid_item_channel, null);
-        }
+		}
 
 		@Override
-        public void updateView(View view, Object object)
-        {
-			Channel channel = (Channel)object;
-			ImageView thumbView = (ImageView)view.findViewById(R.id.thumbnail);
-			TextView titleView = (TextView)view.findViewById(R.id.title);
+		public void updateView(View view, Object object)
+		{
+			Channel channel = (Channel) object;
+			ImageView thumbView = (ImageView) view.findViewById(R.id.thumbnail);
+			TextView titleView = (TextView) view.findViewById(R.id.title);
 			thumbView.setImageBitmap(_epgData.getChannelLogoBitmap(_epgData.getChannelIndex(channel)));
 			titleView.setText(channel.getTitle());
-        }
+		}
 	};
 }
