@@ -11,6 +11,7 @@
 package com.aviq.tv.android.aviqtv.state;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
@@ -90,10 +91,18 @@ public class ThumbnailsView extends GridView
 		addThumbItem(item, position);
 	}
 
-	public void removeThumbAt(int position)
+	public Object removeThumbAt(int position)
 	{
 		Object item = _thumbAdapter._thumbItems.remove(position);
 		Log.i(TAG, "Removed " + item + " from index " + position);
+		if (_isAttached)
+			_thumbAdapter.notifyDataSetChanged();
+		return item;
+	}
+
+	public void swapPositions(int position1, int position2)
+	{
+		Collections.swap(_thumbAdapter._thumbItems, position1, position2);
 		if (_isAttached)
 			_thumbAdapter.notifyDataSetChanged();
 	}

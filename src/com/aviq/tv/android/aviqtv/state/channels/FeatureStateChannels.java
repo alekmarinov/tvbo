@@ -171,10 +171,16 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 			@Override
 			public void onItemSelected(AdapterView<?> adapter, View view, int position, long id)
 			{
-				Log.d(TAG, "onItemSelected " + position);
+				Log.d(TAG, ".onItemSelected: position = " + position + ", _isReorderMode = " + _isReorderMode);
 				if (_isReorderMode)
 				{
 					Log.d(TAG, "Reorder from " + _lockedItemPosition + " to " + position);
+
+					// _myChannelsGrid.getChildAt(_lockedItemPosition).setBackgroundResource(R.drawable.watchlist_item_selector);
+					// _myChannelsGrid.getChildAt(position).setBackgroundResource(R.drawable.channel_thumbnail_locked);
+
+					switchReorderMode();
+					_myChannelsGrid.swapPositions(_lockedItemPosition, position);
 					_lockedItemPosition = position;
 				}
 			}
