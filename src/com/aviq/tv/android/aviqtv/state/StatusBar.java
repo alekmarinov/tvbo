@@ -28,7 +28,8 @@ public class StatusBar
 		DETAILS,
 		ADD,
 		REMOVE,
-		REORDER,
+		START_REORDER,
+		STOP_REORDER,
 		CHANNEL_ORDER_INDEX
 	}
 
@@ -60,13 +61,15 @@ public class StatusBar
 			case NAVIGATION:
 				return _rootView.findViewById(R.id.navigation);
 			case DETAILS:
-				return _rootView.findViewById(R.id.ok_details);
+				return _rootView.findViewById(R.id.details);
 			case ADD:
-				return _rootView.findViewById(R.id.ok_add);
+				return _rootView.findViewById(R.id.add);
 			case REMOVE:
-				return _rootView.findViewById(R.id.ok_remove);
-			case REORDER:
-				return _rootView.findViewById(R.id.playpause_reorder);
+				return _rootView.findViewById(R.id.remove);
+			case START_REORDER:
+				return _rootView.findViewById(R.id.start_reorder);
+			case STOP_REORDER:
+				return _rootView.findViewById(R.id.stop_reorder);
 			case CHANNEL_ORDER_INDEX:
 				return _rootView.findViewById(R.id.channel_order_index);
 		}

@@ -47,7 +47,7 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/ok_details"
+            android:id="@+id/details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="45dp"
@@ -61,7 +61,7 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/ok_add"
+            android:id="@+id/add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="45dp"
@@ -75,7 +75,7 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/ok_remove"
+            android:id="@+id/remove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="45dp"
@@ -90,7 +90,7 @@
 
         <!--  fixme: replace ic_btn_play with something else -->
         <TextView
-            android:id="@+id/playpause_reorder"
+            android:id="@+id/start_reorder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="45dp"
@@ -98,11 +98,25 @@
             android:drawableLeft="@drawable/ic_btn_play"
             android:drawablePadding="10dp"
             android:singleLine="true"
-            android:text="@string/remove"
+            android:text="@string/start_reorder"
             android:textColor="@color/program_text_normal"
             android:textSize="20sp"
             android:visibility="gone" />
-        
+
+        <TextView
+            android:id="@+id/stop_reorder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginRight="17dp"
+            android:drawableLeft="@drawable/ic_btn_play"
+            android:drawablePadding="10dp"
+            android:singleLine="true"
+            android:text="@string/stop_reorder"
+            android:textColor="@color/program_text_normal"
+            android:textSize="20sp"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/back"
             android:layout_width="wrap_content"

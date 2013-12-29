@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -47,12 +48,23 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	private ViewGroup _viewGroup;
 	private FeatureChannels _featureChannels;
 	private EpgData _epgData;
+	private boolean _isReorderMode = false;
+	private ThumbnailsView _allChannelsGrid;
+	private ThumbnailsView _myChannelsGrid;
+	private int _lockedItemPosition;
 
 	public FeatureStateChannels()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
 		_dependencies.Components.add(FeatureName.Component.CHANNELS);
 		_dependencies.States.add(FeatureName.State.MENU);
+	}
+
+	private enum StatusBarState
+	{
+		ALL_CHANNELS,
+		MY_CHANNELS,
+		MY_CHANNELS_REORDER
 	}
 
 	@Override
@@ -93,53 +105,78 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 		Log.i(TAG, ".onCreateView");
 		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_channels, container, false);
 
-		final ThumbnailsView allchannelsGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.allchannels_grid);
-		final ThumbnailsView mychannelsGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.mychannels_grid);
-		allchannelsGrid.setThumbItemCreater(_thumbnailCreater);
-		mychannelsGrid.setThumbItemCreater(_thumbnailCreater);
+		_allChannelsGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.allchannels_grid);
+		_myChannelsGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.mychannels_grid);
+		_allChannelsGrid.setThumbItemCreater(_thumbnailCreater);
+		_myChannelsGrid.setThumbItemCreater(_thumbnailCreater);
+
+		_allChannelsGrid.setOnFocusChangeListener(new OnFocusChangeListener()
+		{
+			@Override
+			public void onFocusChange(View v, boolean hasFocus)
+			{
+				if (hasFocus)
+					setStatusBarState(StatusBarState.ALL_CHANNELS);
+			}
+		});
+
+		_myChannelsGrid.setOnFocusChangeListener(new OnFocusChangeListener()
+		{
+			@Override
+			public void onFocusChange(View v, boolean hasFocus)
+			{
+				if (hasFocus)
+					setStatusBarState(StatusBarState.MY_CHANNELS);
+			}
+		});
 
 		// Distribute favorite and non favorite channels
 		for (int i = 0; i < _epgData.getChannelCount(); i++)
 		{
 			Channel channel = _epgData.getChannel(i);
 			if (_featureChannels.isChannelFavorite(channel))
-				mychannelsGrid.addThumbItem(channel);
+				_myChannelsGrid.addThumbItem(channel);
 			else
-				allchannelsGrid.addThumbItem(channel);
+				_allChannelsGrid.addThumbItem(channel);
 		}
 
-		allchannelsGrid.setOnItemClickListener(new OnItemClickListener()
+		_allChannelsGrid.setOnItemClickListener(new OnItemClickListener()
 		{
 			@Override
 			public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
 			{
 				Channel channel = (Channel) view.getTag();
 				_featureChannels.setChannelFavorite(channel, true);
-				allchannelsGrid.removeThumbAt(position);
-				mychannelsGrid.addThumbItem(channel, 0);
-				mychannelsGrid.smoothScrollBy(0, 0);
+				_allChannelsGrid.removeThumbAt(position);
+				_myChannelsGrid.addThumbItem(channel, 0);
+				_myChannelsGrid.smoothScrollBy(0, 0);
 			}
 		});
 
-		mychannelsGrid.setOnItemClickListener(new OnItemClickListener()
+		_myChannelsGrid.setOnItemClickListener(new OnItemClickListener()
 		{
 			@Override
 			public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
 			{
 				Channel channel = (Channel) view.getTag();
 				_featureChannels.setChannelFavorite(channel, false);
-				mychannelsGrid.removeThumbAt(position);
-				allchannelsGrid.addThumbItem(channel, 0);
-				allchannelsGrid.smoothScrollBy(0, 0);
+				_myChannelsGrid.removeThumbAt(position);
+				_allChannelsGrid.addThumbItem(channel, 0);
+				_allChannelsGrid.smoothScrollBy(0, 0);
 			}
 		});
 
-		allchannelsGrid.setOnItemSelectedListener(new OnItemSelectedListener()
+		_myChannelsGrid.setOnItemSelectedListener(new OnItemSelectedListener()
 		{
 			@Override
 			public void onItemSelected(AdapterView<?> adapter, View view, int position, long id)
 			{
 				Log.d(TAG, "onItemSelected " + position);
+				if (_isReorderMode)
+				{
+					Log.d(TAG, "Reorder from " + _lockedItemPosition + " to " + position);
+					_lockedItemPosition = position;
+				}
 			}
 
 			@Override
@@ -148,11 +185,8 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 				// TODO Auto-generated method stub
 			}
 		});
-		allchannelsGrid.requestFocus();
 
-		new StatusBar(_viewGroup.findViewById(R.id.status_bar)).enable(StatusBar.Element.NAVIGATION).enable(
-		        StatusBar.Element.ADD).enable(StatusBar.Element.REORDER);
-
+		_allChannelsGrid.requestFocus();
 		return _viewGroup;
 	}
 
@@ -166,9 +200,12 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
+		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
 		switch (keyCode)
 		{
-			case KeyEvent.KEYCODE_ENTER:
+			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+				if (_myChannelsGrid.isFocused())
+					switchReorderMode();
 				return true;
 		}
 		return false;
@@ -204,4 +241,35 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 			titleView.setText(channel.getTitle());
 		}
 	};
+
+	private void setStatusBarState(StatusBarState statusBarState)
+	{
+		switch (statusBarState)
+		{
+			case ALL_CHANNELS:
+				new StatusBar(_viewGroup.findViewById(R.id.status_bar)).enable(StatusBar.Element.NAVIGATION).enable(
+				        StatusBar.Element.ADD);
+			break;
+			case MY_CHANNELS:
+				new StatusBar(_viewGroup.findViewById(R.id.status_bar)).enable(StatusBar.Element.NAVIGATION).enable(
+				        StatusBar.Element.REMOVE).enable(StatusBar.Element.START_REORDER);
+			break;
+			case MY_CHANNELS_REORDER:
+				new StatusBar(_viewGroup.findViewById(R.id.status_bar)).enable(StatusBar.Element.NAVIGATION).enable(
+				        StatusBar.Element.ADD).enable(StatusBar.Element.STOP_REORDER);
+			break;
+		}
+	}
+
+	private void switchReorderMode()
+	{
+		_isReorderMode = !_isReorderMode;
+		if (_isReorderMode)
+		{
+			setStatusBarState(StatusBarState.MY_CHANNELS_REORDER);
+			_lockedItemPosition = _myChannelsGrid.getSelectedItemPosition();
+		}
+		else
+			setStatusBarState(StatusBarState.MY_CHANNELS);
+	}
 }

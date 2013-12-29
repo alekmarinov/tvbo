@@ -15,8 +15,9 @@
     <string name="details">Детайли</string>
     <string name="add">Добавяне</string>
     <string name="remove">Премахване</string>
-    <string name="reorder">Разместване</string>
-    
+    <string name="start_reorder">Начало Преместване</string>
+    <string name="stop_reorder">Край Преместване</string>
+
     <string name="programInfoDateFormat">dd/MM/yyyy г.</string>
     <string name="programInfoTimeFormat">kk:mm</string>
     <string name="programInfoTimeRange">%1$s - %2$s</string>
