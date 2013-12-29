@@ -113,6 +113,6 @@
 
     <include
         android:id="@+id/button_bar_container"
-        layout="@layout/channel_status_bar" />
+        layout="@layout/status_bar" />
 
 </RelativeLayout>

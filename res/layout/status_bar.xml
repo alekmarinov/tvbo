@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/button_bar_container"
+    android:layout_width="match_parent"
+    android:layout_height="37dp"
+    android:layout_alignParentBottom="true"
+    android:layout_marginBottom="25dip"
+    android:layout_marginLeft="100dp"
+    android:layout_marginRight="100dp"
+    android:background="@drawable/epg_grid_background"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="17dp"
+            android:drawableLeft="@drawable/ic_menu"
+            android:drawablePadding="10dp"
+            android:singleLine="true"
+            android:text="@string/menu"
+            android:textColor="@color/program_text_normal"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/navigation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginRight="17dp"
+            android:drawableLeft="@drawable/ic_navigation"
+            android:drawablePadding="10dp"
+            android:singleLine="true"
+            android:text="@string/navigation"
+            android:textColor="@color/program_text_normal"
+            android:textSize="20sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/ok_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginRight="17dp"
+            android:drawableLeft="@drawable/ic_ok"
+            android:drawablePadding="10dp"
+            android:singleLine="true"
+            android:text="@string/details"
+            android:textColor="@color/program_text_normal"
+            android:textSize="20sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginRight="17dp"
+            android:drawableLeft="@drawable/ic_back"
+            android:drawablePadding="10dp"
+            android:singleLine="true"
+            android:text="@string/back"
+            android:textColor="@color/program_text_normal"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/epg_channel_order_index"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:singleLine="true"
+        android:text="2 / 100"
+        android:textColor="@color/program_text_normal"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+</RelativeLayout>

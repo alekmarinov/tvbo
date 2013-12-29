@@ -40,6 +40,6 @@
 
     <include
         android:id="@+id/button_bar_container"
-        layout="@layout/epg_status_bar" />
+        layout="@layout/status_bar" />
 
 </RelativeLayout>
