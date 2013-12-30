@@ -14,6 +14,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
+import com.aviq.tv.android.sdk.feature.channels.FeatureChannels;
 import com.aviq.tv.android.sdk.feature.epg.Channel;
 import com.aviq.tv.android.sdk.feature.epg.EpgData;
 import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
@@ -75,6 +77,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	private TextView _channelNoTextView;
 	private ImageView _channelLogoImageView;
 	private FeatureEPG _featureEPG;
+	private FeatureChannels _featureChannels;
 	private EpgData _epgData;
 	private FeaturePlayer _featurePlayer;
 	private ProgramBarUpdater _programBarUpdater = new ProgramBarUpdater();
@@ -84,6 +87,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	public FeatureStateTV()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
+		_dependencies.Components.add(FeatureName.Component.CHANNELS);
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
 		_dependencies.States.add(FeatureName.State.MENU);
 		_dependencies.States.add(FeatureName.State.MESSAGE_BOX);
@@ -96,6 +100,8 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		try
 		{
 			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
+			_featureChannels = (FeatureChannels) Environment.getInstance().getFeatureComponent(
+			        FeatureName.Component.CHANNELS);
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
 			_updateProgramBarDelay = getPrefs().getInt(Param.UPDATE_PROGRAM_BAR_DELAY);
@@ -129,13 +135,14 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		_channelNoTextView = (TextView) _viewGroup.findViewById(R.id.channel_no);
 		_channelLogoImageView = (ImageView) _viewGroup.findViewById(R.id.channel_logo);
 		_programBar = new ProgramBar((ViewGroup) _viewGroup.findViewById(R.id.tv_program_bar));
-
 		_epgData = _featureEPG.getEpgData();
-		for (int i = 0; i < _epgData.getChannelCount(); i++)
+
+		List<Channel> favoriteChannels = _featureChannels.getFavoriteChannels();
+		for (Channel channel: favoriteChannels)
 		{
-			Bitmap bmp = _epgData.getChannelLogoBitmap(i);
+			Bitmap bmp = _epgData.getChannelLogoBitmap(channel.getIndex());
 			if (bmp == null)
-				Log.w(TAG, "Channel " + _epgData.getChannel(i).getChannelId() + " doesn't have image logo!");
+				Log.w(TAG, "Channel " + channel.getChannelId() + " doesn't have image logo!");
 			_zapperListView.addBitmap(bmp);
 		}
 		return _viewGroup;
@@ -149,18 +156,19 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 	private void onSelectChannelIndex(int channelIndex)
 	{
-		// stop timer
-		// Update selected channel logo
+		// Update selected channel number and logo
+		int globalIndex = _featureChannels.getFavoriteChannels().get(channelIndex).getIndex();
 		_channelNoTextView.setText(String.valueOf(channelIndex + 1));
-		_channelLogoImageView.setImageBitmap(_epgData.getChannelLogoBitmap(channelIndex));
+		_channelLogoImageView.setImageBitmap(_epgData.getChannelLogoBitmap(globalIndex));
 
 		// Update program bar
-		updateProgramBar(_epgData.getChannel(channelIndex), Calendar.getInstance());
+		updateProgramBar(_epgData.getChannel(globalIndex), Calendar.getInstance());
 	}
 
 	private void onSwitchChannelIndex(int channelIndex)
 	{
-		String streamUrl = _featureEPG.getChannelStreamUrl(channelIndex);
+		int globalIndex = _featureChannels.getFavoriteChannels().get(channelIndex).getIndex();
+		String streamUrl = _featureEPG.getChannelStreamUrl(globalIndex);
 		_featurePlayer.getPlayer().play(streamUrl);
 	}
 

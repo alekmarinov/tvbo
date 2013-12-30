@@ -502,7 +502,7 @@ public class EpgGrid
 	 */
 	private int calcVerticalPageNum(Channel currentChannel)
 	{
-		return _dataProvider.getChannelIndex(currentChannel) / _gridList.getVisibleItems();
+		return currentChannel.getIndex() / _gridList.getVisibleItems();
 	}
 
 	private int getEpgPagesCount()

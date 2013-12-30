@@ -189,13 +189,13 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	private ThumbnailsView.ThumbItemCreater _thumbnailCreater = new ThumbnailsView.ThumbItemCreater()
 	{
 		@Override
-        public View createView(LayoutInflater inflator)
+        public View createView(ThumbnailsView parent, int position, LayoutInflater inflator)
         {
 			return inflator.inflate(R.layout.grid_item_watchlist, null);
         }
 
 		@Override
-        public void updateView(View view, Object object)
+        public void updateView(ThumbnailsView parent, int position, View view, Object object)
         {
 			Program program = (Program)object;
 			ImageView thumbView = (ImageView)view.findViewById(R.id.thumbnail);

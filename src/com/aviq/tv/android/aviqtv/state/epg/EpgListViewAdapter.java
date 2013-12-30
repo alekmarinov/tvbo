@@ -117,7 +117,7 @@ public class EpgListViewAdapter extends BaseAdapter
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-		int channelIndex = mDataProvider.getChannelIndex(channel); //_isUsingFavorites ? channel.getFavIndex() : channel.getIndex();
+		int channelIndex = channel.getIndex();
 		holder.channelNo.setText("" + (1 + channelIndex));
 
 		Bitmap logo = mDataProvider.getChannelLogoBitmap(channelIndex);

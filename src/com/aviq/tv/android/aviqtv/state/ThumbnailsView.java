@@ -36,9 +36,9 @@ public class ThumbnailsView extends GridView
 
 	public interface ThumbItemCreater
 	{
-		View createView(LayoutInflater inflator);
+		View createView(ThumbnailsView parent, int position, LayoutInflater inflator);
 
-		void updateView(View view, Object object);
+		void updateView(ThumbnailsView parent, int position, View view, Object object);
 	}
 
 	/**
@@ -75,8 +75,17 @@ public class ThumbnailsView extends GridView
 
 	public void addThumbItem(Object item, int position)
 	{
-		_thumbAdapter._thumbItems.add(position, item);
-		Log.i(TAG, "Added " + item + " at index " + (_thumbAdapter._thumbItems.size() - 1));
+		if (position >= 0)
+		{
+			_thumbAdapter._thumbItems.add(position, item);
+			Log.i(TAG, "Added " + item + " at index " + position);
+		}
+		else
+		{
+			_thumbAdapter._thumbItems.add(item);
+			Log.i(TAG, "Added " + item + " at index " + (_thumbAdapter._thumbItems.size() - 1));
+		}
+
 		if (_isAttached)
 		{
 			_thumbAdapter.notifyDataSetChanged();
@@ -86,9 +95,7 @@ public class ThumbnailsView extends GridView
 
 	public void addThumbItem(Object item)
 	{
-		int position = _thumbAdapter._thumbItems.size() - 1;
-		if (position < 0) position = 0;
-		addThumbItem(item, position);
+		addThumbItem(item, -1);
 	}
 
 	public Object removeThumbAt(int position)
@@ -100,11 +107,16 @@ public class ThumbnailsView extends GridView
 		return item;
 	}
 
-	public void swapPositions(int position1, int position2)
+	public void swapPositions(int position1, int position2, boolean isNotifyDataSetChanged)
 	{
 		Collections.swap(_thumbAdapter._thumbItems, position1, position2);
-		if (_isAttached)
+		if (isNotifyDataSetChanged)
 			_thumbAdapter.notifyDataSetChanged();
+	}
+
+	public void notifyDataSetChanged()
+	{
+		_thumbAdapter.notifyDataSetChanged();
 	}
 
 	private class ThumbAdapter extends BaseAdapter
@@ -135,11 +147,11 @@ public class ThumbnailsView extends GridView
 		public View getView(int position, View convertView, ViewGroup parent)
 		{
 			if (convertView == null)
-				convertView = _thumbItemCreater.createView(_inflator);
+				convertView = _thumbItemCreater.createView(ThumbnailsView.this, position, _inflator);
 			Object item = _thumbItems.get(position);
 			convertView.setTag(item);
 			Log.i(TAG, ".getView: " + item + " at index " + position);
-			_thumbItemCreater.updateView(convertView, item);
+			_thumbItemCreater.updateView(ThumbnailsView.this, position, convertView, item);
 			return convertView;
 		}
 	}

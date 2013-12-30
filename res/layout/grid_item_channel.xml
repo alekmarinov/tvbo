@@ -19,7 +19,7 @@
         android:lines="1"
         android:text="001 Title"
     />
-    
+
     <ImageView
         android:id="@+id/thumbnail"
         android:layout_width="match_parent"
