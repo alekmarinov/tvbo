@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -34,6 +35,7 @@ import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
 import com.aviq.tv.android.sdk.core.state.StateException;
 import com.aviq.tv.android.sdk.feature.epg.Program;
+import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 import com.aviq.tv.android.sdk.feature.watchlist.FeatureWatchlist;
 
 /**
@@ -47,9 +49,11 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	private FeatureWatchlist _watchlist;
 	private EpgProgramInfo _programInfo;
 	private ThumbnailsView _watchlistGrid;
+	private FeaturePlayer _featurePlayer;
 
 	public FeatureStateWatchlist()
 	{
+		_dependencies.Components.add(FeatureName.Component.PLAYER);
 		_dependencies.Components.add(FeatureName.Component.EPG);
 		_dependencies.Components.add(FeatureName.Component.WATCHLIST);
 		_dependencies.States.add(FeatureName.State.PROGRAM_INFO);
@@ -73,6 +77,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 			        FeatureName.State.MENU);
 			featureStateMenu.addMenuItemState(this);
 
+			_featurePlayer = (FeaturePlayer) Environment.getInstance().getFeatureComponent(FeatureName.Component.PLAYER);
 			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(FeatureName.Component.WATCHLIST);
 
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
@@ -102,6 +107,27 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 
 		_watchlistGrid.setOnItemSelectedListener(_onItemSelectedListener);
 		_watchlistGrid.setOnItemClickListener(_onItemClickListener);
+
+		// Hide player while view is relayouting and show it by the global layout listener
+		_featurePlayer.hideVideoView();
+		final View videoViewPlaceHolder = _viewGroup.findViewById(R.id.videoview_placeholder);
+
+		videoViewPlaceHolder.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener()
+		{
+			@Override
+            public void onGlobalLayout()
+            {
+				videoViewPlaceHolder.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
+				View container = _viewGroup.findViewById(R.id.program_details_container);
+
+				int x = (int)(_viewGroup.getX() + container.getX() + videoViewPlaceHolder.getX());
+				int y = (int)(_viewGroup.getY() + container.getY() + videoViewPlaceHolder.getY());
+				int w = videoViewPlaceHolder.getWidth();
+				int h = videoViewPlaceHolder.getHeight();
+				_featurePlayer.setVideoViewPositionAndSize(x, y, w, h);
+            }
+		});
 
 		// Initial refresh of the program info widget
 //		if (_adapter.getCount() > 0)
@@ -166,7 +192,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 //BaseAdapter adapter = ((BaseAdapter) _watchlistGrid.getAdapter());
 //adapter.notifyDataSetChanged();
 	}
-	
+
 	@Override
 	protected void onHide()
 	{

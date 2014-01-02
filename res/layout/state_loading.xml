@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background" >
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/loading_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -27,9 +32,9 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="578dip"
         android:layout_height="13dip"
+        android:layout_below="@id/loading"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_vertical"
-        android:layout_below="@id/loading"
         android:layout_marginTop="15dp"
         android:focusable="false"
         android:max="100"

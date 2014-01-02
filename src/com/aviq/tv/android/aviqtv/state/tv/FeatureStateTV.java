@@ -172,7 +172,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	{
 		int globalIndex = _featureChannels.getFavoriteChannels().get(channelIndex).getIndex();
 		String streamUrl = _featureEPG.getChannelStreamUrl(globalIndex);
-		_featurePlayer.getPlayer().play(streamUrl);
+		_featurePlayer.play(streamUrl);
 	}
 
 	private void updateClock()
