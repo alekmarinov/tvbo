@@ -29,4 +29,10 @@
     <string name="loading">Зареждане...</string>
     <string name="all_channels">Всички Канали</string>
     <string name="my_channels">Мои Канали</string>
+    
+    <!-- Networks -->
+    <string name="wifi">Wi-Fi</string>
+    <string name="ethernet">Ethernet</string>
+    <string name="choose_connection">Choose Connection</string>
+    <string name="password_prompt">Въведи парола за %1$s</string>
 </resources>

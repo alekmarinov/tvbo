@@ -1,0 +1,38 @@
+.zenkeyboard {
+}
+.zenkeyboard table {
+    border-collapse: collapse;
+}
+.zenkeyboard div {
+    float: left;
+    margin-left: 0px;
+}
+.zenkeyboard ul {
+    padding: 0px;
+    overflow: hidden;
+    margin: 0px;
+    white-space: nowrap;
+}
+.zenkeyboard li {
+    display : inline-block;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+}
+.zenkeyboard li.empty {
+    display: none;
+}
+
+/* 50px based layout */
+.zenkeyboard.h50 {
+    position: absolute;
+}
+.zenkeyboard.h50 li {
+    width: 72px;
+    height: 82px;
+    line-height: 82px;
+}
+.zenkeyboard.h50 li.double-width {
+    width: 159px;
+}
+

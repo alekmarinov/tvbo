@@ -1,0 +1,236 @@
+{
+
+    "l" : {
+
+        "ml11" : "exr1",
+        "ml12" : "ml11",
+        "ml13" : "ml12",
+
+        "ml21" : "trr3",
+        "ml22" : "ml21",
+        "ml23" : "ml22",
+
+        "ml31" : "trr5",
+        "ml32" : "ml31",
+        "ml33" : "ml32",
+
+        "mm11" : "ml13",
+        "mm12" : "mm11",
+        "mm13" : "mm12",
+
+        "mm21" : "ml23",
+        "mm22" : "mm21",
+        "mm23" : "mm22",
+
+        "mm31" : "ml33",
+        "mm32" : "mm31",
+        "mm33" : "mm32",
+
+        "mr11" : "mm13",
+        "mr12" : "mr11",
+        "mr13" : "mr12",
+
+        "mr21" : "mm23",
+        "mr22" : "mr21",
+        "mr23" : "mr22",
+
+        "mr31" : "mm33",
+        "mr32" : "mr31",
+        "mr33" : "mr32",
+
+        "trr1" : "mr13",
+        "trr2" : "mr23",
+        "trr3" : "trr2",
+        "trr4" : "mr33",
+        "trr5" : "trr4",
+        "trr7" : "brht",
+        "trr8" : "trr7",
+        "trr9" : "trr8",
+
+        "exr1" : "trr1",
+
+        "bstr" : "trr9",
+        "bcps" : "bstr",
+        "bspc" : "bcps",
+        "blft" : "btn2",
+        "btn2" : "btn1",
+        "btn1" : "bspc",
+        "bdel" : "blft",
+        "brht" : "bdel"
+    },
+
+    "r" : {
+        "ml11" : "ml12",
+        "ml12" : "ml13",
+        "ml13" : "mm11",
+
+        "ml21" : "ml22",
+        "ml22" : "ml23",
+        "ml23" : "mm21",
+
+        "ml31" : "ml32",
+        "ml32" : "ml33",
+        "ml33" : "mm31",
+
+        "mm11" : "mm12",
+        "mm12" : "mm13",
+        "mm13" : "mr11",
+
+        "mm21" : "mm22",
+        "mm22" : "mm23",
+        "mm23" : "mr21",
+
+        "mm31" : "mm32",
+        "mm32" : "mm33",
+        "mm33" : "mr31",
+
+        "mr11" : "mr12",
+        "mr12" : "mr13",
+        "mr13" : "trr1",
+
+        "mr21" : "mr22",
+        "mr22" : "mr23",
+        "mr23" : "trr2",
+
+        "mr31" : "mr32",
+        "mr32" : "mr33",
+        "mr33" : "trr4",
+
+        "trr1" : "exr1",
+        "exr1" : "ml11",
+        "trr2" : "trr3",
+        "trr3" : "ml21",
+        "trr4" : "trr5",
+        "trr5" : "ml31",
+        "trr7" : "trr8",
+        "trr8" : "trr9",
+        "trr9" : "bstr",
+
+        "bstr" : "bcps",
+        "bcps" : "bspc",
+        "bspc" : "btn1",
+        "btn1" : "btn2",
+        "btn2" : "blft",
+        "blft" : "bdel",
+        "bdel" : "brht",
+        "brht" : "trr7"
+    },
+
+    "u" : {
+
+        "ml11" : null,
+        "ml12" : null,
+        "ml13" : null,
+
+        "ml21" : "ml11",
+        "ml22" : "ml12",
+        "ml23" : "ml13",
+
+        "ml31" : "ml21",
+        "ml32" : "ml22",
+        "ml33" : "ml23",
+
+        "mm11" : null,
+        "mm12" : null,
+        "mm13" : null,
+
+        "mm21" : "mm11",
+        "mm22" : "mm12",
+        "mm23" : "mm13",
+
+        "mm31" : "mm21",
+        "mm32" : "mm22",
+        "mm33" : "mm23",
+
+        "mr11" : null,
+        "mr12" : null,
+        "mr13" : null,
+
+        "mr21" : "mr11",
+        "mr22" : "mr12",
+        "mr23" : "mr13",
+
+        "mr31" : "mr21",
+        "mr32" : "mr22",
+        "mr33" : "mr23",
+
+        "trr1" : null,
+        "trr2" : "trr1",
+        "trr3" : "exr1",
+        "trr4" : "trr2",
+        "trr5" : "trr3",
+        "trr7" : "trr4",
+        "trr8" : "trr5",
+        "trr9" : "trr5",
+
+        "bstr" : "ml31",
+        "bcps" : "ml33",
+        "bspc" : "mm31",
+        "btn1" : "mm32",
+        "btn2" : "mm33",
+        "blft" : "mr31",
+        "bdel" : "mr32",
+        "brht" : "mr33"
+    },
+
+    "d" : {
+
+        "ml11" : "ml21",
+        "ml12" : "ml22",
+        "ml13" : "ml23",
+
+        "ml21" : "ml31",
+        "ml22" : "ml32",
+        "ml23" : "ml33",
+
+        "ml31" : "bstr",
+        "ml32" : "bstr",
+        "ml33" : "bcps",
+
+        "mm11" : "mm21",
+        "mm12" : "mm22",
+        "mm13" : "mm23",
+
+        "mm21" : "mm31",
+        "mm22" : "mm32",
+        "mm23" : "mm33",
+
+        "mm31" : "bspc",
+        "mm32" : "btn1",
+        "mm33" : "btn2",
+
+        "mr11" : "mr21",
+        "mr12" : "mr22",
+        "mr13" : "mr23",
+
+        "mr21" : "mr31",
+        "mr22" : "mr32",
+        "mr23" : "mr33",
+
+        "mr31" : "blft",
+        "mr32" : "bdel",
+        "mr33" : "brht",
+
+        "trr1" : "trr2",
+        "trr2" : "trr4",
+        "trr3" : "trr5",
+        "trr4" : "trr7",
+        "trr5" : "trr8",
+        "trr7" : null,
+        "trr8" : null,
+        "trr9" : null,
+        "exr1" : "trr3",
+
+        "bstr" : null,
+        "bcps" : null,
+        "bspc" : null,
+        "blft" : null,
+        "bdel" : null,
+        "brht" : null
+    },
+
+    "i" : {
+    }
+
+}
+

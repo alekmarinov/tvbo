@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/network_item_width"
+    android:layout_height="@dimen/network_item_height"
+    android:background="@color/selection_prompt" >
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:paddingLeft="30dip"
+        android:textColor="@color/white"
+        android:textSize="28sp" 
+        android:text="Network type"/>
+
+    <ImageView
+        android:id="@+id/strength"
+        android:layout_width="92dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@id/title"
+        android:scaleType="centerInside"
+        android:src="@drawable/wifi_signal" />
+    
+    <ImageView
+        android:id="@+id/access"
+        android:layout_width="92dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@id/title"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_wifi_locked"
+        android:visibility="gone" />
+
+</RelativeLayout>
