@@ -38,6 +38,7 @@ import com.aviq.tv.android.sdk.feature.channels.FeatureChannels;
 import com.aviq.tv.android.sdk.feature.epg.Channel;
 import com.aviq.tv.android.sdk.feature.epg.EpgData;
 import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
+import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 
 /**
  * Watchlist state feature
@@ -47,6 +48,7 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	public static final String TAG = FeatureStateChannels.class.getSimpleName();
 
 	private ViewGroup _viewGroup;
+	private FeaturePlayer _featurePlayer;
 	private FeatureChannels _featureChannels;
 	private EpgData _epgData;
 	private boolean _isReorderMode = false;
@@ -56,6 +58,7 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 
 	public FeatureStateChannels()
 	{
+		_dependencies.Components.add(FeatureName.Component.PLAYER);
 		_dependencies.Components.add(FeatureName.Component.EPG);
 		_dependencies.Components.add(FeatureName.Component.CHANNELS);
 		_dependencies.States.add(FeatureName.State.MENU);
@@ -84,6 +87,9 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 			_featureChannels = (FeatureChannels) Environment.getInstance().getFeatureComponent(
 			        FeatureName.Component.CHANNELS);
 
+			_featurePlayer = (FeaturePlayer) Environment.getInstance()
+			        .getFeatureComponent(FeatureName.Component.PLAYER);
+
 			// insert in Menu
 			FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
 			        FeatureName.State.MENU);
@@ -102,6 +108,8 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		Log.i(TAG, ".onCreateView");
+		_featurePlayer.setVideoViewFullScreen();
+
 		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_channels, container, false);
 
 		_allChannelsGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.allchannels_grid);

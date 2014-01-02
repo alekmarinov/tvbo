@@ -126,6 +126,9 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 
 		_rootView = viewGroup;
 
+		// Hide player while view is relayouting and show it by the global layout listener
+		_featurePlayer.hideVideoView();
+
 		initEpgGridOnGlobalLayout();
 
 		return viewGroup;
