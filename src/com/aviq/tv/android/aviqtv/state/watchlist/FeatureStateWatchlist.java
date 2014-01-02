@@ -10,6 +10,8 @@
 
 package com.aviq.tv.android.aviqtv.state.watchlist;
 
+import java.util.Calendar;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -82,8 +84,11 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
 			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
 			        FeatureName.Component.WATCHLIST);
+
 			subscribe(_watchlist, FeatureWatchlist.ON_PROGRAM_REMOVED);
 			subscribe(_watchlist, FeatureWatchlist.ON_PROGRAM_ADDED);
+
+			_watchlist.getEventMessenger().register(this, FeatureWatchlist.ON_PROGRAM_NOTIFY);
 
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
@@ -142,7 +147,14 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	public void onEvent(int msgId, Bundle bundle)
 	{
 		Log.i(TAG, ".onEvent: msgId = " + msgId);
-		_watchlistGrid.notifyDataSetChanged();
+		if (msgId == FeatureWatchlist.ON_PROGRAM_NOTIFY)
+		{
+
+		}
+		else if (msgId == FeatureWatchlist.ON_PROGRAM_ADDED || msgId == FeatureWatchlist.ON_PROGRAM_REMOVED)
+		{
+			_watchlistGrid.notifyDataSetChanged();
+		}
 	}
 
 	private OnItemSelectedListener _onItemSelectedListener = new OnItemSelectedListener()
@@ -212,7 +224,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	@Override
 	public String getMenuItemCaption()
 	{
-		return getStateName().name();
+		return Environment.getInstance().getResources().getString(R.string.menu_watchlist);
 	}
 
 	private ThumbnailsView.ThumbItemCreater _thumbnailCreater = new ThumbnailsView.ThumbItemCreater()
@@ -227,6 +239,18 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		public void updateView(ThumbnailsView parent, int position, View view, Object object)
 		{
 			Program program = (Program) object;
+
+			if (Calendar.getInstance().compareTo(program.getStopTimeCalendar()) > 0)
+			{
+				// mark program expired
+				view.setAlpha(0.5f);
+			}
+			else
+			{
+				// mark program active
+				view.setAlpha(1.0f);
+			}
+
 			ImageView thumbView = (ImageView) view.findViewById(R.id.thumbnail);
 			TextView titleView = (TextView) view.findViewById(R.id.title);
 			// thumbView.setImageBitmap();

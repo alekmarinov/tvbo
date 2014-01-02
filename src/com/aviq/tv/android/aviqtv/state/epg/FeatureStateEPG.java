@@ -108,7 +108,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 	@Override
 	public String getMenuItemCaption()
 	{
-		return getStateName().name();
+		return Environment.getInstance().getResources().getString(R.string.menu_epg);
 	}
 
 	@Override

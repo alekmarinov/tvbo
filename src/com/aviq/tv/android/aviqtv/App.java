@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.VideoView;
 
+import com.aviq.tv.android.aviqtv.state.MessageBox;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.IApplication;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
@@ -23,6 +24,7 @@ import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.StateException;
 import com.aviq.tv.android.sdk.core.state.StateManager;
+import com.aviq.tv.android.sdk.core.state.StateManager.MessageParams;
 import com.aviq.tv.android.sdk.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.sdk.utils.TextUtils;
 
@@ -46,6 +48,7 @@ public class App extends Application implements IApplication
 			StateManager stateManager = new StateManager(activity);
 			stateManager.setOverlayBackgroundColor(activity.getResources().getColor(R.color.overlay_background));
 			stateManager.setFragmentLayerResources(R.id.main_fragment, R.id.overlay_fragment, R.id.message_fragment);
+			stateManager.setMessageState(new MessageBox());
 			env.setStateManager(stateManager);
 
 			// Sets application specific feature factory
@@ -53,8 +56,8 @@ public class App extends Application implements IApplication
 			env.setFeatureFactory(featureFactory);
 
 			// Configure RayV player
-			FeaturePlayerRayV featurePlayerRayV = (FeaturePlayerRayV)env.use(FeatureName.Component.PLAYER);
-			featurePlayerRayV.setVideoView((VideoView)activity.findViewById(R.id.player));
+			FeaturePlayerRayV featurePlayerRayV = (FeaturePlayerRayV) env.use(FeatureName.Component.PLAYER);
+			featurePlayerRayV.setVideoView((VideoView) activity.findViewById(R.id.player));
 			String streamerIni = TextUtils.inputSteamToString(getResources().openRawResource(R.raw.streamer));
 			featurePlayerRayV.setStreamerIni(streamerIni);
 
@@ -106,7 +109,15 @@ public class App extends Application implements IApplication
 
 		switch (keyCode)
 		{
-			case KeyEvent.KEYCODE_BACK:// FIXME: for tablet test only
+			case KeyEvent.KEYCODE_BACK:// FIXME: test only
+				String messageTitle = getResources().getString(R.string.watchlist_notify_title);
+				String messageText = String.format(getResources().getString(R.string.watchlist_notify_text), 5,
+				        "Gospodari na Efira", "BTV");
+				MessageParams messageParams = new MessageParams().setType(MessageParams.Type.INFO).setTitle(messageTitle).setText(messageText)
+				        .enableButton(MessageParams.Button.YES).enableButton(MessageParams.Button.NO);
+				Environment.getInstance().getStateManager().showMessage(messageParams);
+
+			break;
 			case KeyEvent.KEYCODE_F2:// Menu
 				FeatureState menuFeatureState;
 				try

@@ -35,4 +35,20 @@
     <string name="ethernet">Ethernet</string>
     <string name="choose_connection">Choose Connection</string>
     <string name="password_prompt">Въведи парола за %1$s</string>
+    
+    <!-- Menu -->
+    <string name="menu_epg">Програмата</string>
+    <string name="menu_channels">Канали</string>
+    <string name="menu_tv">Телевизия</string>
+    <string name="menu_watchlist">Напомняне</string>
+    
+    <string name="ok">Добре</string>
+    <string name="cancel">Отказ</string>
+    <string name="yes">Да</string>
+    <string name="no">Не</string>
+
+    <!-- Watchlist -->
+    <string name="watchlist_notify_title">Напомняне</string>
+    <string name="watchlist_notify_text">След %1$d мин започва %2$s по %3$s. Искате ли да смените канала?</string>
+
 </resources>
