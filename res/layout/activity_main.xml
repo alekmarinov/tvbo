@@ -21,13 +21,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:focusable="false" />
-    <!--
-        android:layout_width="@dimen/player_w"
-        android:layout_height="@dimen/player_h"
-        android:layout_marginLeft="@dimen/player_x"
-        android:layout_marginTop="@dimen/player_y"
-    -->
-
 
     <!-- Main Fragment -->
 
