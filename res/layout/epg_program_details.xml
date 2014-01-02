@@ -34,8 +34,7 @@
             android:background="@drawable/program_details_strip"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:singleLine="true"
-            android:text="Декстър" />
+            android:singleLine="true" />
 
         <LinearLayout
             android:id="@+id/program_time_container"
@@ -56,8 +55,7 @@
                 android:layout_marginRight="17dp"
                 android:drawableLeft="@drawable/ic_calendar"
                 android:drawablePadding="10dp"
-                android:singleLine="true"
-                android:text="22/10/2013 г." />
+                android:singleLine="true" />
 
             <TextView
                 android:id="@+id/time"
@@ -68,8 +66,7 @@
                 android:layout_marginRight="17dp"
                 android:drawableLeft="@drawable/ic_remaining_time"
                 android:drawablePadding="10dp"
-                android:singleLine="true"
-                android:text="20:00" />
+                android:singleLine="true" />
         </LinearLayout>
 
         <TextView
@@ -83,7 +80,6 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="true"
-            android:text="сезон 2, епизод 12"
             android:textStyle="bold" />
 
         <TextView
@@ -96,7 +92,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="false"
-            android:text="Декстър преследва и брутално убива онези опасни убийци, които са успели да избягат от &quot;дългата ръка на закона&quot;. Той организира убийствата си съгласно &quot;Кодекса на Хари&quot;, който е създал..." />
+            android:gravity="top" />
     </LinearLayout>
 
 </LinearLayout>

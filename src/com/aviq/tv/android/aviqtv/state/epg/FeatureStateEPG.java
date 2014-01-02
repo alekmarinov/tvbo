@@ -230,7 +230,6 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		@Override
 		public void onEpgGridItemSelected(Channel channel, Program program)
 		{
-			// TODO:ZZ:test
 			Log.v(TAG, "channel = " + channel.getChannelId() + ", program start = " + program.getStartTime()
 			        + ", stop = " + program.getStopTime());
 

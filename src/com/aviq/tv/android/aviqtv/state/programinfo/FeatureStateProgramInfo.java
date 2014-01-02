@@ -51,7 +51,7 @@ public class FeatureStateProgramInfo extends FeatureState
 	private EpgData _epgData;
 	private String _channelId;
 	private String _programId;
-
+	
 	public FeatureStateProgramInfo()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
@@ -148,7 +148,7 @@ public class FeatureStateProgramInfo extends FeatureState
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-
+	
 	private OnClickListener _contextButtonGroupOnClickListener = new OnClickListener()
 	{
 		@Override
