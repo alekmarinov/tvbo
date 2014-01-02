@@ -145,6 +145,9 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 				Log.w(TAG, "Channel " + channel.getChannelId() + " doesn't have image logo!");
 			_zapperListView.addBitmap(bmp);
 		}
+
+		// Set player at full screen
+		_featurePlayer.setVideoViewFullScreen();
 		return _viewGroup;
 	}
 

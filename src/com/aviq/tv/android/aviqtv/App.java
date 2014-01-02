@@ -106,6 +106,7 @@ public class App extends Application implements IApplication
 
 		switch (keyCode)
 		{
+			case KeyEvent.KEYCODE_BACK:// FIXME: for tablet test only
 			case KeyEvent.KEYCODE_F2:// Menu
 				FeatureState menuFeatureState;
 				try
