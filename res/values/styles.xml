@@ -47,4 +47,9 @@
         <item name="android:drawablePadding">10dip</item>
         <item name="android:layout_marginBottom">10dip</item>
     </style>
+    <style name="MenuItemCaption">
+        <item name="android:textColor">@color/menu_item_caption</item>
+        <item name="android:textSize">@dimen/menu_item_caption</item>
+        <item name="android:paddingTop">30dip</item>
+    </style>
 </resources>
