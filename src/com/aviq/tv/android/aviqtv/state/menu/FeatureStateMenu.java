@@ -18,8 +18,11 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.sdk.core.Environment;
@@ -43,12 +46,13 @@ public class FeatureStateMenu extends FeatureState
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_menu, container, false);
-		_menuContainer = (ViewGroup)viewGroup.findViewById(R.id.menu_container);
+		_menuContainer = (ViewGroup) viewGroup.findViewById(R.id.menu_container);
 
 		for (final IStateMenuItem menuItemState : _menuItemStates)
 		{
 			ImageView imageView = new ImageButton(Environment.getInstance().getContext());
 			imageView.setImageResource(menuItemState.getMenuItemResourceId());
+			imageView.setId(menuItemState.getMenuItemResourceId());
 			// FIXME: add background selector
 			imageView.setOnClickListener(new View.OnClickListener()
 			{
@@ -65,7 +69,22 @@ public class FeatureStateMenu extends FeatureState
 					}
 				}
 			});
-			_menuContainer.addView(imageView);
+
+			// create TextView with item caption
+			TextView textView = new TextView(Environment.getInstance().getContext());
+			textView.setText(menuItemState.getMenuItemCaption());
+			textView.setTextAppearance(Environment.getInstance().getContext(), R.style.MenuItemCaption);
+
+			// add item image and caption to a RelativeLayout container
+			RelativeLayout buttonContainer = new RelativeLayout(Environment.getInstance().getContext());
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+			        LayoutParams.WRAP_CONTENT);
+			params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+			params.addRule(RelativeLayout.BELOW, imageView.getId());
+			buttonContainer.addView(imageView);
+			buttonContainer.addView(textView, params);
+
+			_menuContainer.addView(buttonContainer);
 			Log.i(TAG, "Created menu item " + menuItemState.getMenuItemCaption());
 		}
 		_menuContainer.requestFocus();
