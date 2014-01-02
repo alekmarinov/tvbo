@@ -53,6 +53,8 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 	private EpgListView _gridList;
 	private TextView _dateTimeView;
 	private EpgProgramInfo _programInfo;
+	private View _videoPlaceHolder;
+	private View _rootView;
 
 	private EpgData _epgData;
 
@@ -113,13 +115,16 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 	{
 		Log.i(TAG, ".onCreateView");
 
-		ViewGroup viewGroup =  (ViewGroup) inflater.inflate(R.layout.state_epg, container, false);
+		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_epg, container, false);
 		_dateTimeView = (TextView) viewGroup.findViewById(R.id.datetime);
 		_gridHeader = (EpgHeaderView) viewGroup.findViewById(R.id.time_list);
-		_gridList =  (EpgListView) viewGroup.findViewById(R.id.gridList);
+		_gridList = (EpgListView) viewGroup.findViewById(R.id.gridList);
 
 		ViewGroup programInfoContainer = (ViewGroup) viewGroup.findViewById(R.id.program_details_container);
 		_programInfo = new EpgProgramInfo(getActivity(), programInfoContainer);
+		_videoPlaceHolder = viewGroup.findViewById(R.id.videoview_placeholder);
+
+		_rootView = viewGroup;
 
 		initEpgGridOnGlobalLayout();
 
@@ -168,6 +173,14 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 			public void onGlobalLayout()
 			{
 				_gridHeader.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
+				View container = _rootView.findViewById(R.id.program_details_container);
+
+				int x = (int)(_rootView.getX() + container.getX() + _videoPlaceHolder.getX());
+				int y = (int)(_rootView.getY() + container.getY() + _videoPlaceHolder.getY());
+				int w = _videoPlaceHolder.getWidth();
+				int h = _videoPlaceHolder.getHeight();
+				_featurePlayer.setVideoViewPositionAndSize(x, y, w, h);
 
 				// This method relies on the width of the _gridHeader widget. In
 				// onResume() it is still zero, therefore, we get it from the
