@@ -17,7 +17,8 @@
 	<dimen name="message_fontsize">36sp</dimen>
 
 	<dimen name="channel_number">24sp</dimen>
-	<dimen name="menu_item_caption">26sp</dimen>
+	<dimen name="menu_item_caption_size">26sp</dimen>
+	<dimen name="selection_prompt_size">28sp</dimen>	
 	
 	<!-- Thumbnail size's ratio is 16:10 -->
     <dimen name="epg_program_details_thumbnail_width">352dp</dimen>
@@ -40,4 +41,10 @@
     <!-- channels -->
     <dimen name="mychannel_item_width">174dp</dimen>
     <dimen name="mychannel_item_height">133dp</dimen>
+    
+    <!-- networks -->    
+    <dimen name="network_item_width">406dp</dimen>
+    <dimen name="network_item_height">72dp</dimen>
+    
+	<dimen name="textfield_size">28sp</dimen>
 </resources>

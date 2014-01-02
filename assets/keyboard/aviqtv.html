@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>AVIQTV keyboard</title>
+<script src="jquery.min.js"></script>
+<!-- keyboard imports -->
+<link href="base/base.css" type="text/css" rel="stylesheet"/>
+<script src="base/base.js"></script>
+<!-- customize keyboard look and feel -->
+<style type="text/css">
+body {
+    background: none;
+}
+table {
+    border-spacing: 0px;
+}
+tr {
+    padding: 0px;
+}
+td {
+    padding: 0px;
+}
+.zenkeyboard {
+    top: 10px;
+    left: 214px;
+    color: white;
+	font-size: 26px;	
+}
+.zenkeyboard div {
+    padding: 0px;
+    margin: 0px;
+}
+.zenkeyboard ul {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+.zenkeyboard li {
+    background: url(images/btn_keypad_small.png);
+    border-radius: 4px;
+    margin-left: 7px;
+    margin-right: 7px;
+    margin-bottom: 7px;
+}
+.zenkeyboard li.selected {
+    background: url(images/btn_keypad_small_selected.png);
+}
+
+.zenkeyboard li.backspace {
+    background: url(images/btn_backspace.png);
+    font-size: 14px;
+}
+.zenkeyboard li.ok {
+    background: url(images/btn_done.png);
+	font-size: 16px;
+}
+.zenkeyboard li.pages {
+    background: url(images/btn_shift.png);
+    font-size: 16px;
+}
+.zenkeyboard li.space {
+    background: url(images/btn_keypad_big.png);
+    font-size: 16px;
+}
+
+.zenkeyboard li.backspace.selected {
+    background: url(images/btn_backspace_selected.png);
+}
+.zenkeyboard li.ok.selected {
+    background: url(images/btn_done_selected.png);
+}
+.zenkeyboard li.pages.selected {
+    background: url(images/btn_shift_selected.png);
+}
+.zenkeyboard li.space.selected {
+    background: url(images/btn_keypad_big_selected.png);
+}
+</style>
+</head>
+<body>
+<script>
+if (!window.top) {
+    top = {};
+}
+
+$(document).ready(function() {
+    top.keyboard = new Keyboard();
+});
+
+$(document).bind("key-changed", function(event) {
+    console.log("key-changed:" + event.letter);
+});
+</script>
+</body>
+</html>
+
