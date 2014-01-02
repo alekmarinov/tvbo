@@ -152,8 +152,9 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	}
 
 	@Override
-	protected void onShow()
+	protected void onShow(boolean isViewUncovered)
 	{
+		super.onShow(isViewUncovered);
 		onSelectChannelIndex(_zapperListView.getSelectIndex());
 	}
 

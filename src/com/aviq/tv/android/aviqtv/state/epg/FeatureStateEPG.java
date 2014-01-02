@@ -22,6 +22,7 @@ import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
+import com.aviq.tv.android.aviqtv.state.StatusBar;
 import com.aviq.tv.android.aviqtv.state.epg.EpgGrid.NAVIGATION;
 import com.aviq.tv.android.aviqtv.state.epg.EpgGrid.OnEpgGridEventListener;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
@@ -131,6 +132,8 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 
 		initEpgGridOnGlobalLayout();
 
+		new StatusBar(viewGroup.findViewById(R.id.status_bar)).enable(StatusBar.Element.NAVIGATION).enable(
+		        StatusBar.Element.DETAILS);
 		return viewGroup;
 	}
 

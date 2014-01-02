@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
+import com.aviq.tv.android.aviqtv.state.StatusBar;
 import com.aviq.tv.android.aviqtv.state.ThumbnailsView;
 import com.aviq.tv.android.aviqtv.state.epg.EpgProgramInfo;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
@@ -77,8 +78,12 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 			        FeatureName.State.MENU);
 			featureStateMenu.addMenuItemState(this);
 
-			_featurePlayer = (FeaturePlayer) Environment.getInstance().getFeatureComponent(FeatureName.Component.PLAYER);
-			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(FeatureName.Component.WATCHLIST);
+			_featurePlayer = (FeaturePlayer) Environment.getInstance()
+			        .getFeatureComponent(FeatureName.Component.PLAYER);
+			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
+			        FeatureName.Component.WATCHLIST);
+			subscribe(_watchlist, FeatureWatchlist.ON_PROGRAM_REMOVED);
+			subscribe(_watchlist, FeatureWatchlist.ON_PROGRAM_ADDED);
 
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
@@ -100,43 +105,44 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 
 		_watchlistGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.watchlist_grid);
 		_watchlistGrid.setThumbItemCreater(_thumbnailCreater);
-		for (Program program: _watchlist.getWatchedPrograms())
-		{
-			_watchlistGrid.addThumbItem(program);
-		}
+		_watchlistGrid.setThumbItems(_watchlist.getWatchedPrograms());
 
 		_watchlistGrid.setOnItemSelectedListener(_onItemSelectedListener);
 		_watchlistGrid.setOnItemClickListener(_onItemClickListener);
 
-		// Hide player while view is relayouting and show it by the global layout listener
+		// Hide player while view re-layouts and show it by the global layout
+		// listener
 		_featurePlayer.hideVideoView();
 		final View videoViewPlaceHolder = _viewGroup.findViewById(R.id.videoview_placeholder);
 
-		videoViewPlaceHolder.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener()
-		{
-			@Override
-            public void onGlobalLayout()
-            {
-				videoViewPlaceHolder.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+		videoViewPlaceHolder.getViewTreeObserver().addOnGlobalLayoutListener(
+		        new ViewTreeObserver.OnGlobalLayoutListener()
+		        {
+			        @Override
+			        public void onGlobalLayout()
+			        {
+				        videoViewPlaceHolder.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
-				View container = _viewGroup.findViewById(R.id.program_details_container);
+				        View container = _viewGroup.findViewById(R.id.program_details_container);
 
-				int x = (int)(_viewGroup.getX() + container.getX() + videoViewPlaceHolder.getX());
-				int y = (int)(_viewGroup.getY() + container.getY() + videoViewPlaceHolder.getY());
-				int w = videoViewPlaceHolder.getWidth();
-				int h = videoViewPlaceHolder.getHeight();
-				_featurePlayer.setVideoViewPositionAndSize(x, y, w, h);
-            }
-		});
+				        int x = (int) (_viewGroup.getX() + container.getX() + videoViewPlaceHolder.getX());
+				        int y = (int) (_viewGroup.getY() + container.getY() + videoViewPlaceHolder.getY());
+				        int w = videoViewPlaceHolder.getWidth();
+				        int h = videoViewPlaceHolder.getHeight();
+				        _featurePlayer.setVideoViewPositionAndSize(x, y, w, h);
+			        }
+		        });
 
-		// Initial refresh of the program info widget
-//		if (_adapter.getCount() > 0)
-//		{
-//			Program program = (Program) _adapter.getItem(0);
-//			_programInfo.updateBrief(program.getChannel().getChannelId(), program);
-//		}
-
+		new StatusBar(_viewGroup.findViewById(R.id.status_bar)).enable(StatusBar.Element.NAVIGATION).enable(
+		        StatusBar.Element.DETAILS);
 		return _viewGroup;
+	}
+
+	@Override
+	public void onEvent(int msgId, Bundle bundle)
+	{
+		Log.i(TAG, ".onEvent: msgId = " + msgId);
+		_watchlistGrid.notifyDataSetChanged();
 	}
 
 	private OnItemSelectedListener _onItemSelectedListener = new OnItemSelectedListener()
@@ -157,8 +163,8 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	private OnItemClickListener _onItemClickListener = new OnItemClickListener()
 	{
 		@Override
-        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
-        {
+		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+		{
 			try
 			{
 				FeatureStateProgramInfo programInfo = (FeatureStateProgramInfo) Environment.getInstance()
@@ -181,31 +187,21 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 			{
 				Log.e(TAG, e.getMessage(), e);
 			}
-        }
+		}
 	};
 
 	@Override
-	protected void onShow()
+	protected void onShow(boolean isViewUncovered)
 	{
-		super.onShow();
+		super.onShow(isViewUncovered);
 		_viewGroup.requestFocus();
-//BaseAdapter adapter = ((BaseAdapter) _watchlistGrid.getAdapter());
-//adapter.notifyDataSetChanged();
 	}
 
 	@Override
-	protected void onHide()
+	protected void onHide(boolean isViewCovered)
 	{
-		super.onHide();
-//_watchlistGrid.getAdapter().unregisterDataSetObserver(observer);
+		super.onHide(isViewCovered);
 	}
-
-//
-//	@Override
-//	public boolean onKeyDown(int keyCode, KeyEvent event)
-//	{
-//		return _gridView.onKeyDown(keyCode, event);
-//	}
 
 	@Override
 	public int getMenuItemResourceId()
@@ -222,19 +218,19 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	private ThumbnailsView.ThumbItemCreater _thumbnailCreater = new ThumbnailsView.ThumbItemCreater()
 	{
 		@Override
-        public View createView(ThumbnailsView parent, int position, LayoutInflater inflator)
-        {
+		public View createView(ThumbnailsView parent, int position, LayoutInflater inflator)
+		{
 			return inflator.inflate(R.layout.grid_item_watchlist, null);
-        }
+		}
 
 		@Override
-        public void updateView(ThumbnailsView parent, int position, View view, Object object)
-        {
-			Program program = (Program)object;
-			ImageView thumbView = (ImageView)view.findViewById(R.id.thumbnail);
-			TextView titleView = (TextView)view.findViewById(R.id.title);
+		public void updateView(ThumbnailsView parent, int position, View view, Object object)
+		{
+			Program program = (Program) object;
+			ImageView thumbView = (ImageView) view.findViewById(R.id.thumbnail);
+			TextView titleView = (TextView) view.findViewById(R.id.title);
 			// thumbView.setImageBitmap();
 			titleView.setText(program.getTitle());
-        }
+		}
 	};
 }

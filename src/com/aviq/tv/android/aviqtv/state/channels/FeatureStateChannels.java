@@ -239,9 +239,9 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	}
 
 	@Override
-	public void onShow()
+	public void onShow(boolean isViewUncovered)
 	{
-		super.onShow();
+		super.onShow(isViewUncovered);
 		_viewGroup.requestFocus();
 	}
 
@@ -249,8 +249,10 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	 * On hiding this FeatureState
 	 */
 	@Override
-	protected void onHide()
+	protected void onHide(boolean isViewCovered)
 	{
+		super.onHide(isViewCovered);
+
 		// Save channels list
 		if (_featureChannels.isModified())
 			_featureChannels.save();
