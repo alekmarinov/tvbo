@@ -115,7 +115,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		Log.i(TAG, ".onCreateView");
 		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_watchlist, container, false);
 
-		ViewGroup programInfoContainer = (ViewGroup) _viewGroup.findViewById(R.id.program_details_container);
+		ViewGroup programInfoContainer = (ViewGroup) _viewGroup.findViewById(R.id.infoarea_program);
 		_programInfo = new EpgProgramInfo(getActivity(), programInfoContainer);
 
 		_watchlistGrid = (ThumbnailsView) _viewGroup.findViewById(R.id.watchlist_grid);
@@ -138,7 +138,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 			        {
 				        videoViewPlaceHolder.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
-				        View container = _viewGroup.findViewById(R.id.program_details_container);
+				        View container = _viewGroup.findViewById(R.id.infoarea_program);
 
 				        int x = (int) (_viewGroup.getX() + container.getX() + videoViewPlaceHolder.getX());
 				        int y = (int) (_viewGroup.getY() + container.getY() + videoViewPlaceHolder.getY());

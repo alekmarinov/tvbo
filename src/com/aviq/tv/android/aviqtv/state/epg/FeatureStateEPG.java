@@ -121,7 +121,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		_gridHeader = (EpgHeaderView) viewGroup.findViewById(R.id.time_list);
 		_gridList = (EpgListView) viewGroup.findViewById(R.id.gridList);
 
-		ViewGroup programInfoContainer = (ViewGroup) viewGroup.findViewById(R.id.program_details_container);
+		ViewGroup programInfoContainer = (ViewGroup) viewGroup.findViewById(R.id.infoarea_program);
 		_programInfo = new EpgProgramInfo(getActivity(), programInfoContainer);
 		_videoPlaceHolder = viewGroup.findViewById(R.id.videoview_placeholder);
 
@@ -180,7 +180,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 			{
 				_gridHeader.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
-				View container = _rootView.findViewById(R.id.program_details_container);
+				View container = _rootView.findViewById(R.id.infoarea_program);
 
 				int x = (int)(_rootView.getX() + container.getX() + _videoPlaceHolder.getX());
 				int y = (int)(_rootView.getY() + container.getY() + _videoPlaceHolder.getY());

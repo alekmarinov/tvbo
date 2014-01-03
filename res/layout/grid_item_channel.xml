@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/watchlist_item_width"
     android:layout_height="@dimen/watchlist_item_height"
-    android:background="@drawable/watchlist_item_selector" >
+    android:background="@drawable/grid_item_selector" >
     
     <TextView style="@style/ProgramText" 
         android:id="@+id/title"

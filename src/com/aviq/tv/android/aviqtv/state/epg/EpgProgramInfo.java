@@ -210,7 +210,7 @@ public class EpgProgramInfo
 		if (imageUrl != null)
 		{
 			ImageLoader imageLoader = Environment.getInstance().getImageLoader();
-			ImageListener imageListener = imageLoader.getImageListener(_thumbnail, R.drawable.epg_image_thumbnail,
+			ImageListener imageListener = ImageLoader.getImageListener(_thumbnail, R.drawable.epg_image_thumbnail,
 			        R.drawable.epg_image_thumbnail);
 			imageLoader.get(imageUrl, imageListener);
 		}

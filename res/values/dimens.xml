@@ -21,8 +21,9 @@
 	<dimen name="selection_prompt_size">28sp</dimen>	
 	
 	<!-- Thumbnail size's ratio is 16:10 -->
-    <dimen name="epg_program_details_thumbnail_width">352dp</dimen>
-    <dimen name="epg_program_details_thumbnail_height">204dp</dimen>
+    <dimen name="infoarea_height">204dp</dimen>
+    <dimen name="infoarea_video_width">352dp</dimen>
+    <dimen name="infoarea_settings_height">204dp</dimen>
     <dimen name="epg_grid_header_height">25dp</dimen>
     <dimen name="epg_grid_row_height">49dp</dimen>
     <dimen name="epg_grid_cell_height">49dp</dimen>
@@ -42,6 +43,10 @@
     <dimen name="mychannel_item_width">174dp</dimen>
     <dimen name="mychannel_item_height">133dp</dimen>
     
+    <!-- settings -->
+    <dimen name="settings_item_width">174dp</dimen>
+    <dimen name="settings_item_height">133dp</dimen>
+
     <!-- networks -->    
     <dimen name="network_item_width">406dp</dimen>
     <dimen name="network_item_height">72dp</dimen>
