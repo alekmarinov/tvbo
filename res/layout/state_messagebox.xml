@@ -4,7 +4,8 @@
     android:layout_height="213dip"
     android:layout_centerHorizontal="true"
     android:layout_gravity="center_horizontal"
-    android:layout_marginTop="140dip" >
+    android:layout_marginTop="140dip" 
+    android:focusable="false">
 
     <TextView
         android:id="@+id/titleText"
@@ -17,7 +18,8 @@
         android:layout_marginTop="5dip"
         android:gravity="top"
         android:textColor="@color/white"
-        android:textIsSelectable="false" />
+        android:textIsSelectable="false" 
+        android:focusable="false"/>
 
     <TextView
         android:id="@+id/messageText"
@@ -29,7 +31,8 @@
         android:layout_marginRight="5dip"
         android:layout_marginTop="5dip"
         android:textColor="@color/white"
-        android:textIsSelectable="false" />
+        android:textIsSelectable="false"
+        android:focusable="false" />
 
     <com.aviq.tv.android.aviqtv.state.ContextButtonGroup
         xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.aviqtv"
@@ -37,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:focusable="true"
+        android:focusable="false"
         android:orientation="horizontal" />
 
 </RelativeLayout>

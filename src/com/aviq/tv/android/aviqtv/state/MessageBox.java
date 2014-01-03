@@ -36,6 +36,7 @@ public class MessageBox extends FeatureState
 
 	private View _rootView;
 	private ContextButtonGroup _contextButtonGroup;
+	private Bundle _bundle;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -47,14 +48,14 @@ public class MessageBox extends FeatureState
 		_contextButtonGroup = (ContextButtonGroup) viewGroup.findViewById(R.id.buttons);
 		_rootView = viewGroup;
 
-		Bundle params = getArguments();
-		if (params == null)
+		_bundle = getArguments();
+		if (_bundle == null)
 			throw new IllegalArgumentException(".onCreateView: Invalid arguments for " + TAG);
 
-		String title = params.getString(MessageParams.PARAM_TITLE);
-		String text = params.getString(MessageParams.PARAM_TEXT);
+		String title = _bundle.getString(MessageParams.PARAM_TITLE);
+		String text = _bundle.getString(MessageParams.PARAM_TEXT);
 		int resId = R.drawable.problem;
-		MessageParams.Type msgType = MessageParams.Type.valueOf(params.getString(MessageParams.PARAM_TYPE));
+		MessageParams.Type msgType = MessageParams.Type.valueOf(_bundle.getString(MessageParams.PARAM_TYPE));
 		switch (msgType)
 		{
 			case INFO:
@@ -72,8 +73,8 @@ public class MessageBox extends FeatureState
 
 		for (MessageParams.Button buttonName : MessageParams.Button.values())
 		{
-			Log.i(TAG, buttonName + " -> " + params.getBoolean(buttonName.name()));
-			if (params.getBoolean(buttonName.name()))
+			Log.i(TAG, buttonName + " -> " + _bundle.getBoolean(buttonName.name()));
+			if (_bundle.getBoolean(buttonName.name()))
 			{
 				createContextButton(buttonName);
 			}
@@ -83,9 +84,10 @@ public class MessageBox extends FeatureState
 			@Override
 			public void onClick(View view)
 			{
-				Bundle bundle = new Bundle();
-				bundle.putBoolean(view.getTag().toString(), true);
-				getEventMessenger().trigger(ON_BUTTON_PRESSED, bundle);
+				Log.i(TAG, ".onClick: " + view.getTag());
+				_bundle.putBoolean(view.getTag().toString(), true);
+				getEventMessenger().trigger(ON_BUTTON_PRESSED, _bundle);
+				hide();
 			}
 		});
 
@@ -110,7 +112,7 @@ public class MessageBox extends FeatureState
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
-		return _rootView.onKeyDown(keyCode, event);
+		return _contextButtonGroup.onKeyDown(keyCode, event);
 	}
 
 	private void createContextButton(MessageParams.Button buttonName)
