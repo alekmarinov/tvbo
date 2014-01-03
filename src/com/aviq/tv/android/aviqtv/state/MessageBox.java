@@ -10,8 +10,8 @@
 
 package com.aviq.tv.android.aviqtv.state;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -58,7 +58,6 @@ public class MessageBox extends FeatureState
 
 		MessageParams.Type msgType = MessageParams.Type.valueOf(_bundle.getString(MessageParams.PARAM_TYPE));
 		int drawableResId = R.drawable.transparent;
-
 		switch (msgType)
 		{
 			case INFO:
@@ -70,13 +69,12 @@ public class MessageBox extends FeatureState
 			default:
 			break;
 		}
-
-		Drawable img = getResources().getDrawable(drawableResId);
-		titleText.setCompoundDrawablesWithIntrinsicBounds( img, null, null, null);
+		titleText.setCompoundDrawablesWithIntrinsicBounds(drawableResId, 0, 0, 0);
 
 		titleText.setText(title);
 		messageText.setText(text);
-
+		titleText.setVisibility(TextUtils.isEmpty(title) ? View.GONE : View.VISIBLE);
+		messageText.setVisibility(TextUtils.isEmpty(text) ? View.GONE : View.VISIBLE);
 
 		for (MessageParams.Button buttonName : MessageParams.Button.values())
 		{
@@ -97,6 +95,7 @@ public class MessageBox extends FeatureState
 				hide();
 			}
 		});
+		_contextButtonGroup.setVisibility(MessageParams.Button.values().length > 0 ? View.VISIBLE : View.GONE);
 
 		Log.i(TAG, ".onCreateView: " + messageText.getText());
 		return viewGroup;
@@ -135,8 +134,7 @@ public class MessageBox extends FeatureState
 				        MessageParams.Button.CANCEL);
 			break;
 			case YES:
-				_contextButtonGroup.createButton(R.drawable.ic_ok, R.string.yes).setTag(
-				        MessageParams.Button.YES);
+				_contextButtonGroup.createButton(R.drawable.ic_ok, R.string.yes).setTag(MessageParams.Button.YES);
 			break;
 			case NO:
 				_contextButtonGroup.createButton(android.R.drawable.ic_delete, R.string.no).setTag(
