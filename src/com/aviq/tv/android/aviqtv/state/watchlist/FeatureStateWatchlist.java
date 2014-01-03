@@ -12,6 +12,7 @@ package com.aviq.tv.android.aviqtv.state.watchlist;
 
 import java.util.Calendar;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,11 +26,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
+import com.aviq.tv.android.aviqtv.state.MessageBox;
 import com.aviq.tv.android.aviqtv.state.StatusBar;
 import com.aviq.tv.android.aviqtv.state.ThumbnailsView;
 import com.aviq.tv.android.aviqtv.state.epg.EpgProgramInfo;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.aviqtv.state.programinfo.FeatureStateProgramInfo;
+import com.aviq.tv.android.aviqtv.state.tv.FeatureStateTV;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
@@ -37,6 +40,8 @@ import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
 import com.aviq.tv.android.sdk.core.state.StateException;
+import com.aviq.tv.android.sdk.core.state.StateManager.MessageParams;
+import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
 import com.aviq.tv.android.sdk.feature.epg.Program;
 import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 import com.aviq.tv.android.sdk.feature.watchlist.FeatureWatchlist;
@@ -53,12 +58,15 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	private EpgProgramInfo _programInfo;
 	private ThumbnailsView _watchlistGrid;
 	private FeaturePlayer _featurePlayer;
+	private FeatureEPG _featureEPG;
+	private FeatureStateTV _featureStateTV;
 
 	public FeatureStateWatchlist()
 	{
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
 		_dependencies.Components.add(FeatureName.Component.EPG);
 		_dependencies.Components.add(FeatureName.Component.WATCHLIST);
+		_dependencies.States.add(FeatureName.State.TV);
 		_dependencies.States.add(FeatureName.State.PROGRAM_INFO);
 		_dependencies.States.add(FeatureName.State.MENU);
 	}
@@ -82,8 +90,10 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
+			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
 			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
 			        FeatureName.Component.WATCHLIST);
+			_featureStateTV = (FeatureStateTV)Environment.getInstance().getFeatureState(FeatureName.State.TV);
 
 			subscribe(_watchlist, FeatureWatchlist.ON_PROGRAM_REMOVED);
 			subscribe(_watchlist, FeatureWatchlist.ON_PROGRAM_ADDED);
@@ -149,7 +159,45 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		Log.i(TAG, ".onEvent: msgId = " + msgId);
 		if (msgId == FeatureWatchlist.ON_PROGRAM_NOTIFY)
 		{
+			String programId = bundle.getString("PROGRAM");
+			String channelId = bundle.getString("CHANNEL");
+			Program program = _featureEPG.getEpgData().getProgram(channelId, programId);
+			int minsRemaining = (int)(Calendar.getInstance().getTimeInMillis() - program.getStartTimeCalendar().getTimeInMillis()) / (60 * 1000);
+			Resources resources = Environment.getInstance().getResources();
 
+			String messageTitle = resources.getString(R.string.watchlist_notify_title);
+			String messageText;
+			if (minsRemaining > 0)
+			{
+				messageText = String.format(resources.getString(R.string.watchlist_notify_soon), minsRemaining,
+						program.getTitle(), program.getChannel().getTitle());
+			}
+			else
+			{
+				messageText = String.format(resources.getString(R.string.watchlist_notify_now), program.getTitle(), program.getChannel().getTitle());
+			}
+			MessageParams messageParams = new MessageParams().setType(MessageParams.Type.INFO).setTitle(messageTitle).setText(messageText)
+			        .enableButton(MessageParams.Button.YES).enableButton(MessageParams.Button.NO);
+			// copy event params to message bundle
+			messageParams.getParamsBundle().putAll(bundle);
+			MessageBox messageBox = (MessageBox)Environment.getInstance().getStateManager().showMessage(messageParams);
+			messageBox.getEventMessenger().register(this, MessageBox.ON_BUTTON_PRESSED);
+		}
+		else if (msgId == MessageBox.ON_BUTTON_PRESSED)
+		{
+			MessageBox messageBox = (MessageBox)Environment.getInstance().getStateManager().getMessageState();
+			messageBox.getEventMessenger().unregister(this, MessageBox.ON_BUTTON_PRESSED);
+			if (bundle.getBoolean(MessageParams.Button.YES.name()))
+			{
+				try
+                {
+	                Environment.getInstance().getStateManager().setStateMain(_featureStateTV, bundle);
+                }
+                catch (StateException e)
+                {
+                	Log.e(TAG, e.getMessage(), e);
+                }
+			}
 		}
 		else if (msgId == FeatureWatchlist.ON_PROGRAM_ADDED || msgId == FeatureWatchlist.ON_PROGRAM_REMOVED)
 		{

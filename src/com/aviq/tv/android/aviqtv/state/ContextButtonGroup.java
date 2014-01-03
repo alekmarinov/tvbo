@@ -76,9 +76,9 @@ public class ContextButtonGroup extends LinearLayout
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
-		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
+		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode + ", child count = " + getChildCount() + ", _focusedChildIndex = " + _focusedChildIndex);
 
-		if (keyCode == KeyEvent.KEYCODE_DPAD_UP)
+		if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_LEFT)
 		{
 			_focusedChildIndex--;
 			if (_focusedChildIndex < 0)
@@ -88,7 +88,7 @@ public class ContextButtonGroup extends LinearLayout
 				return true;
 			}
 		}
-		else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
+		else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
 		{
 			_focusedChildIndex++;
 			if (_focusedChildIndex >= getChildCount())

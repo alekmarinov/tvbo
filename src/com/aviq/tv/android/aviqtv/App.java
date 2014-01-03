@@ -109,9 +109,9 @@ public class App extends Application implements IApplication
 
 		switch (keyCode)
 		{
-			case KeyEvent.KEYCODE_BACK:// FIXME: test only
+			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:// FIXME: test only
 				String messageTitle = getResources().getString(R.string.watchlist_notify_title);
-				String messageText = String.format(getResources().getString(R.string.watchlist_notify_text), 5,
+				String messageText = String.format(getResources().getString(R.string.watchlist_notify_soon), 5,
 				        "Gospodari na Efira", "BTV");
 				MessageParams messageParams = new MessageParams().setType(MessageParams.Type.INFO).setTitle(messageTitle).setText(messageText)
 				        .enableButton(MessageParams.Button.YES).enableButton(MessageParams.Button.NO);
