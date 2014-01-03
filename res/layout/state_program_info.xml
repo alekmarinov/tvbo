@@ -171,7 +171,10 @@
             android:layout_marginLeft="15dp"
             android:layout_marginTop="15dip"
             android:focusable="true"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            aviqtv:buttonSpacing="10dp"
+            aviqtv:buttonPaddingLeft="20dp"
+            aviqtv:buttonPaddingRight="0dp" />
     </RelativeLayout>
 
 </RelativeLayout>

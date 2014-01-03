@@ -7,6 +7,7 @@
     android:layout_marginTop="115dip"
     android:background="@drawable/message_box_background"
     android:focusable="false"
+    android:padding="20dp"
     android:minHeight="200dip" >
 
     <TextView
@@ -16,7 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dip"
         android:focusable="false"
         android:textIsSelectable="false"/>
 
@@ -39,9 +39,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/message"
         android:layout_marginTop="20dip"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
         android:focusable="false"
-        android:orientation="horizontal" />
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        aviqtv:buttonSpacing="20dp"
+        aviqtv:buttonPaddingLeft="20dp"
+        aviqtv:buttonPaddingRight="20dp"
+        android:paddingBottom="5dip" />
 
 </RelativeLayout>
