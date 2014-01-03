@@ -140,7 +140,7 @@ public class EpgHeaderView extends LinearLayout
 
 	public int getPixelsPerSinglePosition()
 	{
-		return (int) (getPixelsPerMinute() * getMinutesForSinglePosition());
+		return (int) (getPixelsPerMinute() * getMinutesForSinglePosition() + 0.5);
 	}
 
 	public double getPixelsPerMinute()

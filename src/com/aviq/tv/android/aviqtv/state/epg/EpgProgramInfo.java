@@ -38,6 +38,7 @@ public class EpgProgramInfo
 
 	// From epg_program_details.xml
 	private TextView _summary;
+	private View _programTimeContainer;
 
 	// From state_program.info.xml
 	private ImageView _thumbnail;
@@ -70,6 +71,7 @@ public class EpgProgramInfo
 		_timeRange = (TextView) container.findViewById(R.id.time_range);
 		_pager = (TextView) container.findViewById(R.id.pager);
 		_detailsFlipper = (ViewFlipper) container.findViewById(R.id.details_flipper);
+		_programTimeContainer = container.findViewById(R.id.program_time_container);
 
 		// obtaining _detailsFlipper dimensions
 		_textViewHeight = context.getResources().getDimensionPixelSize(R.dimen.details_area_height);
@@ -99,11 +101,21 @@ public class EpgProgramInfo
 	{
 		// Update start date and time
 
+		if (program == null)
+		{
+			_programTimeContainer.setVisibility(View.INVISIBLE);
+			return;
+		}
+		else
+		{
+			_programTimeContainer.setVisibility(View.VISIBLE);
+		}
+		
 		long startTimeMillis = program.getStartTimeCalendar().getTimeInMillis();
 
 		String startDate = _dateFormat.format(startTimeMillis);
 		_date.setText(startDate);
-
+		
 		String startTime = _timeFormat.format(startTimeMillis);
 		_time.setText(startTime);
 
@@ -111,33 +123,36 @@ public class EpgProgramInfo
 
 		_primaryTitle.setText(program.getTitle());
 
-		_featureEPG.getProgramDetails(channelId, program, new IOnProgramDetails()
+		if (channelId != null)
 		{
-			@Override
-			public void onProgramDetails(Program program)
+			_featureEPG.getProgramDetails(channelId, program, new IOnProgramDetails()
 			{
-				_secondaryTitle.setText(program.getDetailAttribute(ProgramAttribute.SUBTITLE));
-				if (_summary != null)
-					_summary.setText(program.getDetailAttribute(ProgramAttribute.SUMMARY));
-
-				if (_detailsFlipper != null)
-					fillProgramDescription(program.getDetailAttribute(ProgramAttribute.DESCRIPTION));
-			}
-
-			@Override
-			public void onError(int resultCode)
-			{
-				Log.e(TAG, ".updateBrief: error loading program details for channel = " + channelId + ", program = "
-				        + program.getId() + ", " + program.getTitle());
-
-				_secondaryTitle.setText(null);
-
-				if (_summary != null)
-					_summary.setText(null);
-				if (_detailsFlipper != null)
-					fillProgramDescription(null);
-			}
-		});
+				@Override
+				public void onProgramDetails(Program program)
+				{
+					_secondaryTitle.setText(program.getDetailAttribute(ProgramAttribute.SUBTITLE));
+					if (_summary != null)
+						_summary.setText(program.getDetailAttribute(ProgramAttribute.SUMMARY));
+	
+					if (_detailsFlipper != null)
+						fillProgramDescription(program.getDetailAttribute(ProgramAttribute.DESCRIPTION));
+				}
+	
+				@Override
+				public void onError(int resultCode)
+				{
+					Log.e(TAG, ".updateBrief: error loading program details for channel = " + channelId + ", program = "
+					        + program.getId() + ", " + program.getTitle());
+	
+					_secondaryTitle.setText(null);
+	
+					if (_summary != null)
+						_summary.setText(null);
+					if (_detailsFlipper != null)
+						fillProgramDescription(null);
+				}
+			});
+		}
 	}
 
 	public void updateDetails(final String channelId, final Program program)

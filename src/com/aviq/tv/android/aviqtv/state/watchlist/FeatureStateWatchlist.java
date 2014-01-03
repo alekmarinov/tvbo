@@ -125,6 +125,10 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		_watchlistGrid.setOnItemSelectedListener(_onItemSelectedListener);
 		_watchlistGrid.setOnItemClickListener(_onItemClickListener);
 
+
+		// No items? Then hide some drawables that come with the TextViews
+		if (_watchlist.getWatchedPrograms().size() == 0)
+			_programInfo.updateBrief(null, null);
 		// Hide player while view re-layouts and show it by the global layout
 		// listener
 		_featurePlayer.hideVideoView();

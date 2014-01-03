@@ -2,8 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_alignParentBottom="true"
-    android:layout_centerHorizontal="true"
->
+    android:layout_centerHorizontal="true" >
 
     <!-- Program details layout -->
 
@@ -13,20 +12,19 @@
 
     <!-- EPG grid layout -->
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/epg_grid"
         android:layout_width="match_parent"
-        android:layout_height="378dp"
+        android:layout_height="390dp"
         android:layout_below="@id/infoarea_program"
         android:layout_marginLeft="100dp"
         android:layout_marginRight="100dp"
         android:layout_marginTop="15dp"
-        android:baselineAligned="false"
-        android:orientation="horizontal" >
+        android:baselineAligned="false" >
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
+            android:layout_height="378dp" >
 
             <include
                 android:id="@+id/epg_grid_header"
@@ -35,6 +33,7 @@
             <!--
             It's very important to keep this attribute as is: android:layout_height="fill_parent". 
             Otherwise, you get lots of getView() calls to constantly recalculate the ListView height.
+            
             -->
 
             <com.aviq.tv.android.aviqtv.state.epg.EpgListView
@@ -56,16 +55,20 @@
                 android:gravity="left"
                 android:listSelector="@android:color/transparent"
                 android:scrollingCache="false"
-                aviqtv:visibleItems="7">
+                aviqtv:visibleItems="7"
+                aviqtv:timebarOffset="21" >
             </com.aviq.tv.android.aviqtv.state.epg.EpgListView>
 
             <View
                 android:layout_width="1dp"
                 android:layout_height="fill_parent"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="@dimen/epg_channel_info_width"
-                android:layout_marginTop="15dp"
+                android:layout_marginLeft="@dimen/epg_channel_info_divider_position"
+                android:layout_marginTop="@dimen/epg_grid_header_height"
+                android:layout_marginBottom="1dp"
                 android:background="@color/epg_grid_divider_bar" />
+
+            <!-- This "rcu_channel_selection" is not used...yet -->
 
             <TextView
                 android:id="@+id/rcu_channel_selection"
@@ -79,15 +82,26 @@
                 android:textColor="#0000ff"
                 android:textSize="34sp"
                 android:textStyle="bold"
-                android:visibility="visible" />
+                android:visibility="gone" />
         </RelativeLayout>
-    </LinearLayout>
+        
+        <ImageView
+            android:id="@+id/timebar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/epg_channel_info_width"
+            android:layout_marginTop="13dp"
+            android:background="@color/transparent"
+            android:contentDescription="@string/contentDescription"
+            android:scaleType="fitXY"
+            android:src="@drawable/epg_grid_timebar"
+            android:alpha="0" />
+    </RelativeLayout>
 
     <!-- Contextual button bar -->
 
     <include
         android:id="@+id/status_bar"
-        layout="@layout/status_bar"
-    />
+        layout="@layout/status_bar" />
 
 </RelativeLayout>

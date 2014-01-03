@@ -107,7 +107,7 @@ public class TimeBasedRelativeLayout extends RelativeLayout
 
 	private void calcDimensions()
 	{
-		_desiredWidth = (int) (_hours * _pixelsPerOneHour);
+		_desiredWidth = (int) (_hours * _pixelsPerOneHour + 0.5);
 
 		//Log.v(TAG, "_desiredWidth = " + _desiredWidth + ", _desiredHeight = " + _desiredHeight);
 

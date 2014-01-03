@@ -43,8 +43,8 @@ public class MessageBox extends FeatureState
 	{
 		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_messagebox, container, false);
 		ViewGroup messageContainer = (ViewGroup) viewGroup.findViewById(R.id.messageContainer);
-		TextView titleText = (TextView) viewGroup.findViewById(R.id.titleText);
-		TextView messageText = (TextView) viewGroup.findViewById(R.id.messageText);
+		TextView titleText = (TextView) viewGroup.findViewById(R.id.title);
+		TextView messageText = (TextView) viewGroup.findViewById(R.id.message);
 		_contextButtonGroup = (ContextButtonGroup) viewGroup.findViewById(R.id.buttons);
 		_rootView = viewGroup;
 
@@ -54,7 +54,7 @@ public class MessageBox extends FeatureState
 
 		String title = _bundle.getString(MessageParams.PARAM_TITLE);
 		String text = _bundle.getString(MessageParams.PARAM_TEXT);
-		int resId = R.drawable.problem;
+		//int resId = R.drawable.problem;
 		MessageParams.Type msgType = MessageParams.Type.valueOf(_bundle.getString(MessageParams.PARAM_TYPE));
 		switch (msgType)
 		{
@@ -69,7 +69,7 @@ public class MessageBox extends FeatureState
 		}
 		titleText.setText(title);
 		messageText.setText(text);
-		messageContainer.setBackgroundResource(resId);
+		//messageContainer.setBackgroundResource(resId);
 
 		for (MessageParams.Button buttonName : MessageParams.Button.values())
 		{

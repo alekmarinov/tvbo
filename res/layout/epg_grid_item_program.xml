@@ -7,8 +7,8 @@
     android:background="@drawable/epg_grid_cell_inactive"
     android:maxHeight="@dimen/epg_grid_cell_height"
     android:minHeight="@dimen/epg_grid_cell_height"
-    android:paddingLeft="15dip"
-    android:paddingRight="15dip"
+    android:paddingLeft="8dip"
+    android:paddingRight="8dip"
     aviqtv:pixelsPerOneHour="@dimen/epg_grid_one_hour_width"
     aviqtv:viewHeight="@dimen/epg_grid_cell_height" >
 

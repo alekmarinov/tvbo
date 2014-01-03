@@ -73,9 +73,13 @@ public class EpgRowAdapter extends BaseAdapter
 
 		// TODO: remove when done testing; leave line above
 //		holder.title.setText(
-//				program.getStart().get(Calendar.HOUR_OF_DAY)
+//				program.getStartTimeCalendar().get(Calendar.HOUR_OF_DAY)
 //				+ ":"
-//				+ program.getStart().get(Calendar.MINUTE)
+//				+ program.getStartTimeCalendar().get(Calendar.MINUTE)
+//				+ " - "
+//				+ program.getStopTimeCalendar().get(Calendar.HOUR_OF_DAY)
+//				+ ":"
+//				+ program.getStopTimeCalendar().get(Calendar.MINUTE)
 //				+ "\n"
 //				+ program.getTitle());
 

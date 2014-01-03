@@ -14,7 +14,7 @@
 		
 	<dimen name="program_text_size_normal">23sp</dimen>
 	<dimen name="program_text_size_highlight">25sp</dimen>
-	<dimen name="message_fontsize">36sp</dimen>
+	<dimen name="message_fontsize">30sp</dimen>
 
 	<dimen name="channel_number">24sp</dimen>
 	<dimen name="menu_item_caption_size">26sp</dimen>
@@ -30,6 +30,7 @@
     <dimen name="epg_grid_one_hour_width">380dp</dimen>
     <dimen name="epg_grid_channel_logo_width">85dp</dimen>
     <dimen name="epg_channel_info_width">215dp</dimen>
+    <dimen name="epg_channel_info_divider_position">216dp</dimen>
     
     <!-- watchlist -->
     <dimen name="watchlist_item_width">174dp</dimen>
