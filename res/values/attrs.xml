@@ -7,6 +7,7 @@
     <attr name="itemHorizontalPadding" format="dimension" />
     <attr name="itemVerticalPadding" format="dimension" />
     <attr name="itemTextSize" format="dimension" />
+    <attr name="timebarOffset" format="integer" />
 
     <attr name="selectedVisiblePosition" format="integer" />
     <attr name="selectedDelay" format="integer" />
@@ -43,5 +44,6 @@
         <attr name="itemsOffset" />
         <attr name="listitem_size" />
         <attr name="selectionIndex" />
+        <attr name="timebarOffset" />
     </declare-styleable>
 </resources>

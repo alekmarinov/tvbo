@@ -19,6 +19,9 @@ public class EpgListView extends ListView
 	private OnItemSelectedListener _onItemSelectedListener;
 	private int _prevPosition = -1;
 	private int _visibleItems;
+	
+	// This property is used to adjust the timebar to the proper time position
+	private int _timebarOffset;
 
 	public EpgListView(Context context)
 	{
@@ -51,9 +54,7 @@ public class EpgListView extends ListView
 	{
 		_context = context;
 		_visibleItems = attr.getInteger(R.styleable.EpgListView_visibleItems, 0);
-//		_itemsHeight = (int) attr.getDimension(R.styleable.ZapperList3_itemsHeight, 0);
-//		_hideSelected = attr.getBoolean(R.styleable.ZapperList3_hideSelected, false);
-//		_itemsOffset = attr.getFloat(R.styleable.ZapperList3_itemsOffset, 0f);
+		_timebarOffset = attr.getInteger(R.styleable.EpgListView_timebarOffset, 0);
 
 		attr.recycle();
 		setItemsCanFocus(true);
@@ -107,6 +108,11 @@ public class EpgListView extends ListView
 		return _visibleItems;
 	}
 
+	public int getTimebarOffset()
+	{
+		return _timebarOffset;
+	}
+	
 	public void setOnItemSelectingListener(OnItemSelectingListener listener)
 	{
 		_onItemSelectingListener = listener;

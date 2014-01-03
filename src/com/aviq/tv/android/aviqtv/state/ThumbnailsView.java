@@ -155,7 +155,7 @@ public class ThumbnailsView extends GridView
 			return convertView;
 		}
 	}
-
+	
 	@Override
 	protected void onAttachedToWindow()
 	{

@@ -103,12 +103,9 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		_watchlistGrid.setOnItemSelectedListener(_onItemSelectedListener);
 		_watchlistGrid.setOnItemClickListener(_onItemClickListener);
 
-		// Initial refresh of the program info widget
-//		if (_adapter.getCount() > 0)
-//		{
-//			Program program = (Program) _adapter.getItem(0);
-//			_programInfo.updateBrief(program.getChannel().getChannelId(), program);
-//		}
+		// No items? Then hide some drawables that come with the TextViews
+		if (_watchlist.getWatchedPrograms().size() == 0)
+			_programInfo.updateBrief(null, null);
 
 		return _viewGroup;
 	}

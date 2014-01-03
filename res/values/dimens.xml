@@ -28,6 +28,7 @@
     <dimen name="epg_grid_one_hour_width">380dp</dimen>
     <dimen name="epg_grid_channel_logo_width">85dp</dimen>
     <dimen name="epg_channel_info_width">215dp</dimen>
+    <dimen name="epg_channel_info_divider_position">216dp</dimen>
     
     <!-- watchlist -->
     <dimen name="watchlist_item_width">174dp</dimen>

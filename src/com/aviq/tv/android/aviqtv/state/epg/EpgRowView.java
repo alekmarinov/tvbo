@@ -538,12 +538,12 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 			}
 			else
 			{
-				long deltaMin = (_gridStartTimeMillis - firstProgram.getStartTimeCalendar().getTimeInMillis()) / 60000;
+				long deltaMillis = _gridStartTimeMillis - firstProgram.getStartTimeCalendar().getTimeInMillis();
+				double roundingOffset = deltaMillis > 0 ? 0.5 : -0.5;
+				long deltaMin = (long) (deltaMillis / 60000.0 + roundingOffset);
 				left = -(int) (deltaMin * firstChild.getPixelsPerOneMinute());
 			}
 		}
-		// Log.e(TAG, "LEFT: p = " + firstProgram + ", deltaMin = " + deltaMin +
-		// ", left = " + left);
 
 		int top = 0;
 

@@ -15,8 +15,8 @@
         android:id="@+id/videoview_placeholder"
         android:layout_width="@dimen/epg_program_details_thumbnail_width"
         android:layout_height="@dimen/epg_program_details_thumbnail_height"
-        android:padding="1dp"
-        android:background="@drawable/program_thumbnail_mask" />
+        android:background="@drawable/program_thumbnail_mask"
+        android:padding="1dp" />
 
     <LinearLayout
         android:id="@+id/program_details_info_container"
@@ -37,36 +37,43 @@
             android:singleLine="true" />
 
         <LinearLayout
-            android:id="@+id/program_time_container"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="6dp"
             android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
+            android:layout_marginTop="6dp"
             android:background="@drawable/program_details_strip"
+            android:gravity="center_vertical"
             android:orientation="horizontal" >
 
-            <TextView
-                android:id="@+id/date"
-                style="@style/ProgramText"
+            <LinearLayout
+                android:id="@+id/program_time_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="17dp"
-                android:drawableLeft="@drawable/ic_calendar"
-                android:drawablePadding="10dp"
-                android:singleLine="true" />
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal" >
 
-            <TextView
-                android:id="@+id/time"
-                style="@style/ProgramText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="17dp"
-                android:drawableLeft="@drawable/ic_remaining_time"
-                android:drawablePadding="10dp"
-                android:singleLine="true" />
+                <TextView
+                    android:id="@+id/date"
+                    style="@style/ProgramText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="17dp"
+                    android:drawableLeft="@drawable/ic_calendar"
+                    android:drawablePadding="10dp"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/time"
+                    style="@style/ProgramText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="17dp"
+                    android:drawableLeft="@drawable/ic_remaining_time"
+                    android:drawablePadding="10dp"
+                    android:singleLine="true" />
+            </LinearLayout>
         </LinearLayout>
 
         <TextView
@@ -89,10 +96,10 @@
             android:layout_height="69dp"
             android:layout_marginTop="6dp"
             android:background="@drawable/program_details_strip"
+            android:gravity="top"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:singleLine="false"
-            android:gravity="top" />
+            android:singleLine="false" />
     </LinearLayout>
 
 </LinearLayout>

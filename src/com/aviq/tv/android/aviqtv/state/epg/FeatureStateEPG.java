@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
@@ -55,6 +56,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 	private EpgProgramInfo _programInfo;
 	private View _videoPlaceHolder;
 	private View _rootView;
+	private ImageView _gridTimebar;
 
 	private EpgData _epgData;
 
@@ -119,6 +121,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		_dateTimeView = (TextView) viewGroup.findViewById(R.id.datetime);
 		_gridHeader = (EpgHeaderView) viewGroup.findViewById(R.id.time_list);
 		_gridList = (EpgListView) viewGroup.findViewById(R.id.gridList);
+		_gridTimebar = (ImageView) viewGroup.findViewById(R.id.timebar);
 
 		ViewGroup programInfoContainer = (ViewGroup) viewGroup.findViewById(R.id.program_details_container);
 		_programInfo = new EpgProgramInfo(getActivity(), programInfoContainer);
@@ -131,6 +134,13 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		return viewGroup;
 	}
 
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		_epgGrid.deactivate();
+	}
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
@@ -201,6 +211,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 
 		_epgGrid.setEpgHeaderView(_gridHeader);
 		_epgGrid.setDateTimeView(_dateTimeView);
+		_epgGrid.setTimebarImageView(_gridTimebar);
 
 		_epgGrid.setEpgListView(_gridList);
 
