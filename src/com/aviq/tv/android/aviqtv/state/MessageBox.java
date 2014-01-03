@@ -10,6 +10,7 @@
 
 package com.aviq.tv.android.aviqtv.state;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -54,22 +55,28 @@ public class MessageBox extends FeatureState
 
 		String title = _bundle.getString(MessageParams.PARAM_TITLE);
 		String text = _bundle.getString(MessageParams.PARAM_TEXT);
-		//int resId = R.drawable.problem;
+
 		MessageParams.Type msgType = MessageParams.Type.valueOf(_bundle.getString(MessageParams.PARAM_TYPE));
+		int drawableResId = R.drawable.transparent;
+
 		switch (msgType)
 		{
 			case INFO:
 			// FIXME: Change background image for INFO
 			break;
 			case WARN:
-			// FIXME: Change background image for WARN
+				drawableResId = R.drawable.ic_warning;
 			break;
 			default:
 			break;
 		}
+
+		Drawable img = getResources().getDrawable(drawableResId);
+		titleText.setCompoundDrawablesWithIntrinsicBounds( img, null, null, null);
+
 		titleText.setText(title);
 		messageText.setText(text);
-		//messageContainer.setBackgroundResource(resId);
+
 
 		for (MessageParams.Button buttonName : MessageParams.Button.values())
 		{

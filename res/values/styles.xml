@@ -25,6 +25,7 @@
     <style name="MessageTitle" parent="MessageInfo">
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/selection_prompt</item>
+        <item name="android:paddingLeft">0dip</item>
     </style>
 
     <style name="ChannelNumber">
