@@ -7,8 +7,8 @@
     <!-- Program details layout -->
 
     <include
-        android:id="@+id/program_details_container"
-        layout="@layout/epg_program_details" />
+        android:id="@+id/infoarea_program"
+        layout="@layout/infoarea_program" />
 
     <!-- EPG grid layout -->
 
@@ -16,7 +16,7 @@
         android:id="@+id/epg_grid"
         android:layout_width="match_parent"
         android:layout_height="390dp"
-        android:layout_below="@id/program_details_container"
+        android:layout_below="@id/infoarea_program"
         android:layout_marginLeft="100dp"
         android:layout_marginRight="100dp"
         android:layout_marginTop="15dp"

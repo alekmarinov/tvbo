@@ -2,27 +2,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_alignParentBottom="true"
-    android:layout_centerHorizontal="true"
->
+    android:layout_centerHorizontal="true" >
 
     <!-- Program details layout -->
 
     <include
-        android:id="@+id/infoarea_program"
-        layout="@layout/infoarea_program" />
+        android:id="@+id/infoarea_settings"
+        layout="@layout/infoarea_settings" />
 
     <!-- Watchlist layout -->
 
     <com.aviq.tv.android.aviqtv.state.ThumbnailsView
-        android:id="@+id/watchlist_grid"
+        android:id="@+id/settings_grid"
         android:layout_width="match_parent"
         android:layout_height="411dp"
-        android:layout_below="@id/infoarea_program"
+        android:layout_below="@id/infoarea_settings"
         android:layout_marginLeft="100dp"
         android:layout_marginRight="80dp"
         android:layout_marginTop="7dp"
         android:baselineAligned="false"
-        android:columnWidth="@dimen/watchlist_item_width"
+        android:columnWidth="@dimen/settings_item_width"
         android:fadeScrollbars="false"
         android:horizontalSpacing="6dp"
         android:numColumns="6"
@@ -33,6 +32,7 @@
         android:scrollbars="vertical"
         android:stretchMode="spacingWidth"
         android:verticalSpacing="6dp" >
+
         <requestFocus />
     </com.aviq.tv.android.aviqtv.state.ThumbnailsView>
 

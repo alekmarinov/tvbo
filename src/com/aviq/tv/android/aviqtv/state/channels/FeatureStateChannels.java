@@ -302,7 +302,7 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 			if (_isReorderMode && position == _lockedItemPosition)
 				view.setBackgroundResource(R.drawable.channel_thumbnail_locked);
 			else
-				view.setBackgroundResource(R.drawable.watchlist_item_selector);
+				view.setBackgroundResource(R.drawable.grid_item_selector);
 		}
 	};
 

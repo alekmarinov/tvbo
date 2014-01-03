@@ -16,6 +16,8 @@ import com.aviq.tv.android.aviqtv.state.channels.FeatureStateChannels;
 import com.aviq.tv.android.aviqtv.state.epg.FeatureStateEPG;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.aviqtv.state.programinfo.FeatureStateProgramInfo;
+import com.aviq.tv.android.aviqtv.state.settings.FeatureStateSettings;
+import com.aviq.tv.android.aviqtv.state.settings.ethernet.FeatureStateSettingsEthernet;
 import com.aviq.tv.android.aviqtv.state.tv.FeatureStateTV;
 import com.aviq.tv.android.aviqtv.state.watchlist.FeatureStateWatchlist;
 import com.aviq.tv.android.sdk.core.feature.FeatureComponent;
@@ -94,6 +96,10 @@ public class FeatureFactory implements IFeatureFactory
 				return new FeatureStateWatchlist();
 			case CHANNELS:
 				return new FeatureStateChannels();
+			case SETTINGS:
+				return new FeatureStateSettings();
+			case SETTINGS_ETHERNET:
+				return new FeatureStateSettingsEthernet();
 		}
 		throw new FeatureNotFoundException(featureId);
 	}
