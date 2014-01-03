@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
+import com.aviq.tv.android.aviqtv.state.StatusBar;
 import com.aviq.tv.android.aviqtv.state.epg.EpgGrid.NAVIGATION;
 import com.aviq.tv.android.aviqtv.state.epg.EpgGrid.OnEpgGridEventListener;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
@@ -109,7 +110,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 	@Override
 	public String getMenuItemCaption()
 	{
-		return getStateName().name();
+		return Environment.getInstance().getResources().getString(R.string.menu_epg);
 	}
 
 	@Override
@@ -129,8 +130,13 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 
 		_rootView = viewGroup;
 
+		// Hide player while view is relayouting and show it by the global layout listener
+		_featurePlayer.hideVideoView();
+
 		initEpgGridOnGlobalLayout();
 
+		new StatusBar(viewGroup.findViewById(R.id.status_bar)).enable(StatusBar.Element.NAVIGATION).enable(
+		        StatusBar.Element.DETAILS);
 		return viewGroup;
 	}
 

@@ -12,14 +12,18 @@ package com.aviq.tv.android.aviqtv.state;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
+import com.aviq.tv.android.sdk.core.EventMessenger;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
+import com.aviq.tv.android.sdk.core.state.StateManager.MessageParams;
 
 /**
  * Base class of all application message boxes
@@ -28,49 +32,109 @@ public class MessageBox extends FeatureState
 {
 	private static final String TAG = MessageBox.class.getSimpleName();
 
-	public static final String PARAM_TYPE = "PARAM_TYPE";
-	public static final String PARAM_TEXT_ID = "PARAM_TEXT_ID";
+	public static final int ON_BUTTON_PRESSED = EventMessenger.ID();
 
-	public enum Type
-	{
-		INFO, WARN, ERROR
-	}
+	private View _rootView;
+	private ContextButtonGroup _contextButtonGroup;
+	private Bundle _bundle;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_messagebox, container, false);
 		ViewGroup messageContainer = (ViewGroup) viewGroup.findViewById(R.id.messageContainer);
-		TextView messageText = (TextView) viewGroup.findViewById(R.id.messageText);
+		TextView titleText = (TextView) viewGroup.findViewById(R.id.title);
+		TextView messageText = (TextView) viewGroup.findViewById(R.id.message);
+		_contextButtonGroup = (ContextButtonGroup) viewGroup.findViewById(R.id.buttons);
+		_rootView = viewGroup;
 
-		Bundle params = getArguments();
-		if (params == null)
+		_bundle = getArguments();
+		if (_bundle == null)
 			throw new IllegalArgumentException(".onCreateView: Invalid arguments for " + TAG);
 
-		int textId = params.getInt(PARAM_TEXT_ID);
-		int resId = R.drawable.problem;
-		Type msgType = Type.valueOf(params.getString(PARAM_TYPE));
+		String title = _bundle.getString(MessageParams.PARAM_TITLE);
+		String text = _bundle.getString(MessageParams.PARAM_TEXT);
+		//int resId = R.drawable.problem;
+		MessageParams.Type msgType = MessageParams.Type.valueOf(_bundle.getString(MessageParams.PARAM_TYPE));
 		switch (msgType)
 		{
 			case INFO:
-				// FIXME: Change background image for INFO
-				break;
+			// FIXME: Change background image for INFO
+			break;
 			case WARN:
-				// FIXME: Change background image for WARN
-				break;
+			// FIXME: Change background image for WARN
+			break;
 			default:
-				break;
+			break;
 		}
-		messageText.setText(textId);
-		messageContainer.setBackgroundResource(resId);
-		Log.i(TAG, ".onCreateView: " + messageText.getText());
+		titleText.setText(title);
+		messageText.setText(text);
+		//messageContainer.setBackgroundResource(resId);
 
+		for (MessageParams.Button buttonName : MessageParams.Button.values())
+		{
+			Log.i(TAG, buttonName + " -> " + _bundle.getBoolean(buttonName.name()));
+			if (_bundle.getBoolean(buttonName.name()))
+			{
+				createContextButton(buttonName);
+			}
+		}
+		_contextButtonGroup.setButtonOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View view)
+			{
+				Log.i(TAG, ".onClick: " + view.getTag());
+				_bundle.putBoolean(view.getTag().toString(), true);
+				getEventMessenger().trigger(ON_BUTTON_PRESSED, _bundle);
+				hide();
+			}
+		});
+
+		Log.i(TAG, ".onCreateView: " + messageText.getText());
 		return viewGroup;
 	}
 
 	@Override
-    public FeatureName.State getStateName()
-    {
-	    return FeatureName.State.MESSAGE_BOX;
-    }
+	public FeatureName.State getStateName()
+	{
+		return FeatureName.State.MESSAGE_BOX;
+	}
+
+	@Override
+	public void onShow(boolean isViewUncovered)
+	{
+		super.onShow(isViewUncovered);
+		_rootView.requestFocus();
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
+		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
+		return _contextButtonGroup.onKeyDown(keyCode, event);
+	}
+
+	private void createContextButton(MessageParams.Button buttonName)
+	{
+		Log.i(TAG, "Create button: " + buttonName);
+		switch (buttonName)
+		{
+			case OK:
+				_contextButtonGroup.createButton(R.drawable.ic_ok, R.string.ok).setTag(MessageParams.Button.OK);
+			break;
+			case CANCEL:
+				_contextButtonGroup.createButton(android.R.drawable.ic_delete, R.string.cancel).setTag(
+				        MessageParams.Button.CANCEL);
+			break;
+			case YES:
+				_contextButtonGroup.createButton(R.drawable.ic_ok, R.string.yes).setTag(
+				        MessageParams.Button.YES);
+			break;
+			case NO:
+				_contextButtonGroup.createButton(android.R.drawable.ic_delete, R.string.no).setTag(
+				        MessageParams.Button.NO);
+			break;
+		}
+	}
 }

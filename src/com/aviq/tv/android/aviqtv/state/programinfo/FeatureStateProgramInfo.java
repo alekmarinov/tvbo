@@ -22,11 +22,13 @@ import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.aviqtv.state.ContextButton;
 import com.aviq.tv.android.aviqtv.state.ContextButtonGroup;
 import com.aviq.tv.android.aviqtv.state.epg.EpgProgramInfo;
+import com.aviq.tv.android.aviqtv.state.tv.FeatureStateTV;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
+import com.aviq.tv.android.sdk.core.state.StateException;
 import com.aviq.tv.android.sdk.feature.epg.EpgData;
 import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
 import com.aviq.tv.android.sdk.feature.epg.Program;
@@ -45,18 +47,20 @@ public class FeatureStateProgramInfo extends FeatureState
 
 	private FeatureEPG _featureEPG;
 	private FeaturePlayer _featurePlayer;
+	private FeatureStateTV _featureStateTV;
 	private FeatureWatchlist _watchlist;
 	private EpgProgramInfo _programInfo;
 	private ContextButtonGroup _contextButtonGroup;
 	private EpgData _epgData;
 	private String _channelId;
 	private String _programId;
-	
+
 	public FeatureStateProgramInfo()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
 		_dependencies.Components.add(FeatureName.Component.WATCHLIST);
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
+		_dependencies.States.add(FeatureName.State.TV);
 	}
 
 	@Override
@@ -70,6 +74,7 @@ public class FeatureStateProgramInfo extends FeatureState
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
 			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
 			        FeatureName.Component.WATCHLIST);
+			_featureStateTV = (FeatureStateTV)Environment.getInstance().getFeatureState(FeatureName.State.TV);
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
 		catch (FeatureNotFoundException e)
@@ -120,7 +125,7 @@ public class FeatureStateProgramInfo extends FeatureState
 			_contextButtonGroup.createButton(R.drawable.ic_option_btn_favorite, R.string.addToWatchlist);
 
 		// Context button "Like" / "Unlike"
-		_contextButtonGroup.createButton(R.drawable.ic_option_btn_like, R.string.like);
+		// _contextButtonGroup.createButton(R.drawable.ic_option_btn_like, R.string.like);
 
 		return viewGroup;
 	}
@@ -148,7 +153,7 @@ public class FeatureStateProgramInfo extends FeatureState
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	private OnClickListener _contextButtonGroupOnClickListener = new OnClickListener()
 	{
 		@Override
@@ -157,7 +162,20 @@ public class FeatureStateProgramInfo extends FeatureState
 			switch (view.getId())
 			{
 				case R.string.play:
-					Log.e(TAG, "-----: PLAY");
+				{
+					Program program = _epgData.getProgram(_channelId, _programId);
+					Bundle bundle = new Bundle();
+					bundle.putString("PROGRAM", program.getId());
+					bundle.putString("CHANNEL", program.getChannel().getChannelId());
+	                try
+                    {
+	                    Environment.getInstance().getStateManager().setStateMain(_featureStateTV, bundle);
+                    }
+                    catch (StateException e)
+                    {
+                    	Log.e(TAG, e.getMessage(), e);
+                    }
+				}
 				break;
 
 				case R.string.addToWatchlist:

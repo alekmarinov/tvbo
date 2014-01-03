@@ -1,0 +1,167 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background" >
+
+    <TextView
+        android:id="@+id/prompt"
+        style="@style/SelectionPrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/eth_manual_settings" />
+
+    <RadioGroup
+        android:id="@+id/rb_container"
+        android:layout_width="400dp"
+        android:layout_height="120dp"
+        android:layout_below="@id/prompt"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:divider="@null" >
+
+        <RadioButton
+            android:id="@+id/rb_dhcp"
+            style="@style/RadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="right"
+            android:text="@string/eth_setup_dhcp" />
+
+        <RadioButton
+            android:id="@+id/rb_manual"
+            style="@style/RadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/eth_setup_manual" />
+    </RadioGroup>
+    <!-- IP -->
+
+    <EditText
+        android:id="@+id/eth_ip"
+        style="@style/EditField"
+        android:layout_width="@dimen/editfield_width"
+        android:layout_height="@dimen/editfield_height"
+        android:layout_below="@id/rb_container"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:imeOptions="actionNext" />
+
+    <TextView
+        style="@style/EditFieldInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/eth_ip"
+        android:layout_toLeftOf="@id/eth_ip"
+        android:paddingBottom="20dip"
+        android:paddingRight="7dp"
+        android:text="@string/eth_ip" />
+
+    <!-- Mask -->
+
+    <EditText
+        android:id="@+id/eth_mask"
+        style="@style/EditField"
+        android:layout_width="@dimen/editfield_width"
+        android:layout_height="@dimen/editfield_height"
+        android:layout_below="@id/eth_ip"
+        android:layout_centerHorizontal="true"
+        android:imeOptions="actionNext" />
+
+    <TextView
+        style="@style/EditFieldInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/eth_mask"
+        android:layout_toLeftOf="@id/eth_mask"
+        android:paddingBottom="20dip"
+        android:paddingRight="7dp"
+        android:text="@string/eth_mask" />
+
+    <!-- Gateway -->
+
+    <EditText
+        android:id="@+id/eth_gateway"
+        style="@style/EditField"
+        android:layout_width="@dimen/editfield_width"
+        android:layout_height="@dimen/editfield_height"
+        android:layout_below="@id/eth_mask"
+        android:layout_centerHorizontal="true"
+        android:imeOptions="actionNext" />
+
+    <TextView
+        style="@style/EditFieldInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/eth_gateway"
+        android:layout_toLeftOf="@id/eth_gateway"
+        android:paddingBottom="20dip"
+        android:paddingRight="7dp"
+        android:text="@string/eth_gateway" />
+
+    <!-- DNS1 -->
+
+    <EditText
+        android:id="@+id/eth_dns1"
+        style="@style/EditField"
+        android:layout_width="@dimen/editfield_width"
+        android:layout_height="@dimen/editfield_height"
+        android:layout_below="@id/eth_gateway"
+        android:layout_centerHorizontal="true"
+        android:imeOptions="actionNext" />
+
+    <TextView
+        style="@style/EditFieldInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/eth_dns1"
+        android:layout_toLeftOf="@id/eth_dns1"
+        android:paddingBottom="20dip"
+        android:paddingRight="7dp"
+        android:text="@string/eth_dns1" />
+
+    <!-- DNS2 -->
+
+    <EditText
+        android:id="@+id/eth_dns2"
+        style="@style/EditField"
+        android:layout_width="@dimen/editfield_width"
+        android:layout_height="@dimen/editfield_height"
+        android:layout_below="@id/eth_dns1"
+        android:layout_centerHorizontal="true"
+        android:imeOptions="actionNext" />
+
+    <TextView
+        style="@style/EditFieldInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/eth_dns2"
+        android:layout_toLeftOf="@id/eth_dns2"
+        android:paddingBottom="20dip"
+        android:paddingRight="7dp"
+        android:text="@string/eth_dns2" />
+
+    <!-- Clear/OK buttons -->
+
+    <Button
+        style="@style/Button"
+        android:layout_width="210dp"
+        android:layout_height="66dp"
+        android:layout_alignLeft="@id/eth_dns2"
+        android:layout_below="@id/eth_dns2"
+        android:layout_marginLeft="13dp"
+        android:layout_marginTop="18dp"
+        android:text="@string/clear" />
+
+    <Button
+        style="@style/Button"
+        android:layout_width="210dp"
+        android:layout_height="66dp"
+        android:layout_alignRight="@id/eth_dns2"
+        android:layout_below="@id/eth_dns2"
+        android:layout_marginRight="13dp"
+        android:layout_marginTop="18dp"
+        android:text="@string/ok" />
+
+</RelativeLayout>

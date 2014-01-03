@@ -98,6 +98,12 @@ public class ThumbnailsView extends GridView
 		addThumbItem(item, -1);
 	}
 
+	@SuppressWarnings("unchecked")
+    public void setThumbItems(List<?> items)
+	{
+		_thumbAdapter._thumbItems = (List<Object>)items;
+	}
+
 	public Object removeThumbAt(int position)
 	{
 		Object item = _thumbAdapter._thumbItems.remove(position);

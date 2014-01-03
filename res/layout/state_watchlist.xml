@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:layout_alignParentBottom="true"
     android:layout_centerHorizontal="true"
-    android:background="#CC000000" >
+>
 
     <!-- Program details layout -->
 
@@ -39,7 +39,7 @@
     <!-- Contextual button bar -->
 
     <include
-        android:id="@+id/button_bar_container"
+        android:id="@+id/status_bar"
         layout="@layout/status_bar" />
 
 </RelativeLayout>

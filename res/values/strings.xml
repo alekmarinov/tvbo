@@ -29,4 +29,36 @@
     <string name="loading">Зареждане...</string>
     <string name="all_channels">Всички Канали</string>
     <string name="my_channels">Мои Канали</string>
+    
+    <!-- Networks -->
+    <string name="wifi">Wi-Fi</string>
+    <string name="ethernet">Ethernet</string>
+    <string name="choose_connection">Choose Connection</string>
+    <string name="password_prompt">Въведи парола за %1$s</string>
+    <string name="eth_manual_settings">Ethernet Manual Settings</string>
+    <string name="eth_ip">IP</string>
+    <string name="eth_mask">Mask</string>
+    <string name="eth_gateway">Gateway</string>
+    <string name="eth_dns1">DNS1</string>
+    <string name="eth_dns2">DNS2</string>
+    <string name="eth_setup_dhcp">DHCP</string>
+    <string name="eth_setup_manual">Manual</string>
+    
+    <!-- Menu -->
+    <string name="menu_epg">Програмата</string>
+    <string name="menu_channels">Канали</string>
+    <string name="menu_tv">Телевизия</string>
+    <string name="menu_watchlist">Напомняне</string>
+    
+    <string name="ok">Добре</string>
+    <string name="cancel">Отказ</string>
+    <string name="yes">Да</string>
+    <string name="no">Не</string>
+    <string name="clear">Изчисти</string>
+
+    <!-- Watchlist -->
+    <string name="watchlist_notify_title">Напомняне</string>
+    <string name="watchlist_notify_soon">След %1$d мин започва %2$s по %3$s. Искате ли да смените канала?</string>
+    <string name="watchlist_notify_now">Започва %1$s по %2$s. Искате ли да смените канала?</string>
+
 </resources>

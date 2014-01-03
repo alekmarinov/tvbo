@@ -101,7 +101,7 @@
     <!-- Contextual button bar -->
 
     <include
-        android:id="@+id/button_bar_container"
+        android:id="@+id/status_bar"
         layout="@layout/status_bar" />
 
 </RelativeLayout>

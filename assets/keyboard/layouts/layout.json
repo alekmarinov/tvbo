@@ -1,0 +1,168 @@
+{
+    "pages" : [
+        {
+            "ml11" : "1",
+            "ml12" : "2",
+            "ml13" : "3",
+            "mm11" : "4",
+            "mm12" : "5",
+            "mm13" : "6",
+            "mr11" : "7",
+            "mr12" : "8",
+            "mr13" : "9",
+            "trr1" : "0",
+
+            "ml21" : "q",
+            "ml22" : "w",
+            "ml23" : "e",
+            "mm21" : "r",
+            "mm22" : "t",
+            "mm23" : "z",
+            "mr21" : "u",
+            "mr22" : "i",
+            "mr23" : "o",
+            "trr2" : "p",
+
+            "ml31" : "a",
+            "ml32" : "s",
+            "ml33" : "d",
+            "mm31" : "f",
+            "mm32" : "g",
+            "mm33" : "h",
+            "mr31" : "j",
+            "mr32" : "k",
+            "mr33" : "l",
+            "trr4" : "*",
+
+            "bcps" : "y",
+            "bspc" : "x",
+            "btn1" : "c",
+            "btn2" : "v",
+            "blft" : "b",
+            "bdel" : "n",
+            "brht" : "m",
+            "trr7" : ".",
+            "trr8" : "-",
+            "trr9" : "_",
+
+            "exr1" : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Backspace",
+            "trr3" : "DONE",
+            "trr5" : "ABC",
+            "bstr" : "SPACE"
+        },
+
+        {
+            "ml11" : "1",
+            "ml12" : "2",
+            "ml13" : "3",
+            "mm11" : "4",
+            "mm12" : "5",
+            "mm13" : "6",
+            "mr11" : "7",
+            "mr12" : "8",
+            "mr13" : "9",
+            "trr1" : "0",
+
+            "ml21" : "Q",
+            "ml22" : "W",
+            "ml23" : "E",
+            "mm21" : "R",
+            "mm22" : "T",
+            "mm23" : "Z",
+            "mr21" : "U",
+            "mr22" : "I",
+            "mr23" : "O",
+            "trr2" : "P",
+
+            "ml31" : "A",
+            "ml32" : "S",
+            "ml33" : "D",
+            "mm31" : "F",
+            "mm32" : "G",
+            "mm33" : "H",
+            "mr31" : "J",
+            "mr32" : "K",
+            "mr33" : "L",
+            "trr4" : "*",
+
+            "bcps" : "Y",
+            "bspc" : "X",
+            "btn1" : "C",
+            "btn2" : "V",
+            "blft" : "B",
+            "bdel" : "N",
+            "brht" : "M",
+            "trr7" : ".",
+            "trr8" : "-",
+            "trr9" : "_",
+
+            "exr1" : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Backspace",
+            "trr3" : "DONE",
+            "trr5" : "#+=",
+            "bstr" : "SPACE"
+        },
+
+
+        {
+            "ml11" : "ä",
+            "ml12" : "Ä",
+            "ml13" : "à",
+            "mm11" : "À",
+            "mm12" : "é",
+            "mm13" : "É",
+            "mr11" : "è",
+            "mr12" : "È",
+            "mr13" : "ï",
+            "trr1" : "Ï",
+
+            "ml21" : "ö",
+            "ml22" : "Ö",
+            "ml23" : "ü",
+            "mm21" : "Ü",
+            "mm22" : "$",
+            "mm23" : "€",
+            "mr21" : "~",
+            "mr22" : "(",
+            "mr23" : ")",
+            "trr2" : "=",
+
+            "ml31" : "@",
+            "ml32" : "<",
+            "ml33" : ">",
+            "mm31" : "/",
+            "mm32" : "\\",
+            "mm33" : "!",
+            "mr31" : "\"",
+            "mr32" : "'",
+            "mr33" : "+",
+            "trr4" : "*",
+
+            "bcps" : "#",
+            "bspc" : "%",
+            "btn1" : "&",
+            "btn2" : "?",
+            "blft" : ",",
+            "bdel" : ":",
+            "brht" : ";",
+            "trr7" : ".",
+            "trr8" : "-",
+            "trr9" : "_",
+
+            "exr1" : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Backspace",
+            "trr3" : "DONE",
+            "trr5" : "abc",
+            "bstr" : "SPACE"
+        }
+
+    ],
+
+    "default" : "mm23",
+
+    "alias" : {
+        "exr1" : ["double-width", "backspace"],
+        "trr3" : ["double-width", "ok"],
+        "trr5" : ["double-width", "pages"],
+        "bstr" : ["double-width", "space"]
+    }
+}
+

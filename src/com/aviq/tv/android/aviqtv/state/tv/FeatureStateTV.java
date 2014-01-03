@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -49,7 +50,7 @@ import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 public class FeatureStateTV extends FeatureState implements IStateMenuItem
 {
 	public static final String TAG = FeatureStateTV.class.getSimpleName();
-	public static final DateFormat CLOCK_FORMAT = new SimpleDateFormat("HH:mm:ss EEE, MMM d, ''yy, z");
+	public static final DateFormat CLOCK_FORMAT = new SimpleDateFormat("HH:mm:ss EEE, MMM d, ''yy, z", Locale.US);
 	public static final int ON_TIMER = EventMessenger.ID();
 
 	public enum Param
@@ -138,7 +139,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		_epgData = _featureEPG.getEpgData();
 
 		List<Channel> favoriteChannels = _featureChannels.getFavoriteChannels();
-		for (Channel channel: favoriteChannels)
+		for (Channel channel : favoriteChannels)
 		{
 			Bitmap bmp = _epgData.getChannelLogoBitmap(channel.getIndex());
 			if (bmp == null)
@@ -148,12 +149,27 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 		// Set player at full screen
 		_featurePlayer.setVideoViewFullScreen();
+
+		Bundle params = getArguments();
+		if (params != null)
+		{
+			String channelId = params.getString("CHANNEL");
+			if (channelId != null)
+			{
+				// Switching channel requested
+				Channel channel = _epgData.getChannel(channelId);
+				int globalIndex = channel.getIndex();
+				String streamUrl = _featureEPG.getChannelStreamUrl(globalIndex);
+				_featurePlayer.play(streamUrl);
+			}
+		}
 		return _viewGroup;
 	}
 
 	@Override
-	protected void onShow()
+	protected void onShow(boolean isViewUncovered)
 	{
+		super.onShow(isViewUncovered);
 		onSelectChannelIndex(_zapperListView.getSelectIndex());
 	}
 
@@ -172,7 +188,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	{
 		int globalIndex = _featureChannels.getFavoriteChannels().get(channelIndex).getIndex();
 		String streamUrl = _featureEPG.getChannelStreamUrl(globalIndex);
-		_featurePlayer.getPlayer().play(streamUrl);
+		_featurePlayer.play(streamUrl);
 	}
 
 	private void updateClock()
@@ -386,6 +402,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	@Override
 	public String getMenuItemCaption()
 	{
-		return getStateName().name();
+		return Environment.getInstance().getResources().getString(R.string.menu_tv);
 	}
 }
