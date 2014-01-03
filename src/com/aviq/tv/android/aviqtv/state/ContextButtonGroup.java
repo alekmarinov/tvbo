@@ -1,6 +1,7 @@
 package com.aviq.tv.android.aviqtv.state;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -17,28 +18,37 @@ public class ContextButtonGroup extends LinearLayout
 	private LayoutInflater _layoutInflator;
 	private int _focusedChildIndex = 0;
 	private OnClickListener _buttonOnClickListener;
+	private int _buttonSpacing;
+	private int _buttonPaddingLeft;
+	private int _buttonPaddingRight;
 
 	public ContextButtonGroup(Context context)
 	{
 		super(context);
-		init(context);
+		init(context, context.obtainStyledAttributes(R.styleable.ContextButtonGroup));
 	}
 
 	public ContextButtonGroup(Context context, AttributeSet attrs)
 	{
 		this(context, attrs, 0);
-		init(context);
+		init(context, context.obtainStyledAttributes(attrs, R.styleable.ContextButtonGroup));
 	}
 
 	public ContextButtonGroup(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
-		init(context);
+		init(context, context.obtainStyledAttributes(attrs, R.styleable.ContextButtonGroup, defStyle, 0));
 	}
 
-	public void init(Context context)
+	public void init(Context context, TypedArray attr)
 	{
 		_layoutInflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
+		_buttonSpacing = (int) attr.getDimension(R.styleable.ContextButtonGroup_buttonSpacing, 0);
+		_buttonPaddingLeft = (int) attr.getDimension(R.styleable.ContextButtonGroup_buttonPaddingLeft, 0);
+		_buttonPaddingRight = (int) attr.getDimension(R.styleable.ContextButtonGroup_buttonPaddingRight, 0);
+		
+		attr.recycle();
 	}
 
 	public ContextButton createButton()
@@ -54,6 +64,36 @@ public class ContextButtonGroup extends LinearLayout
 		if (_buttonOnClickListener != null)
 			button.setOnClickListener(_buttonOnClickListener);
 
+		switch (getOrientation())
+		{
+			case HORIZONTAL:
+			{
+				// Horizontal layout will get buttons as wide as their contents
+				LayoutParams lp = (LinearLayout.LayoutParams) button.getLayoutParams();
+				lp.width = LayoutParams.WRAP_CONTENT;
+				lp.rightMargin = _buttonSpacing;
+				button.setLayoutParams(lp);
+				break;
+			}
+				
+			case VERTICAL:
+			{
+				// Vertical layout will get buttons as wide as the parent container
+				LayoutParams lp = (LinearLayout.LayoutParams) button.getLayoutParams();
+				lp.width = LayoutParams.FILL_PARENT;
+				lp.bottomMargin = _buttonSpacing;
+				button.setLayoutParams(lp);
+				break;
+			}
+				
+			default:
+				Log.w(TAG,
+				        "Unspecified layout orientation. Default layout parameters will be used for the context buttons.");
+				break;
+		}
+
+		button.setPadding(_buttonPaddingLeft, button.getPaddingTop(), _buttonPaddingRight, button.getPaddingBottom());
+		
 		addView(button);
 		getChildAt(0).requestFocus();
 

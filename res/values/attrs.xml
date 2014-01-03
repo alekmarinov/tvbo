@@ -8,6 +8,9 @@
     <attr name="itemVerticalPadding" format="dimension" />
     <attr name="itemTextSize" format="dimension" />
     <attr name="timebarOffset" format="integer" />
+    <attr name="buttonSpacing" format="dimension" />
+    <attr name="buttonPaddingLeft" format="dimension" />
+    <attr name="buttonPaddingRight" format="dimension" />
 
     <attr name="selectedVisiblePosition" format="integer" />
     <attr name="selectedDelay" format="integer" />
@@ -45,5 +48,11 @@
         <attr name="listitem_size" />
         <attr name="selectionIndex" />
         <attr name="timebarOffset" />
+    </declare-styleable>
+    
+    <declare-styleable name="ContextButtonGroup">
+        <attr name="buttonSpacing" />
+        <attr name="buttonPaddingLeft" />
+        <attr name="buttonPaddingRight" />
     </declare-styleable>
 </resources>

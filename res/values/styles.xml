@@ -25,6 +25,7 @@
     <style name="MessageTitle" parent="MessageInfo">
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/selection_prompt</item>
+        <item name="android:paddingLeft">0dip</item>
     </style>
 
     <style name="ChannelNumber">
@@ -37,9 +38,7 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:gravity">left|center_vertical</item>
-        <item name="android:paddingLeft">20dip</item>
         <item name="android:drawablePadding">10dip</item>
-        <item name="android:layout_marginBottom">10dip</item>
     </style>
 
     <style name="MenuItemCaption">
