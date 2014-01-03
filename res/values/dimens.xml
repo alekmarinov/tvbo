@@ -45,6 +45,8 @@
     <!-- networks -->    
     <dimen name="network_item_width">406dp</dimen>
     <dimen name="network_item_height">72dp</dimen>
+    <dimen name="editfield_width">522dp</dimen>
+    <dimen name="editfield_height">74dp</dimen>
     
 	<dimen name="textfield_size">28sp</dimen>
 </resources>

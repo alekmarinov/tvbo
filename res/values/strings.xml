@@ -35,6 +35,14 @@
     <string name="ethernet">Ethernet</string>
     <string name="choose_connection">Choose Connection</string>
     <string name="password_prompt">Въведи парола за %1$s</string>
+    <string name="eth_manual_settings">Ethernet Manual Settings</string>
+    <string name="eth_ip">IP</string>
+    <string name="eth_mask">Mask</string>
+    <string name="eth_gateway">Gateway</string>
+    <string name="eth_dns1">DNS1</string>
+    <string name="eth_dns2">DNS2</string>
+    <string name="eth_setup_dhcp">DHCP</string>
+    <string name="eth_setup_manual">Manual</string>
     
     <!-- Menu -->
     <string name="menu_epg">Програмата</string>
@@ -46,6 +54,7 @@
     <string name="cancel">Отказ</string>
     <string name="yes">Да</string>
     <string name="no">Не</string>
+    <string name="clear">Изчисти</string>
 
     <!-- Watchlist -->
     <string name="watchlist_notify_title">Напомняне</string>
