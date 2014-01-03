@@ -27,6 +27,9 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_gravity="right"
+            android:nextFocusLeft="@+id/eth_btn_clear"
+            android:nextFocusUp="@+id/eth_btn_clear"
+            android:nextFocusRight="@+id/rb_manual"
             android:text="@string/eth_setup_dhcp" />
 
         <RadioButton
@@ -34,7 +37,9 @@
             style="@style/RadioButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="@string/eth_setup_manual" />
+            android:text="@string/eth_setup_manual"
+            android:nextFocusLeft="@+id/rb_dhcp" 
+            android:nextFocusRight="@+id/eth_ip"/>
     </RadioGroup>
     <!-- IP -->
 
@@ -46,7 +51,9 @@
         android:layout_below="@id/rb_container"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
-        android:imeOptions="actionNext" />
+        android:imeOptions="actionNext"
+        android:nextFocusLeft="@id/rb_manual"
+        android:nextFocusUp="@id/rb_manual" />
 
     <TextView
         style="@style/EditFieldInfo"
@@ -67,7 +74,8 @@
         android:layout_height="@dimen/editfield_height"
         android:layout_below="@id/eth_ip"
         android:layout_centerHorizontal="true"
-        android:imeOptions="actionNext" />
+        android:imeOptions="actionNext"
+        android:nextFocusLeft="@id/eth_ip" />
 
     <TextView
         style="@style/EditFieldInfo"
@@ -88,7 +96,8 @@
         android:layout_height="@dimen/editfield_height"
         android:layout_below="@id/eth_mask"
         android:layout_centerHorizontal="true"
-        android:imeOptions="actionNext" />
+        android:imeOptions="actionNext"
+        android:nextFocusLeft="@id/eth_mask" />
 
     <TextView
         style="@style/EditFieldInfo"
@@ -109,7 +118,8 @@
         android:layout_height="@dimen/editfield_height"
         android:layout_below="@id/eth_gateway"
         android:layout_centerHorizontal="true"
-        android:imeOptions="actionNext" />
+        android:imeOptions="actionNext"
+        android:nextFocusLeft="@id/eth_gateway" />
 
     <TextView
         style="@style/EditFieldInfo"
@@ -130,7 +140,8 @@
         android:layout_height="@dimen/editfield_height"
         android:layout_below="@id/eth_dns1"
         android:layout_centerHorizontal="true"
-        android:imeOptions="actionNext" />
+        android:imeOptions="actionNext"
+        android:nextFocusLeft="@id/eth_dns1" />
 
     <TextView
         style="@style/EditFieldInfo"
@@ -145,6 +156,7 @@
     <!-- Clear/OK buttons -->
 
     <Button
+        android:id="@+id/eth_btn_clear"
         style="@style/Button"
         android:layout_width="210dp"
         android:layout_height="66dp"
@@ -152,9 +164,12 @@
         android:layout_below="@id/eth_dns2"
         android:layout_marginLeft="13dp"
         android:layout_marginTop="18dp"
+        android:nextFocusLeft="@+id/eth_btn_ok"
+        android:nextFocusDown="@id/rb_dhcp"
         android:text="@string/clear" />
 
     <Button
+        android:id="@+id/eth_btn_ok"
         style="@style/Button"
         android:layout_width="210dp"
         android:layout_height="66dp"
@@ -162,6 +177,8 @@
         android:layout_below="@id/eth_dns2"
         android:layout_marginRight="13dp"
         android:layout_marginTop="18dp"
+        android:nextFocusRight="@id/eth_btn_clear"
+        android:nextFocusDown="@id/rb_dhcp"
         android:text="@string/ok" />
 
 </RelativeLayout>

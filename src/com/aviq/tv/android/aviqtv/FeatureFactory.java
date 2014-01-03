@@ -29,6 +29,7 @@ import com.aviq.tv.android.sdk.core.feature.IFeatureFactory;
 import com.aviq.tv.android.sdk.feature.channels.FeatureChannels;
 import com.aviq.tv.android.sdk.feature.epg.rayv.FeatureEPGRayV;
 import com.aviq.tv.android.sdk.feature.httpserver.FeatureHttpServer;
+import com.aviq.tv.android.sdk.feature.network.FeatureEthernet;
 import com.aviq.tv.android.sdk.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.sdk.feature.register.FeatureRegister;
 import com.aviq.tv.android.sdk.feature.scheduler.internet.FeatureInternet;
@@ -58,6 +59,8 @@ public class FeatureFactory implements IFeatureFactory
 				return new FeatureRegister();
 			case WATCHLIST:
 				return new FeatureWatchlist();
+			case ETHERNET:
+				return new FeatureEthernet();
 			default:
 				break;
 		}

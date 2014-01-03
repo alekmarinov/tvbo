@@ -35,6 +35,7 @@ public class FeatureStateSettingsEthernet extends FeatureState implements IState
 
 	public FeatureStateSettingsEthernet()
 	{
+		_dependencies.Components.add(FeatureName.Component.ETHERNET);
 		_dependencies.States.add(FeatureName.State.SETTINGS);
 	}
 

@@ -99,9 +99,9 @@ public class ThumbnailsView extends GridView
 	}
 
 	@SuppressWarnings("unchecked")
-    public void setThumbItems(List<?> items)
+	public void setThumbItems(List<?> items)
 	{
-		_thumbAdapter._thumbItems = (List<Object>)items;
+		_thumbAdapter._thumbItems = (List<Object>) items;
 	}
 
 	public Object removeThumbAt(int position)
@@ -146,7 +146,9 @@ public class ThumbnailsView extends GridView
 		@Override
 		public long getItemId(int position)
 		{
-			return _thumbItems.get(position).hashCode();
+			if (position < _thumbItems.size())
+				return _thumbItems.get(position).hashCode();
+			return 0;
 		}
 
 		@Override
@@ -154,14 +156,17 @@ public class ThumbnailsView extends GridView
 		{
 			if (convertView == null)
 				convertView = _thumbItemCreater.createView(ThumbnailsView.this, position, _inflator);
-			Object item = _thumbItems.get(position);
-			convertView.setTag(item);
-			Log.i(TAG, ".getView: " + item + " at index " + position);
-			_thumbItemCreater.updateView(ThumbnailsView.this, position, convertView, item);
+			if (position < _thumbItems.size())
+			{
+				Object item = _thumbItems.get(position);
+				convertView.setTag(item);
+				Log.i(TAG, ".getView: " + item + " at index " + position);
+				_thumbItemCreater.updateView(ThumbnailsView.this, position, convertView, item);
+			}
 			return convertView;
 		}
 	}
-	
+
 	@Override
 	protected void onAttachedToWindow()
 	{
