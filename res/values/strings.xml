@@ -26,7 +26,7 @@
     <string name="addToWatchlist">To watchlist</string>
     <string name="removeFromWatchlist">Unwatch</string>
     <string name="like">Like</string>
-    <string name="loading">Зареждане...</string>
+    <string name="loading">Зареждане&#8230;</string>
     <string name="all_channels">Всички Канали</string>
     <string name="my_channels">Мои Канали</string>
     
@@ -49,6 +49,10 @@
     <string name="menu_channels">Канали</string>
     <string name="menu_tv">Телевизия</string>
     <string name="menu_watchlist">Напомняне</string>
+    <string name="menu_settings">Настройки</string>
+    
+    <!--  Settings items -->
+    <string name="menu_settings_ethernet">Мрежа</string>
     
     <string name="ok">Добре</string>
     <string name="cancel">Отказ</string>

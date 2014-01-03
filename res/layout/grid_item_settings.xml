@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/watchlist_item_width"
-    android:layout_height="@dimen/watchlist_item_height"
+    android:layout_width="@dimen/settings_item_width"
+    android:layout_height="@dimen/settings_item_height"
     android:background="@drawable/grid_item_selector" >
 
     <ImageView
@@ -10,15 +10,6 @@
         android:layout_height="wrap_content"
         android:scaleType="fitCenter" 
         android:padding="4dp"
-        android:src="@drawable/watchlist_image_placeholder"
-    />
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:padding="4dp"
-        android:src="@drawable/watchlist_thumbnail_bar"
-        android:visibility="visible"
     />
     <TextView style="@style/ProgramText" 
         android:id="@+id/title"

@@ -247,7 +247,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 	private class ProgramBar
 	{
-		private final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
+		private final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm", Locale.US);
 		private TextView ChannelTitle;
 		private TextView PreviousProgramTime;
 		private TextView PreviousProgramTitle;

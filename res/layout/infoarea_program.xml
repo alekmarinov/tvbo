@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/program_details_container"
+    android:id="@+id/infoarea_program"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/epg_program_details_thumbnail_height"
+    android:layout_height="@dimen/infoarea_height"
     android:layout_marginLeft="100dp"
     android:layout_marginRight="92dp"
     android:layout_marginTop="30dp"
@@ -13,8 +13,8 @@
 
     <View
         android:id="@+id/videoview_placeholder"
-        android:layout_width="@dimen/epg_program_details_thumbnail_width"
-        android:layout_height="@dimen/epg_program_details_thumbnail_height"
+        android:layout_width="@dimen/infoarea_video_width"
+        android:layout_height="match_parent"
         android:padding="0dp"
         android:background="@drawable/program_thumbnail_mask" />
 
