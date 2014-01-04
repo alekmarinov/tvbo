@@ -24,7 +24,6 @@ import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.StateException;
 import com.aviq.tv.android.sdk.core.state.StateManager;
-import com.aviq.tv.android.sdk.core.state.StateManager.MessageParams;
 import com.aviq.tv.android.sdk.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.sdk.utils.TextUtils;
 
@@ -61,15 +60,16 @@ public class App extends Application implements IApplication
 			featurePlayerRayV.setStreamerIni(streamerIni);
 
 			// Use application components
-			//env.use(FeatureName.State.LOADING);
-			//env.use(FeatureName.State.EPG);
-			//env.use(FeatureName.State.CHANNELS);
-			//env.use(FeatureName.State.TV);
-			//env.use(FeatureName.State.WATCHLIST);
-			stateManager.setStateMain(env.use(FeatureName.State.SETTINGS_ETHERNET), null);
+			env.use(FeatureName.State.LOADING);
+			env.use(FeatureName.State.TV);
+			env.use(FeatureName.State.EPG);
+			env.use(FeatureName.State.CHANNELS);
+			env.use(FeatureName.State.WATCHLIST);
+			env.use(FeatureName.State.SETTINGS_ETHERNET);
 
 			// Initialize and start application
 			env.initialize(activity);
+
 		}
 		catch (FeatureNotFoundException e)
 		{
@@ -109,16 +109,8 @@ public class App extends Application implements IApplication
 
 		switch (keyCode)
 		{
-			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:// FIXME: test only
-				String messageTitle = getResources().getString(R.string.watchlist_notify_title);
-				String messageText = String.format(getResources().getString(R.string.watchlist_notify_soon), 5,
-				        "Gospodari na Efira", "BTV");
-				MessageParams messageParams = new MessageParams().setType(MessageParams.Type.INFO).setTitle(messageTitle).setText(messageText)
-				        .enableButton(MessageParams.Button.YES).enableButton(MessageParams.Button.NO);
-				Environment.getInstance().getStateManager().showMessage(messageParams);
-
-			break;
 			case KeyEvent.KEYCODE_F2:// Menu
+				Environment.getInstance().getStateManager().hideMessage();
 				FeatureState menuFeatureState;
 				try
 				{

@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -43,11 +44,11 @@ public class ContextButtonGroup extends LinearLayout
 	public void init(Context context, TypedArray attr)
 	{
 		_layoutInflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
+
 		_buttonSpacing = (int) attr.getDimension(R.styleable.ContextButtonGroup_buttonSpacing, 0);
 		_buttonPaddingLeft = (int) attr.getDimension(R.styleable.ContextButtonGroup_buttonPaddingLeft, 0);
 		_buttonPaddingRight = (int) attr.getDimension(R.styleable.ContextButtonGroup_buttonPaddingRight, 0);
-		
+
 		attr.recycle();
 	}
 
@@ -75,26 +76,28 @@ public class ContextButtonGroup extends LinearLayout
 				button.setLayoutParams(lp);
 				break;
 			}
-				
+
 			case VERTICAL:
 			{
-				// Vertical layout will get buttons as wide as the parent container
+				// Vertical layout will get buttons as wide as the parent
+				// container
 				LayoutParams lp = (LinearLayout.LayoutParams) button.getLayoutParams();
 				lp.width = LayoutParams.FILL_PARENT;
 				lp.bottomMargin = _buttonSpacing;
 				button.setLayoutParams(lp);
 				break;
 			}
-				
+
 			default:
 				Log.w(TAG,
 				        "Unspecified layout orientation. Default layout parameters will be used for the context buttons.");
-				break;
+			break;
 		}
 
 		button.setPadding(_buttonPaddingLeft, button.getPaddingTop(), _buttonPaddingRight, button.getPaddingBottom());
-		
+
 		addView(button);
+		button.setTag(new Integer(getChildCount() - 1));
 		getChildAt(0).requestFocus();
 
 		return button;
@@ -108,36 +111,43 @@ public class ContextButtonGroup extends LinearLayout
 			((Button) getChildAt(i)).setOnClickListener(_buttonOnClickListener);
 	}
 
-	/**
-	 * This method is only necessary to wrap the navigation around the elements.
-	 * If it is removed, the widget will work as expected without wrapping the
-	 * navigation around the elements.
-	 */
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	public int childIndexOf(View child)
 	{
-		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode + ", child count = " + getChildCount() + ", _focusedChildIndex = " + _focusedChildIndex);
+		for (int i = 0; i < getChildCount(); i++)
+		{
+			if (getChildAt(i).equals(child))
+				return i;
+		}
+		return -1;
+	}
 
-		if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_LEFT)
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent keyEvent)
+	{
+		int index = childIndexOf(getFocusedChild());
+		if (index == -1 && getChildCount() > 0)
+			getChildAt(0).requestFocus();
+
+		else
 		{
-			_focusedChildIndex--;
-			if (_focusedChildIndex < 0)
+			switch (keyCode)
 			{
-				_focusedChildIndex = getChildCount() - 1;
-				getChildAt(_focusedChildIndex).requestFocus();
-				return true;
+				case KeyEvent.KEYCODE_DPAD_LEFT:
+				case KeyEvent.KEYCODE_DPAD_UP:
+					if (index > 0)
+						getChildAt(index - 1).requestFocus();
+					else
+						getChildAt(getChildCount() - 1).requestFocus();
+					return true;
+				case KeyEvent.KEYCODE_DPAD_RIGHT:
+				case KeyEvent.KEYCODE_DPAD_DOWN:
+					if (index < getChildCount() - 1)
+						getChildAt(index + 1).requestFocus();
+					else
+						getChildAt(0).requestFocus();
+					return true;
 			}
 		}
-		else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
-		{
-			_focusedChildIndex++;
-			if (_focusedChildIndex >= getChildCount())
-			{
-				_focusedChildIndex = 0;
-				getChildAt(_focusedChildIndex).requestFocus();
-				return true;
-			}
-		}
-		return super.onKeyDown(keyCode, event);
+		return super.onKeyDown(keyCode, keyEvent);
 	}
 }

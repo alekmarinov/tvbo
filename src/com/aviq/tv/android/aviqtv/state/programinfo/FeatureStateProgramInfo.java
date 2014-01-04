@@ -58,7 +58,6 @@ public class FeatureStateProgramInfo extends FeatureState
 	public FeatureStateProgramInfo()
 	{
 		_dependencies.Components.add(FeatureName.Component.EPG);
-		_dependencies.Components.add(FeatureName.Component.WATCHLIST);
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
 		_dependencies.States.add(FeatureName.State.TV);
 	}
@@ -72,9 +71,14 @@ public class FeatureStateProgramInfo extends FeatureState
 			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
-			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
-			        FeatureName.Component.WATCHLIST);
-			_featureStateTV = (FeatureStateTV)Environment.getInstance().getFeatureState(FeatureName.State.TV);
+
+			if (Environment.getInstance().hasFeature(FeatureName.Component.WATCHLIST))
+			{
+				_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
+				        FeatureName.Component.WATCHLIST);
+			}
+
+			_featureStateTV = (FeatureStateTV) Environment.getInstance().getFeatureState(FeatureName.State.TV);
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
 		catch (FeatureNotFoundException e)
@@ -118,14 +122,18 @@ public class FeatureStateProgramInfo extends FeatureState
 		// Context button "Play"
 		_contextButtonGroup.createButton(R.drawable.ic_option_btn_play, R.string.play);
 
-		// Context button "Add to watchlist" / "Remove from watchlist"
-		if (_watchlist.isWatched(program))
-			_contextButtonGroup.createButton(R.drawable.ic_option_btn_favorite, R.string.removeFromWatchlist);
-		else
-			_contextButtonGroup.createButton(R.drawable.ic_option_btn_favorite, R.string.addToWatchlist);
+		if (_watchlist != null && !_watchlist.isExpired(program))
+		{
+			// Context button "Add to watchlist" / "Remove from watchlist"
+			if (_watchlist.isWatched(program))
+				_contextButtonGroup.createButton(R.drawable.ic_option_btn_favorite, R.string.removeFromWatchlist);
+			else
+				_contextButtonGroup.createButton(R.drawable.ic_option_btn_favorite, R.string.addToWatchlist);
+		}
 
 		// Context button "Like" / "Unlike"
-		// _contextButtonGroup.createButton(R.drawable.ic_option_btn_like, R.string.like);
+		// _contextButtonGroup.createButton(R.drawable.ic_option_btn_like,
+		// R.string.like);
 
 		return viewGroup;
 	}
@@ -167,14 +175,14 @@ public class FeatureStateProgramInfo extends FeatureState
 					Bundle bundle = new Bundle();
 					bundle.putString("PROGRAM", program.getId());
 					bundle.putString("CHANNEL", program.getChannel().getChannelId());
-	                try
-                    {
-	                    Environment.getInstance().getStateManager().setStateMain(_featureStateTV, bundle);
-                    }
-                    catch (StateException e)
-                    {
-                    	Log.e(TAG, e.getMessage(), e);
-                    }
+					try
+					{
+						Environment.getInstance().getStateManager().setStateMain(_featureStateTV, bundle);
+					}
+					catch (StateException e)
+					{
+						Log.e(TAG, e.getMessage(), e);
+					}
 				}
 				break;
 
@@ -210,7 +218,7 @@ public class FeatureStateProgramInfo extends FeatureState
 
 				default:
 					Log.w(TAG, "Unknown context button clicked. No action taken.");
-					break;
+				break;
 			}
 		}
 	};

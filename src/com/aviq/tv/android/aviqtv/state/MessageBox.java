@@ -81,7 +81,6 @@ public class MessageBox extends FeatureState
 
 		for (MessageParams.Button buttonName : MessageParams.Button.values())
 		{
-			Log.i(TAG, buttonName + " -> " + _bundle.getBoolean(buttonName.name()));
 			if (_bundle.getBoolean(buttonName.name()))
 			{
 				createContextButton(buttonName);
@@ -93,7 +92,7 @@ public class MessageBox extends FeatureState
 			public void onClick(View view)
 			{
 				Log.i(TAG, ".onClick: " + view.getTag());
-				_bundle.putBoolean(view.getTag().toString(), true);
+				_bundle.putString("pressed", view.getTag().toString());
 				getEventMessenger().trigger(ON_BUTTON_PRESSED, _bundle);
 				hide();
 			}
@@ -121,7 +120,7 @@ public class MessageBox extends FeatureState
 	 * Hides message from screen
 	 */
 	@Override
-    public void hide()
+	public void hide()
 	{
 		Environment.getInstance().getStateManager().hideMessage();
 	}
@@ -130,7 +129,15 @@ public class MessageBox extends FeatureState
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
-		return _contextButtonGroup.onKeyDown(keyCode, event);
+		if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_ESCAPE)
+		{
+			hide();
+		}
+		else
+		{
+			_contextButtonGroup.onKeyDown(keyCode, event);
+		}
+		return true;
 	}
 
 	private void createContextButton(MessageParams.Button buttonName)

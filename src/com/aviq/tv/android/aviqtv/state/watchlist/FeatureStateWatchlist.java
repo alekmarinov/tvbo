@@ -191,7 +191,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		{
 			MessageBox messageBox = (MessageBox)Environment.getInstance().getStateManager().getMessageState();
 			messageBox.getEventMessenger().unregister(this, MessageBox.ON_BUTTON_PRESSED);
-			if (bundle.getBoolean(MessageParams.Button.YES.name()))
+			if (MessageParams.Button.YES.name().equals(bundle.getString("pressed")))
 			{
 				try
                 {
