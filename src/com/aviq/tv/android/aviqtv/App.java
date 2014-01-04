@@ -40,7 +40,6 @@ public class App extends Application implements IApplication
 	{
 		activity.setContentView(R.layout.activity_main);
 		Log.i(TAG, ".onActivityCreate");
-
 		Environment env = Environment.getInstance();
 		try
 		{
@@ -62,12 +61,12 @@ public class App extends Application implements IApplication
 			featurePlayerRayV.setStreamerIni(streamerIni);
 
 			// Use application components
-			env.use(FeatureName.State.LOADING);
-			env.use(FeatureName.State.EPG);
-			env.use(FeatureName.State.CHANNELS);
-			env.use(FeatureName.State.TV);
-			env.use(FeatureName.State.WATCHLIST);
-			env.use(FeatureName.State.SETTINGS_ETHERNET);
+			//env.use(FeatureName.State.LOADING);
+			//env.use(FeatureName.State.EPG);
+			//env.use(FeatureName.State.CHANNELS);
+			//env.use(FeatureName.State.TV);
+			//env.use(FeatureName.State.WATCHLIST);
+			stateManager.setStateMain(env.use(FeatureName.State.SETTINGS_ETHERNET), null);
 
 			// Initialize and start application
 			env.initialize(activity);

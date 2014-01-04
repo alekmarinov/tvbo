@@ -12,9 +12,16 @@ package com.aviq.tv.android.aviqtv.state.settings.ethernet;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.aviqtv.state.settings.FeatureStateSettings;
@@ -24,6 +31,10 @@ import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
+import com.aviq.tv.android.sdk.core.state.StateException;
+import com.aviq.tv.android.sdk.core.state.StateManager.MessageParams;
+import com.aviq.tv.android.sdk.feature.network.FeatureEthernet;
+import com.aviq.tv.android.sdk.feature.network.FeatureEthernet.NetworkConfig;
 
 /**
  * Ethernet settings state feature
@@ -31,7 +42,19 @@ import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
 public class FeatureStateSettingsEthernet extends FeatureState implements IStateMenuItem
 {
 	public static final String TAG = FeatureStateSettingsEthernet.class.getSimpleName();
+
+	private FeatureStateSettings _featureStateSettings;
+	private FeatureEthernet _featureEthernet;
 	private ViewGroup _viewGroup;
+	private RadioButton _rbDhcp;
+	private RadioButton _rbManual;
+	private TextView _tvIp;
+	private TextView _tvMask;
+	private TextView _tvGateway;
+	private TextView _tvDns1;
+	private TextView _tvDns2;
+	private Button _btnClr;
+	private Button _btnOk;
 
 	public FeatureStateSettingsEthernet()
 	{
@@ -52,9 +75,11 @@ public class FeatureStateSettingsEthernet extends FeatureState implements IState
 		try
 		{
 			// insert in Settings
-			FeatureStateSettings featureStateSettings = (FeatureStateSettings) Environment.getInstance().getFeatureState(
+			_featureStateSettings = (FeatureStateSettings) Environment.getInstance().getFeatureState(
 			        FeatureName.State.SETTINGS);
-			featureStateSettings.addSettingState(this);
+			_featureEthernet = (FeatureEthernet) Environment.getInstance().getFeatureComponent(
+			        FeatureName.Component.ETHERNET);
+			_featureStateSettings.addSettingState(this);
 
 			onFeatureInitialized.onInitialized(this, ResultCode.OK);
 		}
@@ -70,6 +95,53 @@ public class FeatureStateSettingsEthernet extends FeatureState implements IState
 	{
 		Log.i(TAG, ".onCreateView");
 		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_settings_ethernet, container, false);
+		_rbDhcp = (RadioButton) _viewGroup.findViewById(R.id.rb_dhcp);
+		_rbManual = (RadioButton) _viewGroup.findViewById(R.id.rb_manual);
+		_tvIp = (TextView) _viewGroup.findViewById(R.id.eth_ip);
+		_tvMask = (TextView) _viewGroup.findViewById(R.id.eth_mask);
+		_tvGateway = (TextView) _viewGroup.findViewById(R.id.eth_gateway);
+		_tvDns1 = (TextView) _viewGroup.findViewById(R.id.eth_dns1);
+		_tvDns2 = (TextView) _viewGroup.findViewById(R.id.eth_dns2);
+
+		_btnOk = (Button) _viewGroup.findViewById(R.id.eth_btn_ok);
+		_btnOk.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				if (writeEthernetConfiguration())
+					backToSettings();
+			}
+		});
+		_btnClr = (Button) _viewGroup.findViewById(R.id.eth_btn_clear);
+		_btnClr.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				readEthernetConfiguration();
+			}
+		});
+
+		_rbDhcp.setOnCheckedChangeListener(new OnCheckedChangeListener()
+		{
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+			{
+				enableManualSettings(!isChecked);
+			}
+		});
+
+		_rbManual.setOnCheckedChangeListener(new OnCheckedChangeListener()
+		{
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+			{
+				enableManualSettings(isChecked);
+			}
+		});
+
+		readEthernetConfiguration();
 		return _viewGroup;
 	}
 
@@ -97,5 +169,92 @@ public class FeatureStateSettingsEthernet extends FeatureState implements IState
 	public String getMenuItemCaption()
 	{
 		return Environment.getInstance().getResources().getString(R.string.menu_settings_ethernet);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
+		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
+		if (keyCode == KeyEvent.KEYCODE_BACK)
+		{
+			backToSettings();
+			return true;
+		}
+		return false;
+	}
+
+	private void readEthernetConfiguration()
+	{
+		NetworkConfig networkConfig = _featureEthernet.getNetworkConfig();
+		Log.i(TAG, ".updateView: " + networkConfig);
+
+		_rbDhcp.setChecked(networkConfig.IsDHCP);
+		_tvIp.setText(networkConfig.Addr);
+		_tvMask.setText(networkConfig.Mask);
+		_tvGateway.setText(networkConfig.Gateway);
+		_tvDns1.setText(networkConfig.Dns1);
+		_tvDns2.setText(networkConfig.Dns2);
+		enableManualSettings(!networkConfig.IsDHCP);
+	}
+
+	private boolean writeEthernetConfiguration()
+	{
+		NetworkConfig networkConfig = _featureEthernet.getNetworkConfig();
+		networkConfig.IsDHCP = _rbDhcp.isChecked();
+		networkConfig.Addr = _tvIp.getText().toString();
+		networkConfig.Mask = _tvMask.getText().toString();
+		networkConfig.Gateway = _tvGateway.getText().toString();
+		networkConfig.Dns1 = _tvDns1.getText().toString();
+		networkConfig.Dns2 = _tvDns2.getText().toString();
+
+		try
+		{
+			_featureEthernet.configureNetwork(networkConfig);
+			return true;
+		}
+		catch (SecurityException e)
+		{
+			// No permissions to configure ethernet
+			MessageParams messageParams = new MessageParams().setText(R.string.error_permission_network_config)
+			        .setType(MessageParams.Type.ERROR).enableButton(MessageParams.Button.OK);
+			Environment.getInstance().getStateManager().showMessage(messageParams);
+		}
+		return false;
+	}
+
+	private void backToSettings()
+	{
+		try
+		{
+			Environment.getInstance().getStateManager().setStateMain(_featureStateSettings, null);
+		}
+		catch (StateException e)
+		{
+			Log.e(TAG, e.getMessage(), e);
+		}
+	}
+
+	private void enableManualSettings(boolean isEnabled)
+	{
+		_tvIp.setEnabled(isEnabled);
+		_tvMask.setEnabled(isEnabled);
+		_tvGateway.setEnabled(isEnabled);
+		_tvDns1.setEnabled(isEnabled);
+		_tvDns2.setEnabled(isEnabled);
+
+		if (isEnabled)
+		{
+			_rbManual.setNextFocusDownId(R.id.eth_ip);
+			_rbManual.setNextFocusRightId(R.id.eth_ip);
+			_btnClr.setNextFocusUpId(R.id.eth_dns2);
+			_btnOk.setNextFocusUpId(R.id.eth_dns2);
+		}
+		else
+		{
+			_rbManual.setNextFocusDownId(R.id.eth_btn_clear);
+			_rbManual.setNextFocusRightId(R.id.eth_btn_clear);
+			_btnClr.setNextFocusUpId(R.id.rb_manual);
+			_btnOk.setNextFocusUpId(R.id.rb_manual);
+		}
 	}
 }

@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
+import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.EventMessenger;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
@@ -66,7 +67,9 @@ public class MessageBox extends FeatureState
 			case WARN:
 				drawableResId = R.drawable.ic_warning;
 			break;
-			default:
+			case ERROR:
+				if (title == null)
+					title = getResources().getString(R.string.msg_title_error);
 			break;
 		}
 		titleText.setCompoundDrawablesWithIntrinsicBounds(drawableResId, 0, 0, 0);
@@ -112,6 +115,15 @@ public class MessageBox extends FeatureState
 	{
 		super.onShow(isViewUncovered);
 		_rootView.requestFocus();
+	}
+
+	/**
+	 * Hides message from screen
+	 */
+	@Override
+    public void hide()
+	{
+		Environment.getInstance().getStateManager().hideMessage();
 	}
 
 	@Override

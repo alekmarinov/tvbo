@@ -2,10 +2,10 @@
  * Copyright (c) 2007-2013, AVIQ Bulgaria Ltd
  *
  * Project:     AVIQTV
- * Filename:    FeatureStateWatchlist.java
+ * Filename:    FeatureStateChannels.java
  * Author:      alek
  * Date:        1 Dec 2013
- * Description: TV state feature
+ * Description: Channels state feature
  */
 
 package com.aviq.tv.android.aviqtv.state.channels;
@@ -41,7 +41,7 @@ import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
 import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 
 /**
- * Watchlist state feature
+ * Channels state feature
  */
 public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 {

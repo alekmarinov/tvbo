@@ -64,5 +64,8 @@
     <string name="watchlist_notify_title">Напомняне</string>
     <string name="watchlist_notify_soon">След %1$d мин започва %2$s по %3$s. Искате ли да смените канала?</string>
     <string name="watchlist_notify_now">Започва %1$s по %2$s. Искате ли да смените канала?</string>
+    
+    <string name="msg_title_error">Грешка</string>
+    <string name="error_permission_network_config">Няма права за конфигурация на мрежата</string>
 
 </resources>
