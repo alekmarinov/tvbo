@@ -222,6 +222,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		@Override
 		public void onNothingSelected(AdapterView<?> arg0)
 		{
+			_programInfo.updateBrief(null, null);
 		}
 	};
 

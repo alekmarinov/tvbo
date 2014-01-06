@@ -104,24 +104,33 @@ public class EpgProgramInfo
 		if (program == null)
 		{
 			_programTimeContainer.setVisibility(View.INVISIBLE);
-			return;
 		}
 		else
 		{
 			_programTimeContainer.setVisibility(View.VISIBLE);
 		}
-		
-		long startTimeMillis = program.getStartTimeCalendar().getTimeInMillis();
 
-		String startDate = _dateFormat.format(startTimeMillis);
-		_date.setText(startDate);
-		
-		String startTime = _timeFormat.format(startTimeMillis);
-		_time.setText(startTime);
+		if (program == null)
+		{
+			_date.setText(null);
+			_time.setText(null);
+			_primaryTitle.setText(null);
+		}
+		else
+		{
+			long startTimeMillis = program.getStartTimeCalendar().getTimeInMillis();
 
+			String startDate = _dateFormat.format(startTimeMillis);
+			_date.setText(startDate);
+
+			String startTime = _timeFormat.format(startTimeMillis);
+			_time.setText(startTime);
+			_primaryTitle.setText(program.getTitle());
+		}
 		// Update other fields
 
-		_primaryTitle.setText(program.getTitle());
+		_summary.setText(null);
+		_secondaryTitle.setText(null);
 
 		if (channelId != null)
 		{
@@ -133,19 +142,19 @@ public class EpgProgramInfo
 					_secondaryTitle.setText(program.getDetailAttribute(ProgramAttribute.SUBTITLE));
 					if (_summary != null)
 						_summary.setText(program.getDetailAttribute(ProgramAttribute.SUMMARY));
-	
+
 					if (_detailsFlipper != null)
 						fillProgramDescription(program.getDetailAttribute(ProgramAttribute.DESCRIPTION));
 				}
-	
+
 				@Override
 				public void onError(int resultCode)
 				{
-					Log.e(TAG, ".updateBrief: error loading program details for channel = " + channelId + ", program = "
-					        + program.getId() + ", " + program.getTitle());
-	
+					Log.e(TAG, ".updateBrief: error loading program details for channel = " + channelId
+					        + ", program = " + program.getId() + ", " + program.getTitle());
+
 					_secondaryTitle.setText(null);
-	
+
 					if (_summary != null)
 						_summary.setText(null);
 					if (_detailsFlipper != null)
