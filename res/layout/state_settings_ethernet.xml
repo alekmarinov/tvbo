@@ -53,7 +53,8 @@
         android:layout_marginTop="18dp"
         android:imeOptions="actionNext"
         android:nextFocusLeft="@id/rb_manual"
-        android:nextFocusUp="@id/rb_manual" />
+        android:nextFocusUp="@id/rb_manual"
+        android:digits="0123456789."/>
 
     <TextView
         style="@style/EditFieldInfo"
@@ -75,6 +76,7 @@
         android:layout_below="@id/eth_ip"
         android:layout_centerHorizontal="true"
         android:imeOptions="actionNext"
+        android:digits="0123456789."
         android:nextFocusLeft="@id/eth_ip" />
 
     <TextView
@@ -97,6 +99,7 @@
         android:layout_below="@id/eth_mask"
         android:layout_centerHorizontal="true"
         android:imeOptions="actionNext"
+        android:digits="0123456789."
         android:nextFocusLeft="@id/eth_mask" />
 
     <TextView
@@ -119,6 +122,7 @@
         android:layout_below="@id/eth_gateway"
         android:layout_centerHorizontal="true"
         android:imeOptions="actionNext"
+        android:digits="0123456789."
         android:nextFocusLeft="@id/eth_gateway" />
 
     <TextView
@@ -141,6 +145,7 @@
         android:layout_below="@id/eth_dns1"
         android:layout_centerHorizontal="true"
         android:imeOptions="actionNext"
+        android:digits="0123456789."
         android:nextFocusLeft="@id/eth_dns1" />
 
     <TextView
