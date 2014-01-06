@@ -125,10 +125,10 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		_watchlistGrid.setOnItemSelectedListener(_onItemSelectedListener);
 		_watchlistGrid.setOnItemClickListener(_onItemClickListener);
 
-
 		// No items? Then hide some drawables that come with the TextViews
 		if (_watchlist.getWatchedPrograms().size() == 0)
 			_programInfo.updateBrief(null, null);
+
 		// Hide player while view re-layouts and show it by the global layout
 		// listener
 		_featurePlayer.hideVideoView();
@@ -165,6 +165,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		{
 			String programId = bundle.getString("PROGRAM");
 			String channelId = bundle.getString("CHANNEL");
+			Log.i(TAG, ".onEvent: ON_PROGRAM_NOTIFY - > " + channelId + "/" + programId);
 			Program program = _featureEPG.getEpgData().getProgram(channelId, programId);
 			int minsRemaining = (int)(Calendar.getInstance().getTimeInMillis() - program.getStartTimeCalendar().getTimeInMillis()) / (60 * 1000);
 			Resources resources = Environment.getInstance().getResources();
