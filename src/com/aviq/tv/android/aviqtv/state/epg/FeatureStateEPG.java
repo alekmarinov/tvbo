@@ -154,27 +154,13 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 
 		if (keyCode == KeyEvent.KEYCODE_ENTER)
 		{
-			try
+			String channelId = _epgGrid.getSelectedChannel().getChannelId();
+			
+			Program program = (Program) _epgGrid.getSelectedProgramList().getSelectedItem();
+			if (program != null)
 			{
-				FeatureStateProgramInfo programInfo = (FeatureStateProgramInfo) Environment.getInstance()
-				        .getFeatureState(FeatureName.State.PROGRAM_INFO);
-
-				String channelId = _epgGrid.getSelectedChannel().getChannelId();
-				String programId = ((Program) _epgGrid.getSelectedProgramList().getSelectedItem()).getId();
-
-				Bundle featureParams = new Bundle();
-				featureParams.putString(FeatureStateProgramInfo.ARGS_CHANNEL_ID, channelId);
-				featureParams.putString(FeatureStateProgramInfo.ARGS_PROGRAM_ID, programId);
-
-				Environment.getInstance().getStateManager().setStateOverlay(programInfo, featureParams);
-			}
-			catch (FeatureNotFoundException e)
-			{
-				Log.e(TAG, e.getMessage(), e);
-			}
-			catch (StateException e)
-			{
-				Log.e(TAG, e.getMessage(), e);
+				String programId = program.getId();
+				showProgramInfo(channelId, programId);
 			}
 			return true;
 		}
@@ -250,6 +236,29 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		_gridHeader.setAbsoluteTimeMax(absMax);
 	}
 
+	private void showProgramInfo(String channelId, String programId)
+	{
+		try
+		{
+			FeatureStateProgramInfo programInfo = (FeatureStateProgramInfo) Environment.getInstance()
+			        .getFeatureState(FeatureName.State.PROGRAM_INFO);
+
+			Bundle featureParams = new Bundle();
+			featureParams.putString(FeatureStateProgramInfo.ARGS_CHANNEL_ID, channelId);
+			featureParams.putString(FeatureStateProgramInfo.ARGS_PROGRAM_ID, programId);
+
+			Environment.getInstance().getStateManager().setStateOverlay(programInfo, featureParams);
+		}
+		catch (FeatureNotFoundException e)
+		{
+			Log.e(TAG, e.getMessage(), e);
+		}
+		catch (StateException e)
+		{
+			Log.e(TAG, e.getMessage(), e);
+		}
+	}
+	
 	private final OnEpgGridEventListener _onEpgGridItemSelectionListener = new OnEpgGridEventListener()
 	{
 		@Override
@@ -260,9 +269,6 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		@Override
 		public void onEpgGridItemSelected(Channel channel, Program program)
 		{
-			Log.v(TAG, "channel = " + channel.getChannelId() + ", program start = " + program.getStartTime()
-			        + ", stop = " + program.getStopTime());
-
 			_programInfo.updateBrief(channel.getChannelId(), program);
 		}
 
@@ -271,6 +277,12 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		{
 
 		}
+
+		@Override
+        public void onEpgGridItemLongPress(Channel channel, Program program)
+        {
+			showProgramInfo(channel.getChannelId(), program.getId());
+        }
 	};
 
 }

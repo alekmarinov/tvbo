@@ -18,16 +18,22 @@ import java.util.List;
 import java.util.Locale;
 
 import android.graphics.Bitmap;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.aviq.tv.android.aviqtv.App;
 import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.sdk.core.Environment;
@@ -84,6 +90,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	private ProgramBarUpdater _programBarUpdater = new ProgramBarUpdater();
 	private int _updateProgramBarDelay;
 	private ProgramBar _programBar;
+	private Rect _displayTopTouchZone;
 
 	public FeatureStateTV()
 	{
@@ -149,6 +156,9 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 		// Set player at full screen
 		_featurePlayer.setVideoViewFullScreen();
+
+		// Prepare the video view touch zones and set up the touch listener
+		prepareVideoViewTouchGestures();
 
 		Bundle params = getArguments();
 		if (params != null)
@@ -404,4 +414,45 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	{
 		return Environment.getInstance().getResources().getString(R.string.menu_tv);
 	}
+	
+	private void prepareVideoViewTouchGestures()
+	{
+		Display display = Environment.getInstance().getActivity().getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		int deviceScreenWidth = size.x;
+		int deviceScreenHeight = size.y;
+		
+		_displayTopTouchZone = new Rect(0, 0, deviceScreenWidth, (int) (0.20 * deviceScreenHeight));
+		
+		_featurePlayer.getVideoView().setOnTouchListener(_videoViewOnTouchListener);
+	}
+	
+	private OnTouchListener _videoViewOnTouchListener = new OnTouchListener()
+	{
+		@Override
+		public boolean onTouch(View v, MotionEvent event)
+		{
+			Log.v(TAG, ".onTouch: event = " + event.getAction());
+			
+			if (event.getAction() == MotionEvent.ACTION_DOWN)
+			{
+				return true;
+			}
+			else if (event.getAction() == MotionEvent.ACTION_UP)
+			{
+				int x = (int) event.getRawX();
+				int y = (int) event.getRawY();
+				
+				if (_displayTopTouchZone.contains(x, y))
+				{
+					((App) Environment.getInstance().getActivity().getApplication()).showFeatureStateMenu();
+				}
+
+				return true;
+			}
+
+			return false;
+		}
+	};
 }

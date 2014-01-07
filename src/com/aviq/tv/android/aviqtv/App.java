@@ -110,21 +110,7 @@ public class App extends Application implements IApplication
 		switch (keyCode)
 		{
 			case KeyEvent.KEYCODE_F2:// Menu
-				Environment.getInstance().getStateManager().hideMessage();
-				FeatureState menuFeatureState;
-				try
-				{
-					menuFeatureState = Environment.getInstance().getFeatureState(FeatureName.State.MENU);
-					Environment.getInstance().getStateManager().setStateOverlay(menuFeatureState, null);
-				}
-				catch (FeatureNotFoundException e)
-				{
-					Log.e(TAG, e.getMessage(), e);
-				}
-				catch (StateException e)
-				{
-					Log.e(TAG, e.getMessage(), e);
-				}
+				showFeatureStateMenu();
 				return true;
 		}
 		return false;
@@ -135,5 +121,24 @@ public class App extends Application implements IApplication
 	{
 		Log.i(TAG, ".onKeyUp: keyCode = " + keyCode);
 		return Environment.getInstance().getStateManager().onKeyUp(keyCode, event);
+	}
+	
+	public void showFeatureStateMenu()
+	{
+		Environment.getInstance().getStateManager().hideMessage();
+		FeatureState menuFeatureState;
+		try
+		{
+			menuFeatureState = Environment.getInstance().getFeatureState(FeatureName.State.MENU);
+			Environment.getInstance().getStateManager().setStateOverlay(menuFeatureState, null);
+		}
+		catch (FeatureNotFoundException e)
+		{
+			Log.e(TAG, e.getMessage(), e);
+		}
+		catch (StateException e)
+		{
+			Log.e(TAG, e.getMessage(), e);
+		}
 	}
 }
