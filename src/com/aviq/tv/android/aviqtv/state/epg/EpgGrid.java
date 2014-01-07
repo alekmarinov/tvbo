@@ -38,7 +38,7 @@ public class EpgGrid
 	
 	private static final int PROGRAM_SELECTION_DELAY_MILLIS = 300;
 	
-	private static final int HEADER_POSITION_OFFSET = 0; // -1; //TODO:ZZ:set to
+	private static final int HEADER_POSITION_OFFSET = 0; // -1; //TODO:set to
 	                                                     // 0 for testing
 	
 	private static final int ONE_MINUTE_MILLIS = 60000;
@@ -238,7 +238,7 @@ public class EpgGrid
 			return;
 		}
 		
-		if (calMillis < twoDaysTimeMillis)
+		if (todayMillis < calMillis && calMillis < twoDaysTimeMillis)
 		{
 			String text = _activity.getString(R.string.tomorrow);
 			_dateTimeView.setText(text);
