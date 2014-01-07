@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:layout_width="@dimen/program_bar_channel_width"
+    android:layout_height="@dimen/program_bar_height"
+    android:background="@drawable/tv_program_bar_channel"
+>
+    <!-- Channel logo -->
+
+    <ImageView
+        android:id="@+id/channel_glow"
+        android:layout_width="142dip"
+        android:layout_height="120dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="74dip"
+        android:layout_marginLeft="21dip"
+        android:background="@drawable/tv_selected_channel_background" />
+
+    <ImageView
+        android:id="@+id/channel_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="107dip"
+        android:layout_marginLeft="72dip" />
+
+    <TextView
+        android:id="@+id/channel_no"
+        style="@style/ProgramText"
+        android:layout_width="40dip"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="117dip"
+        android:layout_marginLeft="26dip"
+        android:gravity="right"
+        android:singleLine="true"
+        android:textSize="20sp" />
+
+</RelativeLayout>
