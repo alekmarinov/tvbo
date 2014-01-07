@@ -9,6 +9,8 @@
 	<!-- TV -->
 	<dimen name="program_bar_width">1245dip</dimen>
 	<dimen name="program_bar_height">250dip</dimen>
+	<dimen name="program_bar_channel_width">204dip</dimen>
+	<dimen name="program_bar_bottom_offset">40dip</dimen>
 	<dimen name="channel_bar_width">185dip</dimen>
 	<dimen name="program_navigator_width">210dip</dimen>
 		
