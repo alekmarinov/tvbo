@@ -48,6 +48,7 @@ public class ZapperListView extends ScrollView
 	private int _hpadding;
 	private int _vpadding;
 	private float _fontSize;
+	private OnScrollChangedListener _onScrollChangedListener;
 
 	/**
 	 * View defining the content area to be scrolled by the encapsulating
@@ -248,6 +249,12 @@ public class ZapperListView extends ScrollView
 		return _position;
 	}
 
+// TODO
+public int getSelectItemHeight()
+{
+	return _scrollItem.getItemHeight();
+}
+
 	public int getCount()
 	{
 		return _scrollItem.getCount();
@@ -267,5 +274,71 @@ public class ZapperListView extends ScrollView
 			selectIndex(_position + 1);
 		else
 			selectIndex(0);
+	}
+
+	public void setOnScrollChangedListener(OnScrollChangedListener listener)
+	{
+		_onScrollChangedListener = listener;
+	}
+
+	// TODO: move properties to top of class once scrolling works fine
+	private boolean _scrolling = false;
+	private int _oldY = -1;
+	private int _oldX = -1;
+
+	@Override
+	protected void onScrollChanged(int x, int y, int oldx, int oldy)
+	{
+		super.onScrollChanged(x, y, oldx, oldy);
+
+		_oldX = x;
+		_oldY = y;
+
+		if (_onScrollChangedListener != null)
+		{
+			if (!_scrolling)
+			{
+				_scrolling = true;
+				_onScrollChangedListener.onScrollStarted(oldx, oldy);
+			}
+
+			_onScrollChangedListener.onScrollChanged(x, y, oldx, oldy);
+
+			removeCallbacks(_scrollChecker);
+			post(_scrollChecker);
+		}
+	}
+
+	private Runnable _scrollChecker = new Runnable()
+	{
+		@Override
+		public void run()
+		{
+			int x = getScrollX();
+			int y = getScrollY();
+
+			if (_oldY - y == 0 && _oldX - x == 0)
+			{
+				if (_onScrollChangedListener != null)
+				{
+					_onScrollChangedListener.onScrollEnded(x, y);
+				}
+				removeCallbacks(_scrollChecker);
+				_scrolling = false;
+			}
+			else
+			{
+				_oldX = x;
+				_oldY = y;
+				postDelayed(_scrollChecker, 30); // TODO: value "30" needs to be tested
+			}
+		}
+	};
+
+	public static interface OnScrollChangedListener
+	{
+		public void onScrollStarted(int x, int y);
+		public void onScrollEnded(int x, int y);
+		public void onScrollChanged(int x, int y, int oldx, int oldy);
 	}
 }

@@ -36,6 +36,7 @@ import android.widget.TextView;
 import com.aviq.tv.android.aviqtv.App;
 import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
+import com.aviq.tv.android.aviqtv.state.tv.ZapperListView.OnScrollChangedListener;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.EventMessenger;
 import com.aviq.tv.android.sdk.core.ResultCode;
@@ -91,6 +92,8 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	private int _updateProgramBarDelay;
 	private ProgramBar _programBar;
 	private Rect _displayTopTouchZone;
+	private ZapperListViewSelectRunnable _zapperListViewSelectRunnable = new ZapperListViewSelectRunnable();
+	private boolean _isSnappingScroll = false;
 
 	public FeatureStateTV()
 	{
@@ -144,6 +147,8 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		_channelLogoImageView = (ImageView) _viewGroup.findViewById(R.id.channel_logo);
 		_programBar = new ProgramBar((ViewGroup) _viewGroup.findViewById(R.id.tv_program_bar));
 		_epgData = _featureEPG.getEpgData();
+
+		_zapperListView.setOnScrollChangedListener(_zapperListViewOnScrollListener);
 
 		List<Channel> favoriteChannels = _featureChannels.getFavoriteChannels();
 		for (Channel channel : favoriteChannels)
@@ -414,7 +419,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	{
 		return Environment.getInstance().getResources().getString(R.string.menu_tv);
 	}
-	
+
 	private void prepareVideoViewTouchGestures()
 	{
 		Display display = Environment.getInstance().getActivity().getWindowManager().getDefaultDisplay();
@@ -422,19 +427,19 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		display.getSize(size);
 		int deviceScreenWidth = size.x;
 		int deviceScreenHeight = size.y;
-		
+
 		_displayTopTouchZone = new Rect(0, 0, deviceScreenWidth, (int) (0.20 * deviceScreenHeight));
-		
+
 		_featurePlayer.getVideoView().setOnTouchListener(_videoViewOnTouchListener);
 	}
-	
+
 	private OnTouchListener _videoViewOnTouchListener = new OnTouchListener()
 	{
 		@Override
 		public boolean onTouch(View v, MotionEvent event)
 		{
 			Log.v(TAG, ".onTouch: event = " + event.getAction());
-			
+
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
 			{
 				return true;
@@ -443,7 +448,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			{
 				int x = (int) event.getRawX();
 				int y = (int) event.getRawY();
-				
+
 				if (_displayTopTouchZone.contains(x, y))
 				{
 					((App) Environment.getInstance().getActivity().getApplication()).showFeatureStateMenu();
@@ -455,4 +460,64 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			return false;
 		}
 	};
+
+	private OnScrollChangedListener _zapperListViewOnScrollListener = new OnScrollChangedListener()
+	{
+		@Override
+        public void onScrollChanged(int x, int y, int oldx, int oldy)
+        {
+			//TODO remove log
+			Log.e(TAG, "-----: x = " + x + ", y = " + y + ", oldx = " + oldx + ", oldy = " + oldy);
+
+			int selectItemHeight = _zapperListView.getSelectItemHeight();
+			int yLimit = _zapperListView.getSelectIndex() * selectItemHeight + selectItemHeight;
+
+			//TODO remove log
+			Log.e(TAG, "-----: yLimit = " + yLimit + ", isSnappingScroll = " + _isSnappingScroll);
+
+			if (!_isSnappingScroll)
+			{
+				_zapperListView.removeCallbacks(_zapperListViewSelectRunnable);
+				_zapperListViewSelectRunnable.setY(y);
+				_zapperListView.postDelayed(_zapperListViewSelectRunnable, 50);
+			}
+        }
+
+		@Override
+        public void onScrollStarted(int x, int y)
+        {
+        }
+
+		@Override
+        public void onScrollEnded(int x, int y)
+        {
+			_isSnappingScroll = false;
+        }
+	};
+
+	private class ZapperListViewSelectRunnable implements Runnable
+	{
+		private int _newY;
+
+		public void setY(int y)
+		{
+			_newY = y;
+		}
+
+		@Override
+		public void run()
+		{
+			// FIXME: this method does not work very well
+
+			int newIndex = _newY / _zapperListView.getSelectItemHeight();
+
+			//TODO: remove log
+			Log.e(TAG, "-----: ADJUST TO POS = " + _newY + ", INDEX = " + newIndex);
+
+			_isSnappingScroll = true;
+
+			_zapperListView.selectIndex(newIndex);
+			onSelectChannelIndex(newIndex);
+		}
+	}
 }
