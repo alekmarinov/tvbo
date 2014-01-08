@@ -527,7 +527,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			_isSnappingScroll = true;
 
 			_zapperListView.selectIndex(newIndex);
-			onSelectChannelIndex(newIndex);
+			onSelectChannelIndex(newIndex, _zapperListView.getSelectBitmapX(), _zapperListView.getSelectBitmapY());
 		}
 	}
 }
