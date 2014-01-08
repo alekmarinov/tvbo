@@ -35,6 +35,7 @@
     <string name="ethernet">Ethernet</string>
     <string name="choose_connection">Choose Connection</string>
     <string name="password_prompt">Въведи парола за %1$s</string>
+    <string name="edit_prompt">Въведи стойност за %1$s</string>
     <string name="eth_manual_settings">Ethernet Manual Settings</string>
     <string name="eth_ip">IP</string>
     <string name="eth_mask">Mask</string>

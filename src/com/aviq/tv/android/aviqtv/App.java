@@ -66,6 +66,7 @@ public class App extends Application implements IApplication
 			env.use(FeatureName.State.CHANNELS);
 			env.use(FeatureName.State.WATCHLIST);
 			env.use(FeatureName.State.SETTINGS_ETHERNET);
+			env.use(FeatureName.State.KEYBOARD);
 
 			// Initialize and start application
 			env.initialize(activity);
@@ -122,7 +123,7 @@ public class App extends Application implements IApplication
 		Log.i(TAG, ".onKeyUp: keyCode = " + keyCode);
 		return Environment.getInstance().getStateManager().onKeyUp(keyCode, event);
 	}
-	
+
 	public void showFeatureStateMenu()
 	{
 		Environment.getInstance().getStateManager().hideMessage();

@@ -10,30 +10,29 @@
         style="@style/SelectionPrompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-		android:layout_alignParentTop="true"        
         android:layout_marginTop="150dip"
         android:text="@string/password_prompt"
         android:textColor="@color/white" />
-    
+
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/edit"
         style="@style/EditField"
         android:layout_width="620dp"
         android:layout_height="@dimen/editfield_height"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/prompt"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="20dip"
-        android:imeOptions="actionDone"
-        android:password="true" />    
+        android:imeOptions="actionDone" />
 
     <WebView
         android:id="@+id/keyboard"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="370dip"
-        android:layout_below="@id/password"
-        android:layout_marginTop="30dp"
+        android:layout_below="@id/edit"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
         android:focusable="true" />
 
 </RelativeLayout>

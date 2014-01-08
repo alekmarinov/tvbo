@@ -20,10 +20,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
+import com.aviq.tv.android.aviqtv.state.keyboard.FeatureStateKeyboard;
 import com.aviq.tv.android.aviqtv.state.settings.FeatureStateSettings;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.ResultCode;
@@ -141,6 +143,8 @@ public class FeatureStateSettingsEthernet extends FeatureState implements IState
 			}
 		});
 
+		setEditClickListeners();
+
 		readEthernetConfiguration();
 		return _viewGroup;
 	}
@@ -256,5 +260,64 @@ public class FeatureStateSettingsEthernet extends FeatureState implements IState
 			_btnClr.setNextFocusUpId(R.id.rb_manual);
 			_btnOk.setNextFocusUpId(R.id.rb_manual);
 		}
+	}
+
+	private void setEditClickListeners()
+	{
+		OnClickListener editClickListener = new OnClickListener()
+		{
+
+			@Override
+			public void onClick(View v)
+			{
+				int promptResId = 0;
+				String editText = null;
+				switch (v.getId())
+				{
+					case R.id.eth_ip:
+						promptResId = R.string.eth_ip;
+					break;
+					case R.id.eth_mask:
+						promptResId = R.string.eth_mask;
+					break;
+					case R.id.eth_gateway:
+						promptResId = R.string.eth_gateway;
+					break;
+					case R.id.eth_dns1:
+						promptResId = R.string.eth_dns1;
+					break;
+					case R.id.eth_dns2:
+						promptResId = R.string.eth_dns2;
+					break;
+				}
+
+				String prompt = String.format(getResources().getString(R.string.edit_prompt),
+				        getResources().getString(promptResId));
+
+				Bundle params = new Bundle();
+				params.putString(FeatureStateKeyboard.ARGS_PROMPT_TEXT, prompt);
+				params.putString(FeatureStateKeyboard.ARGS_EDIT_TEXT, ((EditText) v).getText().toString());
+
+				try
+				{
+					FeatureState keyaboardState = Environment.getInstance().getFeatureState(FeatureName.State.KEYBOARD);
+					Environment.getInstance().getStateManager().setStateOverlay(keyaboardState, params);
+				}
+				catch (FeatureNotFoundException e)
+				{
+					Log.e(TAG, e.getMessage(), e);
+				}
+				catch (StateException e)
+				{
+					Log.e(TAG, e.getMessage(), e);
+				}
+			}
+		};
+
+		_tvIp.setOnClickListener(editClickListener);
+		_tvMask.setOnClickListener(editClickListener);
+		_tvGateway.setOnClickListener(editClickListener);
+		_tvDns1.setOnClickListener(editClickListener);
+		_tvDns2.setOnClickListener(editClickListener);
 	}
 }
