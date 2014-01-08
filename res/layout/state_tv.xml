@@ -46,9 +46,9 @@
     <include android:id="@+id/channel_info_container"
         android:layout_width="@dimen/program_bar_channel_width"
         android:layout_height="@dimen/program_bar_height"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="@dimen/program_bar_bottom_offset"
+        android:layout_marginTop="@dimen/program_bar_top_offset"
         android:layout_marginLeft="35dip"
         layout="@layout/programbar_channel" />
 
@@ -56,9 +56,9 @@
         android:id="@+id/tv_program_bar"
         android:layout_width="@dimen/program_bar_width"
         android:layout_height="@dimen/program_bar_height"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="@dimen/program_bar_bottom_offset"
+        android:layout_marginTop="@dimen/program_bar_top_offset"
         layout="@layout/programbar_main" />
 
 </RelativeLayout>

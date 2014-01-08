@@ -77,6 +77,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	private TextView _clockTextView;
 	private TextView _channelNoTextView;
 	private ImageView _channelLogoImageView;
+	private ViewGroup _channelInfoContainer;
 	private FeatureEPG _featureEPG;
 	private FeatureChannels _featureChannels;
 	private EpgData _epgData;
@@ -136,6 +137,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		_channelNoTextView = (TextView) _viewGroup.findViewById(R.id.channel_no);
 		_channelLogoImageView = (ImageView) _viewGroup.findViewById(R.id.channel_logo);
 		_programBar = new ProgramBar((ViewGroup) _viewGroup.findViewById(R.id.tv_program_bar));
+		_channelInfoContainer = (ViewGroup) _viewGroup.findViewById(R.id.channel_info_container);
 		_epgData = _featureEPG.getEpgData();
 
 		List<Channel> favoriteChannels = _featureChannels.getFavoriteChannels();
@@ -170,15 +172,21 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	protected void onShow(boolean isViewUncovered)
 	{
 		super.onShow(isViewUncovered);
-		onSelectChannelIndex(_zapperListView.getSelectIndex());
+		onSelectChannelIndex(_zapperListView.getSelectIndex(), _zapperListView.getSelectBitmapX(),
+		        _zapperListView.getSelectBitmapY());
 	}
 
-	private void onSelectChannelIndex(int channelIndex)
+	private void onSelectChannelIndex(int channelIndex, int x, int y)
 	{
 		// Update selected channel number and logo
 		int globalIndex = _featureChannels.getFavoriteChannels().get(channelIndex).getIndex();
 		_channelNoTextView.setText(String.valueOf(channelIndex + 1));
 		_channelLogoImageView.setImageBitmap(_epgData.getChannelLogoBitmap(globalIndex));
+
+		// Update channel logo position on the program bar
+		// _channelLogoImageView.setX(x);
+		float channelY = y - channelIndex * _zapperListView.getItemHeight() - _channelInfoContainer.getY();
+		_channelLogoImageView.setY(channelY);
 
 		// Update program bar
 		updateProgramBar(_epgData.getChannel(globalIndex), Calendar.getInstance());
@@ -381,11 +389,13 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 				return true;
 			case KeyEvent.KEYCODE_DPAD_UP:
 				_zapperListView.scrollUp();
-				onSelectChannelIndex(_zapperListView.getSelectIndex());
+				onSelectChannelIndex(_zapperListView.getSelectIndex(), _zapperListView.getSelectBitmapX(),
+				        _zapperListView.getSelectBitmapY());
 				return true;
 			case KeyEvent.KEYCODE_DPAD_DOWN:
 				_zapperListView.scrollDown();
-				onSelectChannelIndex(_zapperListView.getSelectIndex());
+				onSelectChannelIndex(_zapperListView.getSelectIndex(), _zapperListView.getSelectBitmapX(),
+				        _zapperListView.getSelectBitmapY());
 				return true;
 		}
 		return false;
