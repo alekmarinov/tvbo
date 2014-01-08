@@ -471,25 +471,45 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		}
 	};
 
+	// TODO This disables the scrolling functionality specific to the touch
+	// mode. It messes up the standard functionality.
+	private boolean isTouchEnabled = false;
+
 	private OnScrollChangedListener _zapperListViewOnScrollListener = new OnScrollChangedListener()
 	{
 		@Override
         public void onScrollChanged(int x, int y, int oldx, int oldy)
         {
-			//TODO remove log
-			Log.e(TAG, "-----: x = " + x + ", y = " + y + ", oldx = " + oldx + ", oldy = " + oldy);
-
-			int selectItemHeight = _zapperListView.getSelectItemHeight();
-			int yLimit = _zapperListView.getSelectIndex() * selectItemHeight + selectItemHeight;
-
-			//TODO remove log
-			Log.e(TAG, "-----: yLimit = " + yLimit + ", isSnappingScroll = " + _isSnappingScroll);
+			if (!isTouchEnabled)
+				return;
 
 			if (!_isSnappingScroll)
 			{
+				int selectItemHeight = _zapperListView.getItemHeight();
+				int indexY = _zapperListView.getSelectIndex() * selectItemHeight;
+				int yMin = indexY - selectItemHeight;
+				int yMax = indexY + selectItemHeight;
+
+				//TODO remove log
+				//Log.e(TAG, "-----: x = " + x + ", y = " + y + ", oldx = " + oldx + ", oldy = " + oldy);
+				//Log.e(TAG, "-----: yMin = " + yMin + ", yMax = " + yMax + ", isSnappingScroll = " + _isSnappingScroll);
+
+				// Update the OSD
+
+				int index = _zapperListView.getSelectIndex();
+				if (y > yMax)
+				{
+					index = Math.min(index + 1, _zapperListView.getCount());
+				}
+				else if (y <= yMin)
+				{
+					index = Math.max(index - 1, 0);
+				}
+				_zapperListView.selectIndexWithoutScroll(index);
+				onSelectChannelIndex(index, _zapperListView.getSelectBitmapX(), _zapperListView.getSelectBitmapY());
+
 				_zapperListView.removeCallbacks(_zapperListViewSelectRunnable);
-				_zapperListViewSelectRunnable.setY(y);
-				_zapperListView.postDelayed(_zapperListViewSelectRunnable, 50);
+				_zapperListView.postDelayed(_zapperListViewSelectRunnable, 100); // TODO value to be tested
 			}
         }
 
@@ -507,27 +527,17 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 	private class ZapperListViewSelectRunnable implements Runnable
 	{
-		private int _newY;
-
-		public void setY(int y)
-		{
-			_newY = y;
-		}
-
 		@Override
 		public void run()
 		{
-			// FIXME: this method does not work very well
-
-			int newIndex = _newY / _zapperListView.getSelectItemHeight();
-
-			//TODO: remove log
-			Log.e(TAG, "-----: ADJUST TO POS = " + _newY + ", INDEX = " + newIndex);
-
 			_isSnappingScroll = true;
 
-			_zapperListView.selectIndex(newIndex);
-			onSelectChannelIndex(newIndex, _zapperListView.getSelectBitmapX(), _zapperListView.getSelectBitmapY());
+			float channelY = _zapperListView.getSelectBitmapY() - _channelInfoContainer.getY()
+			        - _zapperListView.getItemHeight() - 50; // TODO don't know
+															// what this 50
+															// comes from
+
+			_zapperListView.smoothScrollTo(_zapperListView.getSelectBitmapX(), (int) channelY);
 		}
 	}
 }

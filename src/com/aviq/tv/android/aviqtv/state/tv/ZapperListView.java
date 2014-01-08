@@ -255,15 +255,20 @@ public class ZapperListView extends ScrollView
 		}
 	}
 
+	public void selectIndexWithoutScroll(int index)
+	{
+		if (index < 0)
+			index = 0;
+		else if (index > getCount() - 1)
+		{
+			index = getCount() - 1;
+		}
+		_position = index;
+	}
+
 	public int getSelectIndex()
 	{
 		return _position;
-	}
-
-	// TODO check how this is used and possibly rename/refactor
-	public int getSelectItemHeight()
-	{
-		return _scrollItem.getItemHeight();
 	}
 
 	public int getSelectBitmapX()

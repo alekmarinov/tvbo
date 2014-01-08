@@ -20,9 +20,9 @@
         android:id="@+id/channel_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="107dip"
+        android:layout_marginTop="94dip"
         android:layout_marginLeft="72dip" />
 
     <TextView
