@@ -12,6 +12,7 @@ package com.aviq.tv.android.aviqtv.state.tv;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
@@ -22,6 +23,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
@@ -48,6 +50,7 @@ public class ZapperListView extends ScrollView
 	private int _hpadding;
 	private int _vpadding;
 	private float _fontSize;
+	private HashMap<Integer, Point> _bitmapsPositions = new HashMap<Integer, Point>();
 	private OnScrollChangedListener _onScrollChangedListener;
 
 	/**
@@ -93,7 +96,7 @@ public class ZapperListView extends ScrollView
 			int h = _topMargin + virtualItemsCount * _bmpMaxHeight;
 			h += 2 * virtualItemsCount * _vpadding;
 
-			int w =  MeasureSpec.getSize(widthMeasureSpec);
+			int w = MeasureSpec.getSize(widthMeasureSpec);
 			setMeasuredDimension(w, h);
 			Log.d(TAG, ".onMeasure: widthMeasureSpec = " + widthMeasureSpec + ", heightMeasureSpec = "
 			        + heightMeasureSpec + ", w = " + w + ", h = " + h);
@@ -118,8 +121,11 @@ public class ZapperListView extends ScrollView
 				if (bmp != null)
 				{
 					int bmpY = y + _vpadding + (_bmpMaxHeight - bmp.getHeight()) / 2;
-					Log.d(TAG, "draw bmp " + bmp.getWidth() + "x" + bmp.getHeight() + " at x=" + bmpOffset + ", y = " + bmpY);
+					Log.d(TAG, "draw bmp " + bmp.getWidth() + "x" + bmp.getHeight() + " at x=" + bmpOffset + ", y = "
+					        + bmpY);
 					canvas.drawBitmap(bmp, bmpOffset, bmpY, _paint);
+
+					_bitmapsPositions.put(num - 1, new Point(bmpOffset, bmpY));
 				}
 				y += itemHeight;
 				//canvas.drawLine(0, y, getWidth(), y, _textPaint);
@@ -216,6 +222,11 @@ public class ZapperListView extends ScrollView
 		_scrollItem.addBitmap(bitmap);
 	}
 
+	public int getItemHeight()
+	{
+		return _scrollItem.getItemHeight();
+	}
+
 	public void selectIndex(int index)
 	{
 		int prevPosition = _position;
@@ -249,11 +260,26 @@ public class ZapperListView extends ScrollView
 		return _position;
 	}
 
-// TODO
-public int getSelectItemHeight()
-{
-	return _scrollItem.getItemHeight();
-}
+	// TODO check how this is used and possibly rename/refactor
+	public int getSelectItemHeight()
+	{
+		return _scrollItem.getItemHeight();
+	}
+
+	public int getSelectBitmapX()
+	{
+		if (_bitmapsPositions.get(_position) == null)
+			return 0;
+
+		return _bitmapsPositions.get(_position).x;
+	}
+
+	public int getSelectBitmapY()
+	{
+		if (_bitmapsPositions.get(_position) == null)
+			return 0;
+		return _bitmapsPositions.get(_position).y;
+	}
 
 	public int getCount()
 	{
