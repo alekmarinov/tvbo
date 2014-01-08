@@ -77,7 +77,7 @@ public class EpgListView extends ListView
 		}
 		return true;
 	}
-
+	
 	public View getViewAt(int positionInAdapter)
 	{
 		/*

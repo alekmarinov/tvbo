@@ -10,11 +10,15 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Handler;
+import android.support.v4.view.GestureDetectorCompat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Display;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
@@ -32,7 +36,9 @@ public class EpgGrid
 {
 	private static final String TAG = EpgGrid.class.getSimpleName();
 	
-	private static final int HEADER_POSITION_OFFSET = 0; // -1; //TODO:ZZ:set to
+	private static final int PROGRAM_SELECTION_DELAY_MILLIS = 300;
+	
+	private static final int HEADER_POSITION_OFFSET = 0; // -1; //TODO:set to
 	                                                     // 0 for testing
 	
 	private static final int ONE_MINUTE_MILLIS = 60000;
@@ -89,10 +95,25 @@ public class EpgGrid
 	
 	private Handler _uiHandler;
 	
+	private GestureDetectorCompat _gestureDetector; 
+	
+	/**
+	 * This Runnable object simulates the chain of events when in touch mode
+	 * compared to when in non-touch mode.
+	 */
+	private ProgramSelectionRunnable _onProgramSelectionRunnable = new ProgramSelectionRunnable();
+	
+	/** A common global variable to avoid constant object allocation when searching for child views. */
+	private Rect _rect;
+
+	/** Keep track of the last selected EpgRowView when in touch mode. */
+	private EpgRowView _lastSelectedEpgRowView;
+	
 	public EpgGrid(Activity activity)
 	{
 		_activity = activity;
 		_uiHandler = new Handler();
+		_gestureDetector = new GestureDetectorCompat(_activity, _gridGestureListener);
 	}
 	
 	public void setEpgHeaderView(EpgHeaderView header)
@@ -157,6 +178,15 @@ public class EpgGrid
 		_gridList.setFocusableInTouchMode(true);
 		_gridList.setOnItemSelectingListener(_gridOnItemSelecting);
 		_gridList.setOnItemSelectedListener(_gridOnItemSelected);
+		
+		_gridList.setOnTouchListener(new View.OnTouchListener() 
+		{
+            @Override
+            public boolean onTouch(View v, MotionEvent event) 
+            {
+                return _gestureDetector.onTouchEvent(event);
+            }
+        });
 	}
 	
 	public void setTimebarImageView(ImageView timebarImageView)
@@ -208,7 +238,7 @@ public class EpgGrid
 			return;
 		}
 		
-		if (calMillis < twoDaysTimeMillis)
+		if (todayMillis < calMillis && calMillis < twoDaysTimeMillis)
 		{
 			String text = _activity.getString(R.string.tomorrow);
 			_dateTimeView.setText(text);
@@ -273,11 +303,7 @@ public class EpgGrid
 				
 				if (_gridList.getSelectedItemPosition() == 0)
 				{
-					_currentVerticalPageNumber--;
-					if (_currentVerticalPageNumber < 0)
-						_currentVerticalPageNumber = getEpgPagesCount() - 1;
-					
-					fillEpgData(_gridStartTimeCalendar, null);
+					doPageUp();
 				}
 				else
 				{
@@ -299,11 +325,7 @@ public class EpgGrid
 				
 				if (_gridList.getSelectedItemPosition() == _gridListAdapter.getCount() - 1)
 				{
-					_currentVerticalPageNumber++;
-					if (_currentVerticalPageNumber >= getEpgPagesCount())
-						_currentVerticalPageNumber = 0;
-					
-					fillEpgData(_gridStartTimeCalendar, null);
+					doPageDown();
 				}
 				else
 				{
@@ -353,12 +375,7 @@ public class EpgGrid
 				
 				if (needToPaginate)
 				{
-					_gridStartTimeCalendar = getPrevPageStartingTime();
-					
-					int headerPos = _gridHeader.getPositionForTime(_gridStartTimeCalendar);
-					_gridHeader.setPosition(headerPos);
-					
-					fillEpgData(_gridStartTimeCalendar, _channel);
+					doPageLeft();
 				}
 				return true;
 			}
@@ -393,16 +410,7 @@ public class EpgGrid
 				Log.d(TAG, ".onKeyDown: isAtEpgHeaderEnd = " + isAtEpgHeaderEnd + " needToPaginate = " + needToPaginate);
 				if (needToPaginate)
 				{
-					Calendar newGridStartTime = getNextPageStartingTime();
-					if (newGridStartTime != null)
-					{
-						_gridStartTimeCalendar = newGridStartTime;
-						
-						int headerPos = _gridHeader.getPositionForTime(_gridStartTimeCalendar);
-						_gridHeader.setPosition(headerPos);
-						
-						fillEpgData(_gridStartTimeCalendar, _channel);
-					}
+					doPageRight();
 				}
 				
 				return true;
@@ -412,6 +420,68 @@ public class EpgGrid
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Paginate the EPG grid up. Common method used by hardware and touch navigation.
+	 */
+	private void doPageUp()
+	{
+		_navigation = NAVIGATION.UP;
+		
+		_currentVerticalPageNumber--;
+		if (_currentVerticalPageNumber < 0)
+			_currentVerticalPageNumber = getEpgPagesCount() - 1;
+		
+		fillEpgData(_gridStartTimeCalendar, null);
+	}
+	
+	/**
+	 * Paginate the EPG grid down. Common method used by hardware and touch navigation.
+	 */
+	private void doPageDown()
+	{
+		_navigation = NAVIGATION.DOWN;
+		
+		_currentVerticalPageNumber++;
+		if (_currentVerticalPageNumber >= getEpgPagesCount())
+			_currentVerticalPageNumber = 0;
+		
+		fillEpgData(_gridStartTimeCalendar, null);
+	}
+	
+	/**
+	 * Paginate the EPG grid left. Common method used by hardware and touch navigation.
+	 */
+	private void doPageLeft()
+	{
+		_navigation = NAVIGATION.LEFT;
+		
+		_gridStartTimeCalendar = getPrevPageStartingTime();
+		
+		int headerPos = _gridHeader.getPositionForTime(_gridStartTimeCalendar);
+		_gridHeader.setPosition(headerPos);
+		
+		fillEpgData(_gridStartTimeCalendar, _channel);
+	}
+	
+	/**
+	 * Paginate the EPG grid right. Common method used by hardware and touch navigation.
+	 */
+	private void doPageRight()
+	{
+		_navigation = NAVIGATION.RIGHT;
+		
+		Calendar newGridStartTime = getNextPageStartingTime();
+		if (newGridStartTime != null)
+		{
+			_gridStartTimeCalendar = newGridStartTime;
+			
+			int headerPos = _gridHeader.getPositionForTime(_gridStartTimeCalendar);
+			_gridHeader.setPosition(headerPos);
+			
+			fillEpgData(_gridStartTimeCalendar, _channel);
+		}
 	}
 	
 	/**
@@ -783,14 +853,18 @@ public class EpgGrid
 			
 			if (_onEpgGridItemSelectionListener != null)
 			{
+				// Get selected Program object
+				Program newProgram = (Program) parent.getSelectedItem();
+				
 				// Get selected Channel object
 				Channel newChannel = (Channel) _gridList.getSelectedItem();
 				
-				// Get selected Program object
-				// EpgRowAdapter adapter = ((EpgRowView) parent).getAdapter();
-				// Program newProgram = (Program) adapter.getItem(newPosition);
-				Program newProgram = (Program) parent.getSelectedItem();
-				
+				// Channel may be null because a ListView does not seem to have a
+				// selected state in touch mode, so we get it from the Program
+				// object. In non-touch mode, channel will not be null.
+				if (newChannel == null)
+					newChannel = newProgram.getChannel();
+
 				_onEpgGridItemSelectionListener.onEpgGridItemSelecting(newChannel, newProgram);
 			}
 		}
@@ -809,11 +883,17 @@ public class EpgGrid
 				return;
 			}
 			
+			// Get selected Program object
+			Program program = (Program) parent.getSelectedItem();
+			
 			// Get selected Channel object
 			Channel channel = (Channel) _gridList.getSelectedItem();
 			
-			// Get selected Program object
-			Program program = (Program) parent.getSelectedItem();
+			// Channel may be null because a ListView does not seem to have a
+			// selected state in touch mode, so we get it from the Program
+			// object. In non-touch mode, channel will not be null.
+			if (channel == null)
+				channel = program.getChannel();
 			
 			// Get previously selected Program object
 			Program prevProgram = null;
@@ -852,6 +932,8 @@ public class EpgGrid
 		public void onEpgGridItemSelected(Channel channel, Program program);
 		
 		public void onEpgPageScroll(NAVIGATION direction);
+		
+		public void onEpgGridItemLongPress(Channel channel, Program program);
 	}
 	
 	private Runnable _timebarRunnable = new Runnable()
@@ -913,4 +995,179 @@ public class EpgGrid
 			_uiHandler.postDelayed(this, ONE_MINUTE_MILLIS);
 		}
 	};
+	
+	private int getContainingChildIndex(ViewGroup viewGroup, final int x, final int y)
+	{
+		if (_rect == null)
+			_rect = new Rect();
+
+		for (int index = 0; index < viewGroup.getChildCount(); index++)
+		{
+			viewGroup.getChildAt(index).getHitRect(_rect);
+			if (_rect.contains(x, y)) 
+				return index;
+		}
+		return -1;
+	}
+	
+	private ViewGroup findChannelRowFromTouchPoint(MotionEvent event)
+	{
+		// Find the row where the press occurred
+		
+		int childRowIndex = getContainingChildIndex(_gridList, (int) event.getX(), (int) event.getY());
+		if (childRowIndex == -1)
+			return null;
+	
+		ViewGroup childViewGroup = (ViewGroup) _gridList.getChildAt(childRowIndex);
+		return childViewGroup;
+	}
+	
+	private EpgRowView findEpgRowViewFromTouchPoint(ViewGroup channelRow, MotionEvent event)
+	{
+		if (channelRow == null)
+			return null;
+		
+		// Find EpgRowView object in the child row discovered above
+		EpgRowView epgRowView = (EpgRowView) channelRow.findViewById(R.id.program_list);
+	
+		return epgRowView;
+	}
+	
+	private int findEpgRowViewChildIndexFromTouchPoint(EpgRowView epgRowView, MotionEvent event)
+	{
+		if (epgRowView == null)
+			return -1;
+		
+		// Find the item inside the EpgRowView object that received the event
+		int itemIndex = getContainingChildIndex(epgRowView, (int) event.getX() - epgRowView.getLeft(), 0);
+	
+		return itemIndex;
+	}
+	
+	private class ProgramSelectionRunnable implements Runnable
+	{
+		private MotionEvent _event;
+		private EpgRowView _epgRowView;
+		
+		public void setMotionEvent(MotionEvent event)
+		{
+			_event = event.copy(); // !!!
+		}
+		
+		public EpgRowView getEpgRowViewFromTouchPoint()
+		{
+			return _epgRowView;
+		}
+		
+		@Override
+		public void run()
+		{
+			// Find all components involved in the touch event
+			ViewGroup channelRow = findChannelRowFromTouchPoint(_event);
+			_epgRowView = findEpgRowViewFromTouchPoint(channelRow, _event);
+			int childIndex = findEpgRowViewChildIndexFromTouchPoint(_epgRowView, _event);
+			View childView = _epgRowView != null ? _epgRowView.getChildAt(childIndex) : null;
+			
+			// Undo the last selection from the EPG grid
+			if (_lastSelectedEpgRowView != null)
+				_lastSelectedEpgRowView.unsetSelection(_lastSelectedEpgRowView.getSelectedItemPosition());
+			_lastSelectedEpgRowView = _epgRowView;
+			
+			// Set the new selection
+			_epgRowView.setSelection(childIndex);
+	
+			// Do any post processing from the selection
+			_onProgramItemSelectingListener.onItemSelecting(_epgRowView, childView, -1, childIndex);		
+			_onProgramItemSelectedListener.onItemSelected(_epgRowView, childView, childIndex, -1);
+		}
+	}
+
+	private GestureDetector.SimpleOnGestureListener _gridGestureListener = new GestureDetector.SimpleOnGestureListener()
+	{
+		@Override
+		public boolean onDown(MotionEvent event)
+		{
+			if (_loadingEpgData)
+				return false;
+			
+			// Add some delay in order to distinguish onDown and onFling gestures
+			_uiHandler.removeCallbacks(_onProgramSelectionRunnable);
+			_onProgramSelectionRunnable.setMotionEvent(event);
+			_uiHandler.postDelayed(_onProgramSelectionRunnable, PROGRAM_SELECTION_DELAY_MILLIS);
+			
+			return true;
+		}
+		
+		@Override
+		public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY)
+		{
+			// Cancel program selection if this is a fling gesture
+			_uiHandler.removeCallbacks(_onProgramSelectionRunnable);
+
+			if (event1 == null || event2 == null)
+				return false;
+			
+			final int SWIPE_MIN_DISTANCE = 120;
+            final int SWIPE_MAX_OFF_PATH = 100;
+            final int SWIPE_THRESHOLD_VELOCITY = 100;
+			
+            float dx = event1.getX() - event2.getX();
+            float dy = event1.getY() - event2.getY();
+            
+            velocityX = Math.abs(velocityX);
+            velocityY = Math.abs(velocityY);
+            
+			if (dy < SWIPE_MAX_OFF_PATH && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY
+			        && Math.abs(dx) > SWIPE_MIN_DISTANCE)
+			{
+				if (dx > 0)
+				{
+					// right to left
+					Log.i(TAG, ".onFling: right to left");
+					doPageRight();
+				}
+				else
+				{
+					// left to right
+					Log.i(TAG, ".onFling: left to right");
+					doPageLeft();
+				}
+			}
+			else if (dx < SWIPE_MAX_OFF_PATH && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY
+			        && Math.abs(dy) > SWIPE_MIN_DISTANCE)
+			{
+				if (dy > 0)
+				{
+					// bottom to top
+					Log.i(TAG, ".onFling: bottom to top");
+					doPageDown();
+				}
+				else
+				{
+					// top to bottom
+					Log.i(TAG, ".onFling: top to bottom");
+					doPageUp();
+				}
+			}
+
+			return super.onFling(event1, event2, velocityX, velocityY);
+		}
+		
+		@Override
+		public void onLongPress(MotionEvent event)
+		{
+			// Cancel the program selection Runnable. Execute it immediately.
+			_uiHandler.removeCallbacks(_onProgramSelectionRunnable);
+			_onProgramSelectionRunnable.setMotionEvent(event);
+			_onProgramSelectionRunnable.run();
+			EpgRowView epgRowView = _onProgramSelectionRunnable.getEpgRowViewFromTouchPoint();
+
+			Program program = (Program) epgRowView.getSelectedItem();
+			Channel channel = program.getChannel();
+			
+			if (_onEpgGridItemSelectionListener != null)
+				_onEpgGridItemSelectionListener.onEpgGridItemLongPress(channel, program);
+		}
+	};
+
 }

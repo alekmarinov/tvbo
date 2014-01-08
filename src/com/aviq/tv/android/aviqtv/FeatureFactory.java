@@ -46,7 +46,7 @@ public class FeatureFactory implements IFeatureFactory
 		switch (featureId)
 		{
 			case EPG:
-				// return new FeatureEPGWilmaa();
+				//return new FeatureEPGWilmaa();
 				return new FeatureEPGRayV();
 			case CHANNELS:
 				return new FeatureChannels();

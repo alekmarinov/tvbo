@@ -91,7 +91,7 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 	private OnItemSelectingListener _onItemSelectingListener;
 	private OnItemSelectedListener _onItemSelectedListener;
 	private OnItemUnsetSelectionListener _onItemUnsetSelectionListener;
-
+	
 	public EpgRowView(Context context)
 	{
 		super(context);
@@ -223,7 +223,7 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 	{
 		_onItemUnsetSelectionListener = listener;
 	}
-
+	
 	/**
 	 * This method sets the background of the initially selected view during the
 	 * layout phase. It is useful when you want to have some sort of
@@ -680,7 +680,7 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 	 * @param y
 	 *            The y-coordinate
 	 */
-	private void clickChildAt(final int x, final int y)
+	private boolean clickChildAt(final int x, final int y)
 	{
 		final int index = getContainingChildIndex(x, y);
 		if (index != INVALID_INDEX)
@@ -688,8 +688,9 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 			final View itemView = getChildAt(index);
 			final int position = _firstItemPosition + index;
 			final long id = _adapter.getItemId(position);
-			performItemClick(itemView, position, id);
+			return performItemClick(itemView, position, id);
 		}
+		return false;
 	}
 
 	/**
@@ -734,7 +735,7 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 
 		return super.onKeyDown(keyCode, event);
 	}
-
+	
 	public void setEpgRowStartTimeMillis(long gridStartTimeMillis)
 	{
 		_gridStartTimeMillis = gridStartTimeMillis;
@@ -749,7 +750,7 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 	{
 		return _viewsBackgrounds.get(child);
 	}
-
+	
 	public static interface OnItemSelectingListener
 	{
 		/**

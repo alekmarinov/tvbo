@@ -14,9 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.aviq.tv.android.aviqtv.R;
-import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.feature.epg.Channel;
 import com.aviq.tv.android.sdk.feature.epg.IEpgDataProvider;
 import com.aviq.tv.android.sdk.feature.epg.Program;
@@ -26,7 +24,6 @@ public class EpgListViewAdapter extends BaseAdapter
 	@SuppressWarnings("unused")
     private static final String TAG = EpgListViewAdapter.class.getSimpleName();
 
-	private final ImageLoader mImageLoader;
 	private final Context mContext;
 	private final IEpgDataProvider mDataProvider;
 	private final Map<Channel, List<Program>> mChannelsToPrograms;
@@ -45,7 +42,6 @@ public class EpgListViewAdapter extends BaseAdapter
 		mDataProvider = service;
 		mChannelsToPrograms = channelsToPrograms;
 		mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mImageLoader = Environment.getInstance().getImageLoader();
 
 //		_isUsingFavorites = mDataProvider.isUseFavorites();
 
@@ -127,7 +123,7 @@ public class EpgListViewAdapter extends BaseAdapter
 
 		return convertView;
 	}
-
+	
 	public int getItemPosition(Channel channel)
 	{
 		int position = 0;
@@ -150,7 +146,7 @@ public class EpgListViewAdapter extends BaseAdapter
 	{
 		mOnProgramItemSelectedListener = listener;
 	}
-
+	
 	public void setOnProgramItemUnsetSelectionListener(EpgRowView.OnItemUnsetSelectionListener listener)
 	{
 		mOnProgramItemUnsetSelectionListener = listener;

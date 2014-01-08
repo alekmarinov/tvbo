@@ -168,10 +168,14 @@ public class EpgHeaderView extends LinearLayout
 	{
 		int position = -1;
 
-		if (c.before(_absoluteTimeMin))
+		if (c.before(_absoluteTimeMin) || c.equals(_absoluteTimeMin))
+		{
 			position = 0;
+		}
 		else if (c.after(_absoluteTimeMax))
+		{
 			position = _adapter.getCount() - 1;
+		}
 		else
 		{
 			for (int i = 0; i < _adapter.getCount(); i++)
