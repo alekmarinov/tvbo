@@ -5,6 +5,7 @@
     <color name="selection_prompt">#60B2EF</color>
     <color name="menu_item_caption">#60B2EF</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="black">#000000</color>
     <color name="transparent">#00000000</color>
     <color name="epg_grid_divider_bar">#586084</color>
     <color name="overlay_background">#CC000000</color>
