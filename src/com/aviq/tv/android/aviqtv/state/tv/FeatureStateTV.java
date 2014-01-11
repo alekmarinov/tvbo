@@ -23,7 +23,6 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,6 +36,7 @@ import com.aviq.tv.android.aviqtv.App;
 import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.aviqtv.state.tv.ZapperListView.OnScrollChangedListener;
+import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.EventMessenger;
 import com.aviq.tv.android.sdk.core.ResultCode;
@@ -394,20 +394,20 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	public boolean onKeyDown(AVKeyEvent event)
 	{
-		switch (keyCode)
+		switch (event.Code)
 		{
-			case KeyEvent.KEYCODE_ENTER:
+			case OK:
 				// Switch TV channel
 				onSwitchChannelIndex(_zapperListView.getSelectIndex());
 				return true;
-			case KeyEvent.KEYCODE_DPAD_UP:
+			case UP:
 				_zapperListView.scrollUp();
 				onSelectChannelIndex(_zapperListView.getSelectIndex(), _zapperListView.getSelectBitmapX(),
 				        _zapperListView.getSelectBitmapY());
 				return true;
-			case KeyEvent.KEYCODE_DPAD_DOWN:
+			case DOWN:
 				_zapperListView.scrollDown();
 				onSelectChannelIndex(_zapperListView.getSelectIndex(), _zapperListView.getSelectBitmapX(),
 				        _zapperListView.getSelectBitmapY());

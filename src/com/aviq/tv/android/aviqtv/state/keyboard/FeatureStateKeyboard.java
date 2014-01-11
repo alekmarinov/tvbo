@@ -15,7 +15,6 @@ import java.lang.reflect.Method;
 
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
+import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.Log;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
@@ -187,40 +187,40 @@ public class FeatureStateKeyboard extends FeatureState
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	public boolean onKeyDown(AVKeyEvent event)
 	{
-		super.onKeyDown(keyCode, event);
+		super.onKeyDown(event);
 		boolean isMenuKey = false;
 		int jsCode = 0;
-		switch (keyCode)
+		switch (event.Code)
 		{
-			case KeyEvent.KEYCODE_BACK:
+			case BACK:
 				// Hide overlay state
 				Environment.getInstance().getStateManager().hideStateOverlay();
 				return true;
-			case KeyEvent.KEYCODE_F2:
+			case MENU:
 				return true;
-			case KeyEvent.KEYCODE_DPAD_UP:
+			case UP:
 				jsCode = 38;
 			break;
-			case KeyEvent.KEYCODE_DPAD_LEFT:
+			case LEFT:
 				jsCode = 37;
 			break;
-			case KeyEvent.KEYCODE_DPAD_RIGHT:
+			case RIGHT:
 				jsCode = 39;
 			break;
-			case KeyEvent.KEYCODE_DPAD_DOWN:
+			case DOWN:
 				jsCode = 40;
 			break;
-			case KeyEvent.KEYCODE_ENTER:
-			case KeyEvent.KEYCODE_DPAD_CENTER:
+			case OK:
+			//case KeyEvent.KEYCODE_DPAD_CENTER:
 				jsCode = 13;
 			break;
-			case KeyEvent.KEYCODE_VOLUME_UP:
-			case KeyEvent.KEYCODE_VOLUME_DOWN:
+			case VOLUME_UP:
+			case VOLUME_DOWN:
 				return true;
 		}
-		Log.d(TAG, "onKeyDown: keyCode = " + keyCode + ", jsCode = " + jsCode);
+		Log.d(TAG, "onKeyDown: key = " + event + ", jsCode = " + jsCode);
 
 		if (isMenuKey)
 			_webView.loadUrl("javascript: top.keyboard.showNextPage();");

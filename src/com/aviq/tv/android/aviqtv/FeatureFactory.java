@@ -32,6 +32,7 @@ import com.aviq.tv.android.sdk.feature.epg.rayv.FeatureEPGRayV;
 import com.aviq.tv.android.sdk.feature.httpserver.FeatureHttpServer;
 import com.aviq.tv.android.sdk.feature.network.FeatureEthernet;
 import com.aviq.tv.android.sdk.feature.player.rayv.FeaturePlayerRayV;
+import com.aviq.tv.android.sdk.feature.rcu.FeatureRCUWilmaa;
 import com.aviq.tv.android.sdk.feature.register.FeatureRegister;
 import com.aviq.tv.android.sdk.feature.scheduler.internet.FeatureInternet;
 import com.aviq.tv.android.sdk.feature.watchlist.FeatureWatchlist;
@@ -46,6 +47,8 @@ public class FeatureFactory implements IFeatureFactory
 	{
 		switch (featureId)
 		{
+			case RCU:
+				return new FeatureRCUWilmaa();
 			case EPG:
 				//return new FeatureEPGWilmaa();
 				return new FeatureEPGRayV();

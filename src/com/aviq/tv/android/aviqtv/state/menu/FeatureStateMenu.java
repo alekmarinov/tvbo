@@ -25,6 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
+import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.Log;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
@@ -104,15 +105,15 @@ public class FeatureStateMenu extends FeatureState
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	public boolean onKeyDown(AVKeyEvent event)
 	{
-		switch (keyCode)
+		if (event.Event.getKeyCode() == KeyEvent.KEYCODE_F2)
+			return true;
+		switch (event.Code)
 		{
-			case KeyEvent.KEYCODE_BACK:
+			case BACK:
 				// Hide overlay state
 				Environment.getInstance().getStateManager().hideStateOverlay();
-				return true;
-			case KeyEvent.KEYCODE_F2:
 				return true;
 		}
 		return false;

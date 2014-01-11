@@ -12,7 +12,6 @@ package com.aviq.tv.android.aviqtv.state.programinfo;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,6 +22,7 @@ import com.aviq.tv.android.aviqtv.state.ContextButton;
 import com.aviq.tv.android.aviqtv.state.ContextButtonGroup;
 import com.aviq.tv.android.aviqtv.state.epg.EpgProgramInfo;
 import com.aviq.tv.android.aviqtv.state.tv.FeatureStateTV;
+import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
@@ -139,27 +139,27 @@ public class FeatureStateProgramInfo extends FeatureState
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	public boolean onKeyDown(AVKeyEvent event)
 	{
-		switch (keyCode)
+		switch (event.Code)
 		{
-			case KeyEvent.KEYCODE_BACK:
+			case BACK:
 				Environment.getInstance().getStateManager().hideStateOverlay();
 				return true;
 
-			case KeyEvent.KEYCODE_DPAD_LEFT:
+			case LEFT:
 				_programInfo.showPrevPage();
 				return true;
 
-			case KeyEvent.KEYCODE_DPAD_RIGHT:
+			case RIGHT:
 				_programInfo.showNextPage();
 				return true;
 
-			case KeyEvent.KEYCODE_DPAD_UP:
-			case KeyEvent.KEYCODE_DPAD_DOWN:
-				return _contextButtonGroup.onKeyDown(keyCode, event);
+			case UP:
+			case DOWN:
+				return _contextButtonGroup.onKeyDown(event.Event.getKeyCode(), event.Event);
 		}
-		return super.onKeyDown(keyCode, event);
+		return super.onKeyDown(event);
 	}
 
 	private OnClickListener _contextButtonGroupOnClickListener = new OnClickListener()

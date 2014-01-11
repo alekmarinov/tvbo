@@ -13,7 +13,6 @@ package com.aviq.tv.android.aviqtv.state;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,8 +20,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
+import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.EventMessenger;
+import com.aviq.tv.android.sdk.core.Key;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.StateManager.MessageParams;
@@ -126,16 +127,16 @@ public class MessageBox extends FeatureState
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	public boolean onKeyDown(AVKeyEvent event)
 	{
-		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
-		if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_ESCAPE)
+		Log.i(TAG, ".onKeyDown: key = " + event);
+		if (event.is(Key.BACK))
 		{
 			hide();
 		}
 		else
 		{
-			_contextButtonGroup.onKeyDown(keyCode, event);
+			_contextButtonGroup.onKeyDown(event.Event.getKeyCode(), event.Event);
 		}
 		return true;
 	}

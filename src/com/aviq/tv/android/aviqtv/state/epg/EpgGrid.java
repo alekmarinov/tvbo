@@ -17,7 +17,6 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aviq.tv.android.aviqtv.R;
+import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.feature.epg.Channel;
 import com.aviq.tv.android.sdk.feature.epg.IEpgDataProvider;
 import com.aviq.tv.android.sdk.feature.epg.Program;
@@ -103,7 +103,10 @@ public class EpgGrid
 	 */
 	private ProgramSelectionRunnable _onProgramSelectionRunnable = new ProgramSelectionRunnable();
 
-	/** A common global variable to avoid constant object allocation when searching for child views. */
+	/**
+	 * A common global variable to avoid constant object allocation when
+	 * searching for child views.
+	 */
 	private Rect _rect;
 
 	/** Keep track of the last selected EpgRowView when in touch mode. */
@@ -181,12 +184,12 @@ public class EpgGrid
 
 		_gridList.setOnTouchListener(new View.OnTouchListener()
 		{
-            @Override
-            public boolean onTouch(View v, MotionEvent event)
-            {
-                return _gestureDetector.onTouchEvent(event);
-            }
-        });
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				return _gestureDetector.onTouchEvent(event);
+			}
+		});
 	}
 
 	public void setTimebarImageView(ImageView timebarImageView)
@@ -282,16 +285,16 @@ public class EpgGrid
 		return programList;
 	}
 
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	public boolean onKeyDown(AVKeyEvent event)
 	{
-		Log.d(TAG, "handleKey: key = " + keyCode);
+		Log.d(TAG, "handleKey: key = " + event);
 
 		if (_loadingEpgData)
 			return true;
 
-		switch (keyCode)
+		switch (event.Code)
 		{
-			case KeyEvent.KEYCODE_DPAD_UP:
+			case UP:
 			{
 				_navigation = NAVIGATION.UP;
 
@@ -307,13 +310,13 @@ public class EpgGrid
 				}
 				else
 				{
-					_gridList.onKeyDown(keyCode, event);
+					_gridList.onKeyDown(event.Event.getKeyCode(), event.Event);
 					_channel = (Channel) _gridListAdapter.getItem(_gridList.getSelectedItemPosition());
 				}
 				return true;
 			}
 
-			case KeyEvent.KEYCODE_DPAD_DOWN:
+			case DOWN:
 			{
 				_navigation = NAVIGATION.DOWN;
 
@@ -329,39 +332,39 @@ public class EpgGrid
 				}
 				else
 				{
-					_gridList.onKeyDown(keyCode, event);
+					_gridList.onKeyDown(event.Event.getKeyCode(), event.Event);
 					_channel = (Channel) _gridListAdapter.getItem(_gridList.getSelectedItemPosition());
 				}
 				return true;
 			}
-			// case CHANNEL_UP:
-			// {
-			// _navigation = NAVIGATION.DOWN;
-			// _currentVerticalPageNumber++;
-			// if (_currentVerticalPageNumber >= getEpgPagesCount())
-			// _currentVerticalPageNumber = 0;
-			//
-			// fillEpgData(_gridStartTimeCalendar, null);
-			// return true;
-			// }
-			// case CHANNEL_DOWN:
-			// {
-			// _navigation = NAVIGATION.UP;
-			// _currentVerticalPageNumber--;
-			// if (_currentVerticalPageNumber < 0)
-			// _currentVerticalPageNumber = getEpgPagesCount() - 1;
-			//
-			// fillEpgData(_gridStartTimeCalendar, null);
-			// return true;
-			// }
-			case KeyEvent.KEYCODE_DPAD_LEFT:
+			case PAGE_UP:
+			{
+				_navigation = NAVIGATION.DOWN;
+				_currentVerticalPageNumber++;
+				if (_currentVerticalPageNumber >= getEpgPagesCount())
+					_currentVerticalPageNumber = 0;
+
+				fillEpgData(_gridStartTimeCalendar, null);
+				return true;
+			}
+			case PAGE_DOWN:
+			{
+				_navigation = NAVIGATION.UP;
+				_currentVerticalPageNumber--;
+				if (_currentVerticalPageNumber < 0)
+					_currentVerticalPageNumber = getEpgPagesCount() - 1;
+
+				fillEpgData(_gridStartTimeCalendar, null);
+				return true;
+			}
+			case LEFT:
 			{
 				_navigation = NAVIGATION.LEFT;
 
 				EpgRowView programList = getSelectedProgramList();
 
 				View selectedView1 = programList.getSelectedView();
-				programList.onKeyDown(keyCode, event);
+				programList.onKeyDown(event.Event.getKeyCode(), event.Event);
 				View selectedView2 = programList.getSelectedView();
 
 				_prevEpgRowSelectedProgram = null;
@@ -380,14 +383,14 @@ public class EpgGrid
 				return true;
 			}
 
-			case KeyEvent.KEYCODE_DPAD_RIGHT:
+			case RIGHT:
 			{
 				_navigation = NAVIGATION.RIGHT;
 
 				EpgRowView programList = getSelectedProgramList();
 
 				View selectedView1 = programList.getSelectedView();
-				programList.onKeyDown(keyCode, event);
+				programList.onKeyDown(event.Event.getKeyCode(), event.Event);
 				View selectedView2 = programList.getSelectedView();
 
 				_prevEpgRowSelectedProgram = null;
@@ -423,7 +426,8 @@ public class EpgGrid
 	}
 
 	/**
-	 * Paginate the EPG grid up. Common method used by hardware and touch navigation.
+	 * Paginate the EPG grid up. Common method used by hardware and touch
+	 * navigation.
 	 */
 	private void doPageUp()
 	{
@@ -437,7 +441,8 @@ public class EpgGrid
 	}
 
 	/**
-	 * Paginate the EPG grid down. Common method used by hardware and touch navigation.
+	 * Paginate the EPG grid down. Common method used by hardware and touch
+	 * navigation.
 	 */
 	private void doPageDown()
 	{
@@ -451,7 +456,8 @@ public class EpgGrid
 	}
 
 	/**
-	 * Paginate the EPG grid left. Common method used by hardware and touch navigation.
+	 * Paginate the EPG grid left. Common method used by hardware and touch
+	 * navigation.
 	 */
 	private void doPageLeft()
 	{
@@ -466,7 +472,8 @@ public class EpgGrid
 	}
 
 	/**
-	 * Paginate the EPG grid right. Common method used by hardware and touch navigation.
+	 * Paginate the EPG grid right. Common method used by hardware and touch
+	 * navigation.
 	 */
 	private void doPageRight()
 	{
@@ -859,7 +866,8 @@ public class EpgGrid
 				// Get selected Channel object
 				Channel newChannel = (Channel) _gridList.getSelectedItem();
 
-				// Channel may be null because a ListView does not seem to have a
+				// Channel may be null because a ListView does not seem to have
+				// a
 				// selected state in touch mode, so we get it from the Program
 				// object. In non-touch mode, channel will not be null.
 				if (newChannel == null)
@@ -1092,7 +1100,8 @@ public class EpgGrid
 			if (_loadingEpgData)
 				return false;
 
-			// Add some delay in order to distinguish onDown and onFling gestures
+			// Add some delay in order to distinguish onDown and onFling
+			// gestures
 			_uiHandler.removeCallbacks(_onProgramSelectionRunnable);
 			_onProgramSelectionRunnable.setMotionEvent(event);
 			_uiHandler.postDelayed(_onProgramSelectionRunnable, PROGRAM_SELECTION_DELAY_MILLIS);
@@ -1110,14 +1119,14 @@ public class EpgGrid
 				return false;
 
 			final int SWIPE_MIN_DISTANCE = 120;
-            final int SWIPE_MAX_OFF_PATH = 100;
-            final int SWIPE_THRESHOLD_VELOCITY = 100;
+			final int SWIPE_MAX_OFF_PATH = 100;
+			final int SWIPE_THRESHOLD_VELOCITY = 100;
 
-            float dx = event1.getX() - event2.getX();
-            float dy = event1.getY() - event2.getY();
+			float dx = event1.getX() - event2.getX();
+			float dy = event1.getY() - event2.getY();
 
-            velocityX = Math.abs(velocityX);
-            velocityY = Math.abs(velocityY);
+			velocityX = Math.abs(velocityX);
+			velocityY = Math.abs(velocityY);
 
 			if (dy < SWIPE_MAX_OFF_PATH && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY
 			        && Math.abs(dx) > SWIPE_MIN_DISTANCE)

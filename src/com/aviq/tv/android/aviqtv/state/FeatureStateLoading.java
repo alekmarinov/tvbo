@@ -69,9 +69,9 @@ public class FeatureStateLoading extends FeatureState
 			subscribe(featurePlayer, FeaturePlayer.ON_PLAY_TIMEOUT);
 
 			_userPrefs = Environment.getInstance().getUserPrefs();
-			if (_userPrefs.has(FeaturePlayer.Param.LAST_URL))
+			if (_userPrefs.has(FeaturePlayer.UserParam.LAST_URL))
 			{
-				featurePlayer.play(_userPrefs.getString(FeaturePlayer.Param.LAST_URL));
+				featurePlayer.play(_userPrefs.getString(FeaturePlayer.UserParam.LAST_URL));
 			}
 
 			super.initialize(onInitialized);

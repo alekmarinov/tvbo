@@ -28,6 +28,7 @@ import com.aviq.tv.android.aviqtv.state.StatusBar;
 import com.aviq.tv.android.aviqtv.state.ThumbnailsView;
 import com.aviq.tv.android.aviqtv.state.ThumbnailsView.ThumbItemCreater;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
+import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
@@ -209,8 +210,52 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 		_allChannelsGrid.setOnItemClickListener(new OnItemClickListener()
 		{
 			@Override
-			public void onItemClick(AdapterView<?> adapter, View view, int position, long id)
+			public void onItemClick(AdapterView<?> adapter, final View view, final int position, long id)
 			{
+//				LayoutInflater inflator = (LayoutInflater)Environment.getInstance().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//				View flyerView = _thumbnailCreater.createView(null,  0, inflator);
+//				ImageView flyerThumbView = (ImageView) flyerView.findViewById(R.id.thumbnail);
+//				TextView flyerTitleView = (TextView) flyerView.findViewById(R.id.title);
+//				ImageView thumbView = (ImageView) view.findViewById(R.id.thumbnail);
+//				TextView titleView = (TextView) view.findViewById(R.id.title);
+//				flyerTitleView.setText(titleView.getText());
+//				flyerThumbView.setImageDrawable(thumbView.getDrawable());
+//				flyerThumbView.setX(view.getX());
+//				flyerThumbView.setY(view.getY());
+//				_viewGroup.addView(flyerThumbView);
+//
+//				flyerThumbView.animate().setDuration(1000).translationX(600).translationY(300).setListener(new AnimatorListener()
+//				{
+//					@Override
+//					public void onAnimationStart(Animator animation)
+//					{
+//					}
+//
+//					@Override
+//					public void onAnimationRepeat(Animator animation)
+//					{
+//					}
+//
+//					@Override
+//					public void onAnimationEnd(Animator animation)
+//					{
+//						Log.i(TAG, ".onAnimationEnd");
+//						Channel channel = (Channel) view.getTag();
+//						_featureChannels.setChannelFavorite(channel, true);
+//						_allChannelsGrid.removeThumbAt(position);
+//						_myChannelsGrid.addThumbItem(channel);
+//						_myChannelsGrid.setSelection(_myChannelsGrid.getCount() - 1);
+//						_myChannelsGrid.smoothScrollBy(0, 99999);
+//					}
+//
+//					@Override
+//					public void onAnimationCancel(Animator animation)
+//					{
+//					}
+//				}).start();
+//
+
+				Log.i(TAG, ".onAnimationEnd");
 				Channel channel = (Channel) view.getTag();
 				_featureChannels.setChannelFavorite(channel, true);
 				_allChannelsGrid.removeThumbAt(position);
@@ -261,9 +306,9 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	public boolean onKeyDown(AVKeyEvent event)
 	{
-		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
+		Log.i(TAG, ".onKeyDown: key = " + event);
 		return false;
 	}
 

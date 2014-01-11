@@ -14,7 +14,6 @@ import java.util.Calendar;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,9 @@ import com.aviq.tv.android.aviqtv.state.epg.EpgGrid.NAVIGATION;
 import com.aviq.tv.android.aviqtv.state.epg.EpgGrid.OnEpgGridEventListener;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.aviqtv.state.programinfo.FeatureStateProgramInfo;
+import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
+import com.aviq.tv.android.sdk.core.Key;
 import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
@@ -146,16 +147,16 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		super.onPause();
 		_epgGrid.deactivate();
 	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
-	{
-		Log.i(TAG, ".onKeyDown: keyCode = " + keyCode);
 
-		if (keyCode == KeyEvent.KEYCODE_ENTER)
+	@Override
+	public boolean onKeyDown(AVKeyEvent event)
+	{
+		Log.i(TAG, ".onKeyDown: key = " + event);
+
+		if (event.is(Key.OK))
 		{
 			String channelId = _epgGrid.getSelectedChannel().getChannelId();
-			
+
 			Program program = (Program) _epgGrid.getSelectedProgramList().getSelectedItem();
 			if (program != null)
 			{
@@ -164,7 +165,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 			}
 			return true;
 		}
-		return _epgGrid.onKeyDown(keyCode, event);
+		return _epgGrid.onKeyDown(event);
 	}
 
 	private void initEpgGridOnGlobalLayout()
@@ -258,7 +259,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 			Log.e(TAG, e.getMessage(), e);
 		}
 	}
-	
+
 	private final OnEpgGridEventListener _onEpgGridItemSelectionListener = new OnEpgGridEventListener()
 	{
 		@Override

@@ -239,7 +239,7 @@ public class ZapperListView extends ScrollView
 		_position = index;
 		if (_position != prevPosition)
 		{
-			int startY = (int) getY() + prevPosition * _scrollItem.getItemHeight();
+			int startY = prevPosition * _scrollItem.getItemHeight();
 			int deltaY = (_position - prevPosition) * _scrollItem.getItemHeight();
 			if (Math.abs(_position - prevPosition) == 1 && _myScroller != null)
 			{

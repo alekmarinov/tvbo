@@ -19,7 +19,7 @@ public class EpgListView extends ListView
 	private OnItemSelectedListener _onItemSelectedListener;
 	private int _prevPosition = -1;
 	private int _visibleItems;
-	
+
 	// This property is used to adjust the timebar to the proper time position
 	private int _timebarOffset;
 
@@ -77,7 +77,7 @@ public class EpgListView extends ListView
 		}
 		return true;
 	}
-	
+
 	public View getViewAt(int positionInAdapter)
 	{
 		/*
@@ -112,7 +112,7 @@ public class EpgListView extends ListView
 	{
 		return _timebarOffset;
 	}
-	
+
 	public void setOnItemSelectingListener(OnItemSelectingListener listener)
 	{
 		_onItemSelectingListener = listener;
