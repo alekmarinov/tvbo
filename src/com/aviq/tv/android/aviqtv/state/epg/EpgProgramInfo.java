@@ -245,13 +245,11 @@ public class EpgProgramInfo
 		_detailsFlipper.removeAllViews();
 		while (description != null && description.length() != 0)
 		{
-			int textViewHeight = _textViewHeight;
-
 			// creating new textviews for every page
 			TextView textView = (TextView) LayoutInflater.from(_context).inflate(R.layout.program_summary_view, null);
 			textView.setWidth(_textViewWidth);
 			// textView.setLineSpacing(LINE_SPACING_ADD, LINE_SPACING_MULT);
-			textView.setHeight(textViewHeight);
+			textView.setHeight(_textViewHeight);
 
 			StaticLayout layout = new StaticLayout(description, textView.getPaint(), _textViewWidth,
 			        Alignment.ALIGN_NORMAL, LINE_SPACING_MULT, LINE_SPACING_ADD, true);
@@ -262,8 +260,8 @@ public class EpgProgramInfo
 			{
 				// Since the line at the specific vertical position would be cut
 				// off, we must trim up to the previous line
-				int lastVisibleLine = layout.getLineForVertical(textViewHeight) - 1;
-				if (lastVisibleLine > 0 && layout.getHeight() > textViewHeight)
+				int lastVisibleLine = layout.getLineForVertical(_textViewHeight) - 1;
+				if (lastVisibleLine > 0 && layout.getHeight() > _textViewHeight)
 				{
 					numChars = layout.getLineEnd(lastVisibleLine);
 				}
