@@ -87,6 +87,7 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 			_epgData = featureEPG.getEpgData();
 			_featureChannels = (FeatureChannels) Environment.getInstance().getFeatureComponent(
 			        FeatureName.Component.CHANNELS);
+			_featureChannels.setUseFavorites(true);
 
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
@@ -124,7 +125,7 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 			public boolean onKey(View v, int keyCode, KeyEvent event)
 			{
 				Log.d(TAG, ".onKey: keyCode = " + keyCode);
-				if (!event.isDown())
+				if (event.getAction() != KeyEvent.ACTION_DOWN)
 					return false;
 				if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
 				{

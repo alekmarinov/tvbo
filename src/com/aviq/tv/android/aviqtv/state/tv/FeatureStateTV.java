@@ -412,6 +412,12 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 				onSelectChannelIndex(_zapperListView.getSelectIndex(), _zapperListView.getSelectBitmapX(),
 				        _zapperListView.getSelectBitmapY());
 				return true;
+			case BACK:
+				// FIXME: remove this behavior, just for testing player view
+				_viewGroup.findViewById(R.id.tv_channel_bar).setVisibility(View.INVISIBLE);
+				_viewGroup.findViewById(R.id.channel_info_container).setVisibility(View.INVISIBLE);
+				_viewGroup.findViewById(R.id.tv_program_bar).setVisibility(View.INVISIBLE);
+				return true;
 		}
 		return false;
 	}
