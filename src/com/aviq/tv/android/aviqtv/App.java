@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.aviq.tv.android.aviqtv.state.MessageBox;
@@ -108,6 +109,8 @@ public class App extends Application implements IApplication
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
+		Toast.makeText(getApplicationContext(), String.valueOf(keyCode), Toast.LENGTH_SHORT).show();
+
 		Key key = _rcu.getKey(keyCode);
 		AVKeyEvent keyEvent = new AVKeyEvent(event, key);
 
