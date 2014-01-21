@@ -16,25 +16,25 @@ public class ContextButton extends Button
 		this(context, attrs, 0);
 		init(context);
 	}
-	
+
 	public ContextButton(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
 		init(context);
 	}
-	
+
 	public void init(Context context)
 	{
 	}
-	
+
 	public void setContent(int iconResId, int textResId)
 	{
-		if (iconResId > 0)
-			setText(textResId);
-		
 		if (textResId > 0)
+			setText(textResId);
+
+		if (iconResId > 0)
 			setCompoundDrawablesWithIntrinsicBounds(iconResId, 0, 0, 0);
-		
+
 		setId(textResId);
 	}
 }
