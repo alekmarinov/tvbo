@@ -63,8 +63,8 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 
 	public FeatureStateWatchlist()
 	{
+		_dependencies.Schedulers.add(FeatureName.Scheduler.EPG);
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
-		_dependencies.Components.add(FeatureName.Component.EPG);
 		_dependencies.Components.add(FeatureName.Component.WATCHLIST);
 		_dependencies.States.add(FeatureName.State.TV);
 		_dependencies.States.add(FeatureName.State.PROGRAM_INFO);
@@ -90,7 +90,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
-			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
+			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
 			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
 			        FeatureName.Component.WATCHLIST);
 			_featureStateTV = (FeatureStateTV)Environment.getInstance().getFeatureState(FeatureName.State.TV);

@@ -64,7 +64,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 
 	public FeatureStateEPG()
 	{
-		_dependencies.Components.add(FeatureName.Component.EPG);
+		_dependencies.Schedulers.add(FeatureName.Scheduler.EPG);
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
 		_dependencies.States.add(FeatureName.State.MENU);
 		_dependencies.States.add(FeatureName.State.PROGRAM_INFO);
@@ -77,7 +77,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		Log.i(TAG, ".initialize");
 		try
 		{
-			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
+			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
 			_featurePlayer = (FeaturePlayer) Environment.getInstance()
 			        .getFeatureComponent(FeatureName.Component.PLAYER);
 

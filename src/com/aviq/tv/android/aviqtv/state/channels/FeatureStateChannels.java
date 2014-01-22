@@ -60,7 +60,7 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	public FeatureStateChannels()
 	{
 		_dependencies.Components.add(FeatureName.Component.PLAYER);
-		_dependencies.Components.add(FeatureName.Component.EPG);
+		_dependencies.Schedulers.add(FeatureName.Scheduler.EPG);
 		_dependencies.Components.add(FeatureName.Component.CHANNELS);
 		_dependencies.States.add(FeatureName.State.MENU);
 	}
@@ -82,8 +82,8 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 		Log.i(TAG, ".initialize");
 		try
 		{
-			FeatureEPG featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(
-			        FeatureName.Component.EPG);
+			FeatureEPG featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(
+			        FeatureName.Scheduler.EPG);
 			_epgData = featureEPG.getEpgData();
 			_featureChannels = (FeatureChannels) Environment.getInstance().getFeatureComponent(
 			        FeatureName.Component.CHANNELS);

@@ -30,11 +30,11 @@ import com.aviq.tv.android.sdk.core.feature.IFeatureFactory;
 import com.aviq.tv.android.sdk.feature.channels.FeatureChannels;
 import com.aviq.tv.android.sdk.feature.epg.bulsat.FeatureEPGBulsat;
 import com.aviq.tv.android.sdk.feature.httpserver.FeatureHttpServer;
+import com.aviq.tv.android.sdk.feature.internet.FeatureInternet;
 import com.aviq.tv.android.sdk.feature.network.FeatureEthernet;
 import com.aviq.tv.android.sdk.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.sdk.feature.rcu.FeatureRCUWilmaa;
 import com.aviq.tv.android.sdk.feature.register.FeatureRegister;
-import com.aviq.tv.android.sdk.feature.scheduler.internet.FeatureInternet;
 import com.aviq.tv.android.sdk.feature.watchlist.FeatureWatchlist;
 
 /**
@@ -51,10 +51,6 @@ public class FeatureFactory implements IFeatureFactory
 				// return new FeatureRCUBulsat();
 				return new FeatureRCUWilmaa();
 				// return new FeatureRCUSDMC();
-			case EPG:
-				//return new FeatureEPGWilmaa();
-				// return new FeatureEPGRayV();
-				return new FeatureEPGBulsat();
 			case CHANNELS:
 				return new FeatureChannels();
 			case PLAYER:
@@ -79,6 +75,10 @@ public class FeatureFactory implements IFeatureFactory
 	{
 		switch (featureId)
 		{
+			case EPG:
+				//return new FeatureEPGWilmaa();
+				// return new FeatureEPGRayV();
+				return new FeatureEPGBulsat();
 			case INTERNET:
 				return new FeatureInternet();
 		}

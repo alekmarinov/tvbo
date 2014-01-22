@@ -88,7 +88,7 @@ public class EpgProgramInfo
 
 		try
 		{
-			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureComponent(FeatureName.Component.EPG);
+			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
 		}
 		catch (FeatureNotFoundException e)
 		{
