@@ -97,6 +97,39 @@ public class EpgProgramInfo
 		}
 	}
 
+	public void updatePrimaryTitle(String title)
+	{
+		if (_primaryTitle != null)
+			_primaryTitle.setText(title);
+	}
+
+	public void updateSecondaryTitle(String title)
+	{
+		if (_secondaryTitle != null)
+			_secondaryTitle.setText(title);
+	}
+
+	public void updateSummary(String text)
+	{
+		if (_summary != null)
+			_summary.setText(text);
+	}
+
+	public void updateDateTime(String date, int dateIconResId, String time, int timeIconResId)
+	{
+		if (_date != null)
+		{
+			_date.setText(date);
+			_date.setCompoundDrawablesWithIntrinsicBounds(dateIconResId, 0, 0, 0);
+		}
+
+		if (_time != null)
+		{
+			_time.setText(date);
+			_time.setCompoundDrawablesWithIntrinsicBounds(timeIconResId, 0, 0, 0);
+		}
+	}
+
 	public void updateBrief(final String channelId, final Program program)
 	{
 		// Update start date and time

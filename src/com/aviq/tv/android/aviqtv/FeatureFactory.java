@@ -21,6 +21,8 @@ import com.aviq.tv.android.aviqtv.state.settings.FeatureStateSettings;
 import com.aviq.tv.android.aviqtv.state.settings.ethernet.FeatureStateSettingsEthernet;
 import com.aviq.tv.android.aviqtv.state.tv.FeatureStateTV;
 import com.aviq.tv.android.aviqtv.state.watchlist.FeatureStateWatchlist;
+import com.aviq.tv.android.aviqtv.state.webtv.FeatureStateWebTV;
+import com.aviq.tv.android.aviqtv.state.webtv.FeatureStateWebTVVideo;
 import com.aviq.tv.android.sdk.core.feature.FeatureComponent;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
@@ -36,6 +38,7 @@ import com.aviq.tv.android.sdk.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.sdk.feature.rcu.FeatureRCUWilmaa;
 import com.aviq.tv.android.sdk.feature.register.FeatureRegister;
 import com.aviq.tv.android.sdk.feature.watchlist.FeatureWatchlist;
+import com.aviq.tv.android.sdk.feature.webtv.FeatureWebTV;
 
 /**
  * AVIQTV specific feature factory
@@ -64,6 +67,8 @@ public class FeatureFactory implements IFeatureFactory
 				return new FeatureWatchlist();
 			case ETHERNET:
 				return new FeatureEthernet();
+			case WEBTV:
+				return new FeatureWebTV();
 			default:
 				break;
 		}
@@ -112,6 +117,10 @@ public class FeatureFactory implements IFeatureFactory
 				return new FeatureStateSettingsEthernet();
 			case KEYBOARD:
 				return new FeatureStateKeyboard();
+			case WEBTV:
+				return new FeatureStateWebTV();
+			case WEBTV_VIDEO:
+				return new FeatureStateWebTVVideo();
 		}
 		throw new FeatureNotFoundException(featureId);
 	}

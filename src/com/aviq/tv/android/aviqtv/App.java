@@ -73,6 +73,8 @@ public class App extends Application implements IApplication
 			env.use(FeatureName.State.WATCHLIST);
 			env.use(FeatureName.State.SETTINGS_ETHERNET);
 			env.use(FeatureName.State.KEYBOARD);
+			env.use(FeatureName.State.WEBTV);
+			env.use(FeatureName.State.WEBTV_VIDEO);
 
 			// Initialize and start application
 			env.initialize(activity);
