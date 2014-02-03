@@ -132,7 +132,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		_rootView = viewGroup;
 
 		// Hide player while view is relayouting and show it by the global layout listener
-		_featurePlayer.hideVideoView();
+		_featurePlayer.hide();
 
 		initEpgGridOnGlobalLayout();
 
@@ -183,7 +183,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 				int y = (int)(_rootView.getY() + container.getY() + _videoPlaceHolder.getY());
 				int w = _videoPlaceHolder.getWidth();
 				int h = _videoPlaceHolder.getHeight();
-				_featurePlayer.setVideoViewPositionAndSize(x, y, w, h);
+				_featurePlayer.setPositionAndSize(x, y, w, h);
 
 				// This method relies on the width of the _gridHeader widget. In
 				// onResume() it is still zero, therefore, we get it from the

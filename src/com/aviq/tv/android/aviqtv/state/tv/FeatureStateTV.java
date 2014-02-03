@@ -162,7 +162,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		}
 
 		// Set player at full screen
-		_featurePlayer.setVideoViewFullScreen();
+		_featurePlayer.setFullScreen();
 
 		// Prepare the video view touch zones and set up the touch listener
 		prepareVideoViewTouchGestures();
@@ -446,7 +446,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 		_displayTopTouchZone = new Rect(0, 0, deviceScreenWidth, (int) (0.20 * deviceScreenHeight));
 
-		_featurePlayer.getVideoView().setOnTouchListener(_videoViewOnTouchListener);
+		_featurePlayer.getView().setOnTouchListener(_videoViewOnTouchListener);
 	}
 
 	private OnTouchListener _videoViewOnTouchListener = new OnTouchListener()

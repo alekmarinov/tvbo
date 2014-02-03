@@ -131,7 +131,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 
 		// Hide player while view re-layouts and show it by the global layout
 		// listener
-		_featurePlayer.hideVideoView();
+		_featurePlayer.hide();
 		final View videoViewPlaceHolder = _viewGroup.findViewById(R.id.videoview_placeholder);
 
 		videoViewPlaceHolder.getViewTreeObserver().addOnGlobalLayoutListener(
@@ -148,7 +148,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 				        int y = (int) (_viewGroup.getY() + container.getY() + videoViewPlaceHolder.getY());
 				        int w = videoViewPlaceHolder.getWidth();
 				        int h = videoViewPlaceHolder.getHeight();
-				        _featurePlayer.setVideoViewPositionAndSize(x, y, w, h);
+				        _featurePlayer.setPositionAndSize(x, y, w, h);
 			        }
 		        });
 

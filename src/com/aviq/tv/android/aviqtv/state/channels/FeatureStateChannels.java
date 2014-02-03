@@ -110,7 +110,7 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		Log.i(TAG, ".onCreateView");
-		_featurePlayer.setVideoViewFullScreen();
+		_featurePlayer.setFullScreen();
 
 		_viewGroup = (ViewGroup) inflater.inflate(R.layout.state_channels, container, false);
 
