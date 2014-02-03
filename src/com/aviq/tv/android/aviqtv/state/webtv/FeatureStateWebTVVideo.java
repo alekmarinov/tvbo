@@ -87,7 +87,7 @@ public class FeatureStateWebTVVideo extends FeatureState
 		Log.i(TAG, ".onCreateView");
 
 		_rootView = inflater.inflate(R.layout.state_webtv_video, container, false);
-		_videoView = _featurePlayer.getVideoView();
+		_videoView = (VideoView) _featurePlayer.getView();
 
 		_videoView.setOnCompletionListener(new OnCompletionListener()
 		{
@@ -202,7 +202,7 @@ public class FeatureStateWebTVVideo extends FeatureState
 		_videoView.setVisibility(View.VISIBLE);
 		_videoView.setZOrderOnTop(true);
 		_videoViewLayoutParams = (RelativeLayout.LayoutParams) _videoView.getLayoutParams();
-		_featurePlayer.setVideoViewFullScreen();
+		_featurePlayer.setFullScreen();
 	}
 
 	@Override
@@ -216,7 +216,7 @@ public class FeatureStateWebTVVideo extends FeatureState
 		int y = _videoViewLayoutParams.topMargin;
 		int w = _videoViewLayoutParams.width;
 		int h = _videoViewLayoutParams.height;
-		_featurePlayer.setVideoViewPositionAndSize(x, y, w, h);
+		_featurePlayer.setPositionAndSize(x, y, w, h);
 	}
 
 	private void stopPlayback()

@@ -10,6 +10,7 @@
 
 package com.aviq.tv.android.aviqtv;
 
+import com.aviq.tv.android.aviqtv.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.aviqtv.state.FeatureStateLoading;
 import com.aviq.tv.android.aviqtv.state.MessageBox;
 import com.aviq.tv.android.aviqtv.state.channels.FeatureStateChannels;
@@ -34,7 +35,6 @@ import com.aviq.tv.android.sdk.feature.epg.bulsat.FeatureEPGBulsat;
 import com.aviq.tv.android.sdk.feature.httpserver.FeatureHttpServer;
 import com.aviq.tv.android.sdk.feature.internet.FeatureInternet;
 import com.aviq.tv.android.sdk.feature.network.FeatureEthernet;
-import com.aviq.tv.android.sdk.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.sdk.feature.rcu.FeatureRCUWilmaa;
 import com.aviq.tv.android.sdk.feature.register.FeatureRegister;
 import com.aviq.tv.android.sdk.feature.watchlist.FeatureWatchlist;

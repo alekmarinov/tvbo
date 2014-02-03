@@ -17,6 +17,7 @@ import android.view.KeyEvent;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.aviq.tv.android.aviqtv.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.aviqtv.state.MessageBox;
 import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
@@ -27,8 +28,8 @@ import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.StateException;
 import com.aviq.tv.android.sdk.core.state.StateManager;
-import com.aviq.tv.android.sdk.feature.player.rayv.FeaturePlayerRayV;
 import com.aviq.tv.android.sdk.feature.rcu.FeatureRCU;
+import com.aviq.tv.android.sdk.player.AndroidPlayer;
 import com.aviq.tv.android.sdk.utils.TextUtils;
 
 /**
@@ -60,7 +61,8 @@ public class App extends Application implements IApplication
 
 			// Configure RayV player
 			FeaturePlayerRayV featurePlayerRayV = (FeaturePlayerRayV) env.use(FeatureName.Component.PLAYER);
-			featurePlayerRayV.setVideoView((VideoView) activity.findViewById(R.id.player));
+			VideoView videoView = (VideoView) activity.findViewById(R.id.player);
+			featurePlayerRayV.setPlayer(new AndroidPlayer(videoView));
 			String streamerIni = TextUtils.inputSteamToString(getResources().openRawResource(R.raw.streamer));
 			featurePlayerRayV.setStreamerIni(streamerIni);
 
