@@ -51,7 +51,8 @@
     <string name="menu_tv">Телевизия</string>
     <string name="menu_watchlist">Напомняне</string>
     <string name="menu_settings">Настройки</string>
-    
+    <string name="menu_webtv">Интернет ТВ</string>
+
     <!--  Settings items -->
     <string name="menu_settings_ethernet">Мрежа</string>
     

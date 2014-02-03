@@ -3,9 +3,9 @@
  *
  * Project:     AVIQTV
  * Filename:    FeatureStateWatchlist.java
- * Author:      alek
- * Date:        1 Dec 2013
- * Description: TV state feature
+ * Author:      zheliazko
+ * Date:        30 Jan 2014
+ * Description: WebTV state feature
  */
 
 package com.aviq.tv.android.aviqtv.state.webtv;
@@ -156,7 +156,9 @@ public class FeatureStateWebTV extends FeatureState implements IStateMenuItem
 			String genres = TextUtils.join(", ", item.getGenres());
 			_programInfo.updateSecondaryTitle(genres);
 
-			_programInfo.updateSummary(item.getDescription());
+			// _programInfo.updateSummary(item.getDescription());
+			String languages = TextUtils.join(", ", item.getLanguages());
+			_programInfo.updateSummary(languages);
 		}
 
 		@Override
@@ -212,13 +214,13 @@ public class FeatureStateWebTV extends FeatureState implements IStateMenuItem
 	@Override
 	public int getMenuItemResourceId()
 	{
-		return R.drawable.ic_menu_watchlist; // TODO need image for WebTV
+		return R.drawable.ic_menu_webtv;
 	}
 
 	@Override
 	public String getMenuItemCaption()
 	{
-		return Environment.getInstance().getResources().getString(R.string.menu_watchlist);
+		return Environment.getInstance().getResources().getString(R.string.menu_webtv);
 	}
 
 	private ThumbnailsView.ThumbItemCreater _thumbnailCreater = new ThumbnailsView.ThumbItemCreater()
@@ -237,6 +239,8 @@ public class FeatureStateWebTV extends FeatureState implements IStateMenuItem
 			// ImageView thumbView = (ImageView)
 			// view.findViewById(R.id.thumbnail);
 			// thumbView.setImageBitmap();
+
+			// Environment.getInstance().getImageLoader().getImageListener(thumbView, R.drawable., errorImageResId);
 			TextView titleView = (TextView) view.findViewById(R.id.title);
 			titleView.setText(item.getName());
 		}
