@@ -45,9 +45,9 @@ public class FeatureStateKeyboard extends FeatureState
 	private TextView _prompt;
 	private EditText _editField;
 
-	public FeatureStateKeyboard()
+	public FeatureStateKeyboard() throws FeatureNotFoundException
 	{
-		_dependencies.Components.add(FeatureName.Component.HTTP_SERVER);
+		require(FeatureName.Component.HTTP_SERVER);
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class FeatureStateKeyboard extends FeatureState
 				Log.d(TAG, message + " -- From line " + lineNumber + " of " + sourceID);
 				if (message.startsWith("key-changed:"))
 				{
-					Environment.getInstance().getActivity().runOnUiThread(new Runnable()
+					Environment.getInstance().runOnUiThread(new Runnable()
 					{
 						@Override
 						public void run()
@@ -145,22 +145,12 @@ public class FeatureStateKeyboard extends FeatureState
 		}
 
 		// load url
-		try
-		{
-			FeatureHttpServer httpServer = (FeatureHttpServer) Environment.getInstance().getFeatureComponent(
-			        FeatureName.Component.HTTP_SERVER);
-			int port = httpServer.getListenPort();
+		FeatureHttpServer httpServer = (FeatureHttpServer) Environment.getInstance().getFeatureComponent(
+		        FeatureName.Component.HTTP_SERVER);
+		int port = httpServer.getListenPort();
 
-			Log.d(TAG, "load url through httpServer");
-			_webView.loadUrl("http://localhost:" + port + "/keyboard/aviqtv.html");
-		}
-		catch (FeatureNotFoundException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
-
-			Log.d(TAG, "load url from assets");
-			_webView.loadUrl("file:///android_asset/keyboard/aviqtv.html");
-		}
+		Log.d(TAG, "load url through httpServer");
+		_webView.loadUrl("http://localhost:" + port + "/keyboard/aviqtv.html");
 		_webView.setBackgroundColor(0x00000000);
 
 		// solves blocked Left|OK issue

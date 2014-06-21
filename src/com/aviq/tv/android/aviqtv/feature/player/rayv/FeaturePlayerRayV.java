@@ -13,6 +13,7 @@ package com.aviq.tv.android.aviqtv.feature.player.rayv;
 import android.util.Log;
 
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
+import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 import com.rayv.StreamingAgent.Loader;
 
@@ -24,9 +25,9 @@ public class FeaturePlayerRayV extends FeaturePlayer
 	public static final String TAG = FeaturePlayerRayV.class.getSimpleName();
 	private String _streamerIni;
 
-	public FeaturePlayerRayV()
+	public FeaturePlayerRayV() throws FeatureNotFoundException
 	{
-		_dependencies.Components.add(FeatureName.Component.REGISTER);
+		require(FeatureName.Component.REGISTER);
 	}
 
 	@Override

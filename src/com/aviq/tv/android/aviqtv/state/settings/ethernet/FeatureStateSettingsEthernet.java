@@ -37,7 +37,7 @@ import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
 import com.aviq.tv.android.sdk.core.state.StateException;
 import com.aviq.tv.android.sdk.core.state.StateManager.MessageParams;
 import com.aviq.tv.android.sdk.feature.network.FeatureEthernet;
-import com.aviq.tv.android.sdk.feature.network.FeatureEthernet.NetworkConfig;
+import com.aviq.tv.android.sdk.feature.network.NetworkConfig;
 
 /**
  * Ethernet settings state feature
@@ -59,10 +59,10 @@ public class FeatureStateSettingsEthernet extends FeatureState implements IState
 	private Button _btnClr;
 	private Button _btnOk;
 
-	public FeatureStateSettingsEthernet()
+	public FeatureStateSettingsEthernet() throws FeatureNotFoundException
 	{
-		_dependencies.Components.add(FeatureName.Component.ETHERNET);
-		_dependencies.States.add(FeatureName.State.SETTINGS);
+		require(FeatureName.Component.ETHERNET);
+		require(FeatureName.State.SETTINGS);
 	}
 
 	@Override
@@ -75,22 +75,14 @@ public class FeatureStateSettingsEthernet extends FeatureState implements IState
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		Log.i(TAG, ".initialize");
-		try
-		{
-			// insert in Settings
-			_featureStateSettings = (FeatureStateSettings) Environment.getInstance().getFeatureState(
-			        FeatureName.State.SETTINGS);
-			_featureEthernet = (FeatureEthernet) Environment.getInstance().getFeatureComponent(
-			        FeatureName.Component.ETHERNET);
-			_featureStateSettings.addSettingState(this);
+		// insert in Settings
+		_featureStateSettings = (FeatureStateSettings) Environment.getInstance().getFeatureState(
+		        FeatureName.State.SETTINGS);
+		_featureEthernet = (FeatureEthernet) Environment.getInstance().getFeatureComponent(
+		        FeatureName.Component.ETHERNET);
+		_featureStateSettings.addSettingState(this);
 
-			onFeatureInitialized.onInitialized(this, ResultCode.OK);
-		}
-		catch (FeatureNotFoundException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
-			onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
-		}
+		onFeatureInitialized.onInitialized(this, ResultCode.OK);
 	}
 
 	@Override
@@ -303,10 +295,6 @@ public class FeatureStateSettingsEthernet extends FeatureState implements IState
 				{
 					FeatureState keyaboardState = Environment.getInstance().getFeatureState(FeatureName.State.KEYBOARD);
 					Environment.getInstance().getStateManager().setStateOverlay(keyaboardState, params);
-				}
-				catch (FeatureNotFoundException e)
-				{
-					Log.e(TAG, e.getMessage(), e);
 				}
 				catch (StateException e)
 				{

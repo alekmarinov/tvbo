@@ -52,7 +52,6 @@ public class ZapperListView extends ScrollView
 	private float _fontSize;
 	private HashMap<Integer, Point> _bitmapsPositions = new HashMap<Integer, Point>();
 	private OnScrollChangedListener _onScrollChangedListener;
-	private Bitmap _banner;
 
 	/**
 	 * View defining the content area to be scrolled by the encapsulating
@@ -107,7 +106,6 @@ public class ZapperListView extends ScrollView
 		protected void onDraw(Canvas canvas)
 		{
 			Log.d(TAG, ".onDraw: w = " + getWidth() + ", h = " + getHeight());
-			canvas.drawBitmap(_banner, (getWidth() - _banner.getWidth()) / 2, 0, _paint);
 			int itemHeight = getItemHeight();
 			int y = _topMargin + _vpadding + _activeItemIndex * itemHeight;
 			int yText = (_textHeight + itemHeight) >> 1;
@@ -211,9 +209,6 @@ public class ZapperListView extends ScrollView
 		{
 			Log.e(TAG, e.getMessage(), e);
 		}
-
-		_banner = BitmapFactory.decodeResource(getResources(), R.drawable.banner);
-
 	}
 
 	public void addDrawable(int resId)

@@ -166,13 +166,9 @@ public class EpgHeaderView extends LinearLayout
 
 	public int getPositionForTime(Calendar c)
 	{
-		int position = -1;
+		int position = 0;
 
-		if (c.before(_absoluteTimeMin) || c.equals(_absoluteTimeMin))
-		{
-			position = 0;
-		}
-		else if (c.after(_absoluteTimeMax))
+		if (c.after(_absoluteTimeMax))
 		{
 			position = _adapter.getCount() - 1;
 		}

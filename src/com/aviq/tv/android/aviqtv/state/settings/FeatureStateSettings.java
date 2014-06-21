@@ -50,10 +50,10 @@ public class FeatureStateSettings extends FeatureState implements IStateMenuItem
 	private FeaturePlayer _featurePlayer;
 	private List<FeatureState> _settingStates = new ArrayList<FeatureState>();
 
-	public FeatureStateSettings()
+	public FeatureStateSettings() throws FeatureNotFoundException
 	{
-		_dependencies.Components.add(FeatureName.Component.PLAYER);
-		_dependencies.States.add(FeatureName.State.MENU);
+		require(FeatureName.Component.PLAYER);
+		require(FeatureName.State.MENU);
 	}
 
 	@Override
@@ -66,23 +66,15 @@ public class FeatureStateSettings extends FeatureState implements IStateMenuItem
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		Log.i(TAG, ".initialize");
-		try
-		{
-			// insert in Menu
-			FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
-			        FeatureName.State.MENU);
-			featureStateMenu.addMenuItemState(this);
+		// insert in Menu
+		FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
+		        FeatureName.State.MENU);
+		featureStateMenu.addMenuItemState(this);
 
-			_featurePlayer = (FeaturePlayer) Environment.getInstance()
-			        .getFeatureComponent(FeatureName.Component.PLAYER);
+		_featurePlayer = (FeaturePlayer) Environment.getInstance()
+		        .getFeatureComponent(FeatureName.Component.PLAYER);
 
-			onFeatureInitialized.onInitialized(this, ResultCode.OK);
-		}
-		catch (FeatureNotFoundException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
-			onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
-		}
+		onFeatureInitialized.onInitialized(this, ResultCode.OK);
 	}
 
 	@Override

@@ -1,0 +1,77 @@
+<!-- AVIQTV application definition. Do not modify this file for testing purpose, use eclipse.xml instead. -->
+<aviqtv>
+    <features>
+        <feature class="com.aviq.tv.android.sdk.feature.rcu.FeatureRCUSDMC" />
+        <feature class="com.aviq.tv.android.sdk.feature.channels.FeatureChannels" />
+        <feature class="com.aviq.tv.android.sdk.feature.player.FeaturePlayer" />
+        <feature class="com.aviq.tv.android.sdk.feature.player.FeatureStreamerRayV" />
+        <feature class="com.aviq.tv.android.sdk.feature.httpserver.FeatureHttpServer" />
+        <feature class="com.aviq.tv.android.sdk.feature.system.FeatureSystem" />
+        <feature class="com.aviq.tv.android.sdk.feature.system.FeatureNethogs" />
+        <feature class="com.aviq.tv.android.sdk.feature.system.FeatureTimeZone" />
+        <feature class="com.aviq.tv.android.sdk.feature.system.FeatureStandBy" />
+        <feature class="com.aviq.tv.android.sdk.feature.register.FeatureRegister" />
+        <feature class="com.aviq.tv.android.sdk.feature.network.FeatureWireless" />
+        <feature class="com.aviq.tv.android.sdk.feature.network.FeatureEthernet" />
+        <feature class="com.aviq.tv.android.sdk.feature.webtv.FeatureWebTV" />
+        <feature class="com.aviq.tv.android.sdk.feature.rpc.FeatureLuaRPC" />
+        <feature class="com.aviq.tv.android.sdk.core.feature.easteregg.FeatureEasterEgg" />
+        <feature class="com.aviq.tv.android.sdk.feature.crashlog.FeatureCrashLog" />
+        <feature class="com.aviq.tv.android.sdk.feature.epg.rayv.FeatureEPGRayV" />
+        <feature class="com.aviq.tv.android.sdk.feature.language.FeatureLanguage" />
+        <feature class="com.aviq.tv.android.sdk.feature.upgrade.FeatureUpgrade" />
+        <feature class="com.aviq.tv.android.sdk.feature.internet.FeatureInternet" />
+
+        <feature class="com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu" />
+        <feature class="com.aviq.tv.android.aviqtv.state.keyboard.FeatureStateKeyboard" />
+        <feature class="com.aviq.tv.android.aviqtv.state.FeatureStateLoading" />
+        <feature class="com.aviq.tv.android.aviqtv.state.tv.FeatureStateTV" />
+        <feature class="com.aviq.tv.android.aviqtv.state.epg.FeatureStateEPG" />
+        <feature class="com.aviq.tv.android.aviqtv.state.MessageBox" />
+        <feature class="com.aviq.tv.android.aviqtv.state.programinfo.FeatureStateProgramInfo" />
+        <feature class="com.aviq.tv.android.aviqtv.state.channels.FeatureStateChannels" />
+        <feature class="com.aviq.tv.android.aviqtv.state.webtv.FeatureStateWebTV" />
+        <feature class="com.aviq.tv.android.aviqtv.state.webtv.FeatureStateWebTVVideo" />
+        <feature class="com.aviq.tv.android.aviqtv.state.settings.FeatureStateSettings" />
+        <feature class="com.aviq.tv.android.aviqtv.state.settings.ethernet.FeatureStateSettingsEthernet" />
+    </features>
+
+    <use>
+        <state name="EPG" />
+        <state name="CHANNELS" />
+        <state name="TV" />
+        <state name="LOADING">
+            <string name="HOME_FEATURE_STATE" >TV</string>
+        </state>
+        <state name="MESSAGE_BOX" />
+        
+        <scheduler name="EPG">
+            <string name="EPG_SERVER">http://bg.aviq.com:9090</string>
+        </scheduler>
+        <component name="TIMEZONE" >
+            <string name="TIMEZONE" >Europe/Sofia</string>
+        </component>
+        <component name="RCU" />
+        <component name="CRASHLOG">
+			<string name="REMOTE_SERVER_USERNAME" >vtxStb</string>
+			<string name="REMOTE_SERVER_PASSWORD" >FuXi0pMNa4tN5CsRRiZk95</string>
+			<string name="CRASHLOG_CUSTOMER" >aviq</string>
+			<string name="CRASHLOG_BRAND" >aviqtv</string>            
+		</component>
+        <component name="EASTER_EGG" />
+        <component name="RPC" />
+        <component name="SYSTEM" />
+        <component name="NETHOGS">
+            <string name="NETWORK_INTERFACE">eth0</string>
+        </component>
+        <component name="STREAMER" />
+        <component name="CHANNELS" >
+            <boolean name="AUTOPLAY" value="true" />
+        </component>
+        <scheduler name="INTERNET" />
+        <component name="REGISTER" >
+            <string name="ABMP_SERVER" >http://services.aviq.com:978</string>
+            <string name="BRAND" >aviqtv</string>
+        </component>
+    </use>
+</aviqtv>

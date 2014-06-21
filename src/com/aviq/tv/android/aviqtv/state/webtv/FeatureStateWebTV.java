@@ -54,13 +54,13 @@ public class FeatureStateWebTV extends FeatureState implements IStateMenuItem
 	private ThumbnailsView _webtvGrid;
 	private FeaturePlayer _featurePlayer;
 
-	public FeatureStateWebTV()
+	public FeatureStateWebTV() throws FeatureNotFoundException
 	{
-		_dependencies.Components.add(FeatureName.Component.PLAYER);
-		_dependencies.Components.add(FeatureName.Component.CHANNELS);
-		_dependencies.Components.add(FeatureName.Component.WEBTV);
-		_dependencies.States.add(FeatureName.State.PROGRAM_INFO);
-		_dependencies.States.add(FeatureName.State.MENU);
+		require(FeatureName.Component.PLAYER);
+		require(FeatureName.Component.CHANNELS);
+		require(FeatureName.Component.WEBTV);
+		require(FeatureName.State.PROGRAM_INFO);
+		require(FeatureName.State.MENU);
 	}
 
 	@Override
@@ -73,25 +73,17 @@ public class FeatureStateWebTV extends FeatureState implements IStateMenuItem
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		Log.i(TAG, ".initialize");
-		try
-		{
-			// insert in Menu
-			FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
-			        FeatureName.State.MENU);
-			featureStateMenu.addMenuItemState(this);
+		// insert in Menu
+		FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
+		        FeatureName.State.MENU);
+		featureStateMenu.addMenuItemState(this);
 
-			_featurePlayer = (FeaturePlayer) Environment.getInstance()
-			        .getFeatureComponent(FeatureName.Component.PLAYER);
-			_featureWebTV = (FeatureWebTV) Environment.getInstance().getFeatureComponent(FeatureName.Component.WEBTV);
-			_featureChannels = (FeatureChannels) Environment.getInstance().getFeatureComponent(
-			        FeatureName.Component.CHANNELS);
-			onFeatureInitialized.onInitialized(this, ResultCode.OK);
-		}
-		catch (FeatureNotFoundException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
-			onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
-		}
+		_featurePlayer = (FeaturePlayer) Environment.getInstance()
+		        .getFeatureComponent(FeatureName.Component.PLAYER);
+		_featureWebTV = (FeatureWebTV) Environment.getInstance().getFeatureComponent(FeatureName.Component.WEBTV);
+		_featureChannels = (FeatureChannels) Environment.getInstance().getFeatureComponent(
+		        FeatureName.Component.CHANNELS);
+		onFeatureInitialized.onInitialized(this, ResultCode.OK);
 	}
 
 	@Override
@@ -185,10 +177,6 @@ public class FeatureStateWebTV extends FeatureState implements IStateMenuItem
 				featureParams.putString(FeatureStateWebTVVideo.ARGS_CHANNEL_NAME, null);
 
 				stateManager.setStateOverlay(featureState, featureParams);
-			}
-			catch (FeatureNotFoundException e)
-			{
-				Log.e(TAG, e.getMessage(), e);
 			}
 			catch (StateException e)
 			{

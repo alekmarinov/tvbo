@@ -61,14 +61,14 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	private FeatureEPG _featureEPG;
 	private FeatureStateTV _featureStateTV;
 
-	public FeatureStateWatchlist()
+	public FeatureStateWatchlist() throws FeatureNotFoundException
 	{
-		_dependencies.Schedulers.add(FeatureName.Scheduler.EPG);
-		_dependencies.Components.add(FeatureName.Component.PLAYER);
-		_dependencies.Components.add(FeatureName.Component.WATCHLIST);
-		_dependencies.States.add(FeatureName.State.TV);
-		_dependencies.States.add(FeatureName.State.PROGRAM_INFO);
-		_dependencies.States.add(FeatureName.State.MENU);
+		require(FeatureName.Scheduler.EPG);
+		require(FeatureName.Component.PLAYER);
+		require(FeatureName.Component.WATCHLIST);
+		require(FeatureName.State.TV);
+		require(FeatureName.State.PROGRAM_INFO);
+		require(FeatureName.State.MENU);
 	}
 
 	@Override
@@ -81,32 +81,24 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		Log.i(TAG, ".initialize");
-		try
-		{
-			// insert in Menu
-			FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
-			        FeatureName.State.MENU);
-			featureStateMenu.addMenuItemState(this);
+		// insert in Menu
+		FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
+		        FeatureName.State.MENU);
+		featureStateMenu.addMenuItemState(this);
 
-			_featurePlayer = (FeaturePlayer) Environment.getInstance()
-			        .getFeatureComponent(FeatureName.Component.PLAYER);
-			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
-			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
-			        FeatureName.Component.WATCHLIST);
-			_featureStateTV = (FeatureStateTV)Environment.getInstance().getFeatureState(FeatureName.State.TV);
+		_featurePlayer = (FeaturePlayer) Environment.getInstance()
+		        .getFeatureComponent(FeatureName.Component.PLAYER);
+		_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
+		_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
+		        FeatureName.Component.WATCHLIST);
+		_featureStateTV = (FeatureStateTV)Environment.getInstance().getFeatureState(FeatureName.State.TV);
 
-			subscribe(_watchlist, FeatureWatchlist.ON_PROGRAM_REMOVED);
-			subscribe(_watchlist, FeatureWatchlist.ON_PROGRAM_ADDED);
+		subscribe(_watchlist, FeatureWatchlist.ON_PROGRAM_REMOVED);
+		subscribe(_watchlist, FeatureWatchlist.ON_PROGRAM_ADDED);
 
-			_watchlist.getEventMessenger().register(this, FeatureWatchlist.ON_PROGRAM_NOTIFY);
+		_watchlist.getEventMessenger().register(this, FeatureWatchlist.ON_PROGRAM_NOTIFY);
 
-			onFeatureInitialized.onInitialized(this, ResultCode.OK);
-		}
-		catch (FeatureNotFoundException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
-			onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
-		}
+		onFeatureInitialized.onInitialized(this, ResultCode.OK);
 	}
 
 	@Override
@@ -166,8 +158,8 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 			String programId = bundle.getString("PROGRAM");
 			String channelId = bundle.getString("CHANNEL");
 			Log.i(TAG, ".onEvent: ON_PROGRAM_NOTIFY - > " + channelId + "/" + programId);
-			Program program = _featureEPG.getEpgData().getProgram(channelId, programId);
-			int minsRemaining = (int)(Calendar.getInstance().getTimeInMillis() - program.getStartTimeCalendar().getTimeInMillis()) / (60 * 1000);
+			Program program = _featureEPG.getEpgData().getProgramById(channelId, programId);
+			int minsRemaining = (int)(Calendar.getInstance().getTimeInMillis() - program.getStartTime().getTimeInMillis()) / (60 * 1000);
 			Resources resources = Environment.getInstance().getResources();
 
 			String messageTitle = resources.getString(R.string.watchlist_notify_title);
@@ -245,10 +237,6 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 
 				Environment.getInstance().getStateManager().setStateOverlay(programInfo, featureParams);
 			}
-			catch (FeatureNotFoundException e)
-			{
-				Log.e(TAG, e.getMessage(), e);
-			}
 			catch (StateException e)
 			{
 				Log.e(TAG, e.getMessage(), e);
@@ -294,7 +282,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 		{
 			Program program = (Program) object;
 
-			if (Calendar.getInstance().compareTo(program.getStopTimeCalendar()) > 0)
+			if (Calendar.getInstance().compareTo(program.getStopTime()) > 0)
 			{
 				// mark program expired
 				view.setAlpha(0.5f);

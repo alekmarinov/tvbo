@@ -20,7 +20,6 @@ import com.android.volley.toolbox.ImageLoader.ImageListener;
 import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
-import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
 import com.aviq.tv.android.sdk.feature.epg.FeatureEPG.IOnProgramDetails;
 import com.aviq.tv.android.sdk.feature.epg.Program;
@@ -86,15 +85,7 @@ public class EpgProgramInfo
 		_timeRangeTemplate = context.getString(R.string.programInfoTimeRange);
 		_pagerTemplate = context.getString(R.string.programInfoPager);
 
-		try
-		{
-			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
-		}
-		catch (FeatureNotFoundException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
-			throw new RuntimeException("FeatureEPG is a required component for " + TAG);
-		}
+		_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
 	}
 
 	public void updatePrimaryTitle(String title)
@@ -151,7 +142,7 @@ public class EpgProgramInfo
 		}
 		else
 		{
-			long startTimeMillis = program.getStartTimeCalendar().getTimeInMillis();
+			long startTimeMillis = program.getStartTime().getTimeInMillis();
 
 			String startDate = _dateFormat.format(startTimeMillis);
 			_date.setText(startDate);
@@ -201,7 +192,7 @@ public class EpgProgramInfo
 	{
 		// Update start date and time
 
-		long startTimeMillis = program.getStartTimeCalendar().getTimeInMillis();
+		long startTimeMillis = program.getStartTime().getTimeInMillis();
 
 		String startDate = _dateFormat.format(startTimeMillis);
 		_date.setText(startDate);
@@ -213,7 +204,7 @@ public class EpgProgramInfo
 
 		String rangeStartTime = _timeFormat.format(startTimeMillis);
 
-		Calendar stopTimeCal = program.getStopTimeCalendar();
+		Calendar stopTimeCal = program.getStopTime();
 		String rangeStopTime = _timeFormat.format(stopTimeCal.getTime());
 
 		_timeRange.setText(String.format(_timeRangeTemplate, rangeStartTime, rangeStopTime));

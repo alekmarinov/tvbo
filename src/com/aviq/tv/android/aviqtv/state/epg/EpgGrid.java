@@ -547,15 +547,14 @@ public class EpgGrid
 		double minutes = _gridHeader.getWidth() / _gridHeader.getPixelsPerMinute();
 		minutes = minutes - minutes % EpgHeaderView.TIME_SLOT_MINUTES;
 		long timeEndMillis = timeStartMillis + (long) (minutes * 60000);
-
-		String timeStart = Program.getEpgTime(timeStartMillis);
-		String timeEnd = Program.getEpgTime(timeEndMillis);
+		Calendar endTime = Calendar.getInstance();
+		endTime.setTimeInMillis(timeEndMillis);
 
 		LinkedHashMap<Channel, List<Program>> data = new LinkedHashMap<Channel, List<Program>>();
 		for (int i = startIndex; i < endIndex; i++)
 		{
 			Channel channelTmp = _dataProvider.getChannel(i);
-			List<Program> programList = _dataProvider.getProgramList(channelTmp.getChannelId(), timeStart, timeEnd);
+			List<Program> programList = _dataProvider.getProgramList(channelTmp.getChannelId(), startTime, endTime);
 			data.put(channelTmp, programList);
 		}
 
@@ -699,8 +698,8 @@ public class EpgGrid
 
 			if (_prevEpgRowSelectedProgram != null)
 			{
-				long prevStartTime = _prevEpgRowSelectedProgram.getStartTimeCalendar().getTimeInMillis();
-				long prevEndTime = _prevEpgRowSelectedProgram.getStopTimeCalendar().getTimeInMillis();
+				long prevStartTime = _prevEpgRowSelectedProgram.getStartTime().getTimeInMillis();
+				long prevEndTime = _prevEpgRowSelectedProgram.getStopTime().getTimeInMillis();
 				boolean isPrevProgramPlayingNow = prevStartTime <= nowMillis && prevEndTime > nowMillis;
 				long commonLengthLeft = -1;
 				int leftPosition = -1;
@@ -711,8 +710,8 @@ public class EpgGrid
 				for (int i = 0; i < numPrograms; i++)
 				{
 					Program p = (Program) epgRowAdapter.getItem(i);
-					long startTime = p.getStartTimeCalendar().getTimeInMillis();
-					long endTime = p.getStopTimeCalendar().getTimeInMillis();
+					long startTime = p.getStartTime().getTimeInMillis();
+					long endTime = p.getStopTime().getTimeInMillis();
 					boolean isProgramPlayingNow = startTime <= nowMillis && endTime > nowMillis;
 
 					// Ignore program objects that are not interesting in terms
@@ -917,11 +916,11 @@ public class EpgGrid
 
 			// Only update border cases in order not to slow down the UI
 
-			final int programStartDay = program.getStartTimeCalendar().get(Calendar.DAY_OF_MONTH);
-			final int prevProgramStartDay = prevProgram != null ? prevProgram.getStartTimeCalendar().get(
-			        Calendar.DAY_OF_MONTH) : programStartDay;
+			final int programStartDay = program.getStartTime().get(Calendar.DAY_OF_MONTH);
+			final int prevProgramStartDay = prevProgram != null ? prevProgram.getStartTime().get(Calendar.DAY_OF_MONTH)
+			        : programStartDay;
 			if (programStartDay != prevProgramStartDay)
-				updateDateTimeView(program.getStartTimeCalendar());
+				updateDateTimeView(program.getStartTime());
 
 			if (_onEpgGridItemSelectionListener != null)
 				_onEpgGridItemSelectionListener.onEpgGridItemSelected(channel, program);

@@ -83,7 +83,7 @@ public class EpgRowAdapter extends BaseAdapter
 //				+ "\n"
 //				+ program.getTitle());
 
-		long programLengthInSec = (program.getStopTimeCalendar().getTimeInMillis() - program.getStartTimeCalendar().getTimeInMillis()) / 1000;
+		long programLengthInSec = (program.getStopTime().getTimeInMillis() - program.getStartTime().getTimeInMillis()) / 1000;
 		view.setTimeInSeconds(programLengthInSec);
 
 		return view;

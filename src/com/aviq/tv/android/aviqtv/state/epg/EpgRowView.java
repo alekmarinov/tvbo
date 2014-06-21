@@ -91,7 +91,7 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 	private OnItemSelectingListener _onItemSelectingListener;
 	private OnItemSelectedListener _onItemSelectedListener;
 	private OnItemUnsetSelectionListener _onItemUnsetSelectionListener;
-	
+
 	public EpgRowView(Context context)
 	{
 		super(context);
@@ -223,7 +223,7 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 	{
 		_onItemUnsetSelectionListener = listener;
 	}
-	
+
 	/**
 	 * This method sets the background of the initially selected view during the
 	 * layout phase. It is useful when you want to have some sort of
@@ -321,7 +321,7 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 			for (int i = _firstItemPosition; i <= _lastItemPosition; i++)
 			{
 				Program p = (Program) _adapter.getItem(i);
-				if (p.getStartTimeCalendar().getTimeInMillis() < nowMillis && p.getStopTimeCalendar().getTimeInMillis() > nowMillis)
+				if (p.getStartTime().getTimeInMillis() < nowMillis && p.getStopTime().getTimeInMillis() > nowMillis)
 				{
 					_position = i;
 					break;
@@ -362,7 +362,7 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 		for (int i = 0; i < numItems; i++)
 		{
 			Program p = (Program) _adapter.getItem(i);
-			if (p.getStopTimeCalendar().getTimeInMillis() > _gridStartTimeMillis)
+			if (p.getStopTime().getTimeInMillis() > _gridStartTimeMillis)
 			{
 				_firstItemPosition = i;
 				_lastItemPosition = i - 1;
@@ -538,7 +538,7 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 			}
 			else
 			{
-				long deltaMillis = _gridStartTimeMillis - firstProgram.getStartTimeCalendar().getTimeInMillis();
+				long deltaMillis = _gridStartTimeMillis - firstProgram.getStartTime().getTimeInMillis();
 				double roundingOffset = deltaMillis > 0 ? 0.5 : -0.5;
 				long deltaMin = (long) (deltaMillis / 60000.0 + roundingOffset);
 				left = -(int) (deltaMin * firstChild.getPixelsPerOneMinute());
@@ -735,7 +735,7 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	public void setEpgRowStartTimeMillis(long gridStartTimeMillis)
 	{
 		_gridStartTimeMillis = gridStartTimeMillis;
@@ -750,7 +750,7 @@ public class EpgRowView extends AdapterView<EpgRowAdapter>
 	{
 		return _viewsBackgrounds.get(child);
 	}
-	
+
 	public static interface OnItemSelectingListener
 	{
 		/**

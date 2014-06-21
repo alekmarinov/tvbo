@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
+import com.aviq.tv.android.sdk.core.Key;
 import com.aviq.tv.android.sdk.core.Log;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
@@ -44,6 +45,14 @@ public class FeatureStateMenu extends FeatureState
 	private ViewGroup _menuContainer;
 
 	@Override
+	public void initialize(final OnFeatureInitialized onFeatureInitialized)
+	{
+		Log.i(TAG, ".initialize");
+		Environment.getInstance().getEventMessenger().register(this, Environment.ON_KEY_PRESSED);
+		super.initialize(onFeatureInitialized);
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_menu, container, false);
@@ -51,7 +60,7 @@ public class FeatureStateMenu extends FeatureState
 
 		for (final IStateMenuItem menuItemState : _menuItemStates)
 		{
-			ImageView imageView = new ImageButton(Environment.getInstance().getContext());
+			ImageView imageView = new ImageButton(Environment.getInstance());
 			imageView.setImageResource(menuItemState.getMenuItemResourceId());
 			imageView.setId(menuItemState.getMenuItemResourceId());
 			// FIXME: add background selector
@@ -72,12 +81,12 @@ public class FeatureStateMenu extends FeatureState
 			});
 
 			// create TextView with item caption
-			TextView textView = new TextView(Environment.getInstance().getContext());
+			TextView textView = new TextView(Environment.getInstance());
 			textView.setText(menuItemState.getMenuItemCaption());
-			textView.setTextAppearance(Environment.getInstance().getContext(), R.style.MenuItemCaption);
+			textView.setTextAppearance(Environment.getInstance(), R.style.MenuItemCaption);
 
 			// add item image and caption to a RelativeLayout container
-			RelativeLayout buttonContainer = new RelativeLayout(Environment.getInstance().getContext());
+			RelativeLayout buttonContainer = new RelativeLayout(Environment.getInstance());
 			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
 			        LayoutParams.WRAP_CONTENT);
 			params.addRule(RelativeLayout.CENTER_HORIZONTAL);
@@ -90,6 +99,33 @@ public class FeatureStateMenu extends FeatureState
 		}
 		_menuContainer.requestFocus();
 		return viewGroup;
+	}
+
+	@Override
+	public void onEvent(int msgId, Bundle bundle)
+	{
+		Log.i(TAG, ".onEvent: msgId = " + msgId);
+		if (Environment.ON_KEY_PRESSED == msgId)
+		{
+			// Don't reopen the MENU if already shown.
+			if (isShown())
+				return;
+
+			Key key = Key.valueOf(bundle.getString(Environment.EXTRA_KEY));
+			boolean isConsumed = bundle.getBoolean(Environment.EXTRA_KEYCONSUMED);
+			if (Key.MENU.equals(key) && !isConsumed)
+			{
+				// show this Menu state
+				try
+				{
+					Environment.getInstance().getStateManager().setStateOverlay(this, null);
+				}
+				catch (StateException e)
+				{
+					Log.e(TAG, e.getMessage(), e);
+				}
+			}
+		}
 	}
 
 	public void addMenuItemState(IStateMenuItem menuItemState)

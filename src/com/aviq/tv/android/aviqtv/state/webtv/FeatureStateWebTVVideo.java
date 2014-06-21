@@ -24,12 +24,9 @@ import android.widget.VideoView;
 
 import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.sdk.core.AVKeyEvent;
-import com.aviq.tv.android.sdk.core.Environment;
-import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
-import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 
 /**
  * EPG state feature
@@ -42,7 +39,6 @@ public class FeatureStateWebTVVideo extends FeatureState
 	public static final String ARGS_CHANNEL_NAME = "channelName";
 	public static final String ARGS_SUICIDE_TIMEOUT = "suicideTimeout";
 
-	private FeaturePlayer _featurePlayer;
 	private View _rootView;
 	private Handler _handler = new Handler();
 	private VideoView _videoView;
@@ -52,27 +48,9 @@ public class FeatureStateWebTVVideo extends FeatureState
 	private int _errorCounter = 0;
 	private RelativeLayout.LayoutParams _videoViewLayoutParams;
 
-	public FeatureStateWebTVVideo()
+	public FeatureStateWebTVVideo() throws FeatureNotFoundException
 	{
-		_dependencies.Components.add(FeatureName.Component.PLAYER);
-	}
-
-	@Override
-	public void initialize(final OnFeatureInitialized onFeatureInitialized)
-	{
-		Log.i(TAG, ".initialize");
-
-		try
-		{
-			_featurePlayer = (FeaturePlayer) Environment.getInstance().getFeatureComponent(FeatureName.Component.PLAYER);
-
-			onFeatureInitialized.onInitialized(this, ResultCode.OK);
-		}
-		catch (FeatureNotFoundException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
-			onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
-		}
+		require(FeatureName.Component.PLAYER);
 	}
 
 	@Override
@@ -87,7 +65,7 @@ public class FeatureStateWebTVVideo extends FeatureState
 		Log.i(TAG, ".onCreateView");
 
 		_rootView = inflater.inflate(R.layout.state_webtv_video, container, false);
-		_videoView = (VideoView) _featurePlayer.getView();
+		_videoView = (VideoView) _feature.Component.PLAYER.getView();
 
 		_videoView.setOnCompletionListener(new OnCompletionListener()
 		{
@@ -111,13 +89,12 @@ public class FeatureStateWebTVVideo extends FeatureState
 		//url = "http://www.nasa.gov/multimedia/nasatv/NTV-Public-IPS.m3u8";
 		//url = "http://194.230.85.52/MOVIEPATH1/Planes_SD_54062_EF_WMA_fr.wmv";
 
-		if (_featurePlayer.getPlayer().isPlaying())
-			_featurePlayer.getPlayer().stop();
+		_feature.Component.PLAYER.stop();
 
-		_mediaController = _featurePlayer.createMediaController(false);
-		_featurePlayer.play(url);
+		_mediaController = _feature.Component.PLAYER.createMediaController(false);
+		_feature.Component.PLAYER.play(url);
 
-//		_videoView = _featurePlayer.getVideoView();
+//		_videoView = _feature.Component.PLAYER.getVideoView();
 //
 //		_bufferingTimer = new Runnable()
 //		{
@@ -202,7 +179,7 @@ public class FeatureStateWebTVVideo extends FeatureState
 		_videoView.setVisibility(View.VISIBLE);
 		_videoView.setZOrderOnTop(true);
 		_videoViewLayoutParams = (RelativeLayout.LayoutParams) _videoView.getLayoutParams();
-		_featurePlayer.setFullScreen();
+		_feature.Component.PLAYER.setFullScreen();
 	}
 
 	@Override
@@ -216,13 +193,13 @@ public class FeatureStateWebTVVideo extends FeatureState
 		int y = _videoViewLayoutParams.topMargin;
 		int w = _videoViewLayoutParams.width;
 		int h = _videoViewLayoutParams.height;
-		_featurePlayer.setPositionAndSize(x, y, w, h);
+		_feature.Component.PLAYER.setPositionAndSize(x, y, w, h);
 	}
 
 	private void stopPlayback()
 	{
 		_handler.removeCallbacks(_bufferingTimer);
-		_featurePlayer.removeMediaController();
-		_featurePlayer.getPlayer().stop();
+		_feature.Component.PLAYER.removeMediaController();
+		_feature.Component.PLAYER.stop();
 	}
 }

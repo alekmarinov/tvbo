@@ -32,7 +32,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.aviq.tv.android.aviqtv.App;
 import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.aviqtv.state.tv.ZapperListView.OnScrollChangedListener;
@@ -43,8 +42,9 @@ import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
+import com.aviq.tv.android.sdk.core.state.BaseState;
 import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
-import com.aviq.tv.android.sdk.feature.channels.FeatureChannels;
+import com.aviq.tv.android.sdk.core.state.StateException;
 import com.aviq.tv.android.sdk.feature.epg.Channel;
 import com.aviq.tv.android.sdk.feature.epg.EpgData;
 import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
@@ -58,7 +58,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 {
 	public static final String TAG = FeatureStateTV.class.getSimpleName();
 	public static final DateFormat CLOCK_FORMAT = new SimpleDateFormat("HH:mm:ss EEE, MMM d, ''yy, z", Locale.US);
-	public static final int ON_TIMER = EventMessenger.ID();
+	public static final int ON_TIMER = EventMessenger.ID("ON_TIMER");
 
 	public enum Param
 	{
@@ -86,7 +86,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	private ImageView _channelLogoImageView;
 	private ViewGroup _channelInfoContainer;
 	private FeatureEPG _featureEPG;
-	private FeatureChannels _featureChannels;
 	private EpgData _epgData;
 	private FeaturePlayer _featurePlayer;
 	private ProgramBarUpdater _programBarUpdater = new ProgramBarUpdater();
@@ -96,39 +95,29 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	private ZapperListViewSelectRunnable _zapperListViewSelectRunnable = new ZapperListViewSelectRunnable();
 	private boolean _isSnappingScroll = false;
 
-	public FeatureStateTV()
+	public FeatureStateTV() throws FeatureNotFoundException
 	{
-		_dependencies.Schedulers.add(FeatureName.Scheduler.EPG);
-		_dependencies.Components.add(FeatureName.Component.CHANNELS);
-		_dependencies.Components.add(FeatureName.Component.PLAYER);
-		_dependencies.States.add(FeatureName.State.MENU);
-		_dependencies.States.add(FeatureName.State.MESSAGE_BOX);
+		require(FeatureName.Scheduler.EPG);
+		require(FeatureName.Component.CHANNELS);
+		require(FeatureName.Component.PLAYER);
+		require(FeatureName.State.MENU);
+		require(FeatureName.State.MESSAGE_BOX);
 	}
 
 	@Override
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		Log.i(TAG, ".initialize");
-		try
-		{
-			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
-			_featureChannels = (FeatureChannels) Environment.getInstance().getFeatureComponent(
-			        FeatureName.Component.CHANNELS);
-			_featurePlayer = (FeaturePlayer) Environment.getInstance()
-			        .getFeatureComponent(FeatureName.Component.PLAYER);
-			_updateProgramBarDelay = getPrefs().getInt(Param.UPDATE_PROGRAM_BAR_DELAY);
+		_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
+		_featurePlayer = (FeaturePlayer) Environment.getInstance()
+		        .getFeatureComponent(FeatureName.Component.PLAYER);
+		_updateProgramBarDelay = getPrefs().getInt(Param.UPDATE_PROGRAM_BAR_DELAY);
 
-			FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
-			        FeatureName.State.MENU);
-			featureStateMenu.addMenuItemState(this);
+		FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
+		        FeatureName.State.MENU);
+		featureStateMenu.addMenuItemState(this);
 
-			onFeatureInitialized.onInitialized(this, ResultCode.OK);
-		}
-		catch (FeatureNotFoundException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
-			onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
-		}
+		onFeatureInitialized.onInitialized(this, ResultCode.OK);
 	}
 
 	@Override
@@ -152,7 +141,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 		_zapperListView.setOnScrollChangedListener(_zapperListViewOnScrollListener);
 
-		List<Channel> favoriteChannels = _featureChannels.getFavoriteChannels();
+		List<Channel> favoriteChannels = _feature.Component.CHANNELS.getActiveChannels();
 		for (Channel channel : favoriteChannels)
 		{
 			Bitmap bmp = _epgData.getChannelLogoBitmap(channel.getIndex());
@@ -174,10 +163,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			if (channelId != null)
 			{
 				// Switching channel requested
-				Channel channel = _epgData.getChannel(channelId);
-				int globalIndex = channel.getIndex();
-				String streamUrl = _featureEPG.getChannelStreamUrl(globalIndex);
-				_featurePlayer.play(streamUrl);
+				_feature.Component.CHANNELS.play(channelId);
 			}
 		}
 		return _viewGroup;
@@ -194,7 +180,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	private void onSelectChannelIndex(int channelIndex, int x, int y)
 	{
 		// Update selected channel number and logo
-		int globalIndex = _featureChannels.getFavoriteChannels().get(channelIndex).getIndex();
+		int globalIndex = _feature.Component.CHANNELS.getActiveChannels().get(channelIndex).getIndex();
 		_channelNoTextView.setText(String.valueOf(channelIndex + 1));
 		_channelLogoImageView.setImageBitmap(_epgData.getChannelLogoBitmap(globalIndex));
 
@@ -202,16 +188,13 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		// _channelLogoImageView.setX(x);
 		float channelY = y - channelIndex * _zapperListView.getItemHeight() - _channelInfoContainer.getY();
 		_channelLogoImageView.setY(channelY);
-
 		// Update program bar
 		updateProgramBar(_epgData.getChannel(globalIndex), Calendar.getInstance());
 	}
 
 	private void onSwitchChannelIndex(int channelIndex)
 	{
-		int globalIndex = _featureChannels.getFavoriteChannels().get(channelIndex).getIndex();
-		String streamUrl = _featureEPG.getChannelStreamUrl(globalIndex);
-		_featurePlayer.play(streamUrl);
+		_feature.Component.CHANNELS.play(channelIndex);
 	}
 
 	private void updateClock()
@@ -310,8 +293,8 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			{
 				try
 				{
-					Calendar startTime = parseDateTime(currentProgram.getStartTime());
-					Calendar endTime = parseDateTime(currentProgram.getStopTime());
+					Calendar startTime = currentProgram.getStartTime();
+					Calendar endTime = currentProgram.getStopTime();
 
 					long elapsed = When.getTimeInMillis() - startTime.getTimeInMillis();
 					long total = endTime.getTimeInMillis() - startTime.getTimeInMillis();
@@ -368,15 +351,9 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			}
 		}
 
-		private Calendar parseDateTime(String dateTime) throws ParseException
+		private String parseDateTimeToHourMins(Calendar dateTime) throws ParseException
 		{
-			return Program.getEpgTime(dateTime);
-		}
-
-		private String parseDateTimeToHourMins(String dateTime) throws ParseException
-		{
-			Calendar startTime = parseDateTime(dateTime);
-			return TIME_FORMAT.format(startTime.getTime());
+			return TIME_FORMAT.format(dateTime.getTime());
 		}
 	}
 
@@ -438,7 +415,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 	private void prepareVideoViewTouchGestures()
 	{
-		Display display = Environment.getInstance().getActivity().getWindowManager().getDefaultDisplay();
+		Display display = Environment.getInstance().getWindowManager().getDefaultDisplay();
 		Point size = new Point();
 		display.getSize(size);
 		int deviceScreenWidth = size.x;
@@ -467,7 +444,15 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 				if (_displayTopTouchZone.contains(x, y))
 				{
-					((App) Environment.getInstance().getActivity().getApplication()).showFeatureStateMenu();
+					BaseState menuState = Environment.getInstance().getFeatureState(FeatureName.State.MENU);
+					try
+                    {
+	                    Environment.getInstance().getStateManager().setStateOverlay(menuState, null);
+                    }
+                    catch (StateException e)
+                    {
+                    	Log.e(TAG, e.getMessage(), e);
+                    }
 				}
 
 				return true;
@@ -530,7 +515,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			_isSnappingScroll = false;
         }
 	};
-
 	private class ZapperListViewSelectRunnable implements Runnable
 	{
 		@Override

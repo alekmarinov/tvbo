@@ -55,37 +55,29 @@ public class FeatureStateProgramInfo extends FeatureState
 	private String _channelId;
 	private String _programId;
 
-	public FeatureStateProgramInfo()
+	public FeatureStateProgramInfo() throws FeatureNotFoundException
 	{
-		_dependencies.Schedulers.add(FeatureName.Scheduler.EPG);
-		_dependencies.Components.add(FeatureName.Component.PLAYER);
-		_dependencies.States.add(FeatureName.State.TV);
+		require(FeatureName.Scheduler.EPG);
+		require(FeatureName.Component.PLAYER);
+		require(FeatureName.State.TV);
 	}
 
 	@Override
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		Log.i(TAG, ".initialize");
-		try
-		{
-			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
-			_featurePlayer = (FeaturePlayer) Environment.getInstance()
-			        .getFeatureComponent(FeatureName.Component.PLAYER);
+		_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
+		_featurePlayer = (FeaturePlayer) Environment.getInstance()
+		        .getFeatureComponent(FeatureName.Component.PLAYER);
 
-			if (Environment.getInstance().hasFeature(FeatureName.Component.WATCHLIST))
-			{
-				_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
-				        FeatureName.Component.WATCHLIST);
-			}
-
-			_featureStateTV = (FeatureStateTV) Environment.getInstance().getFeatureState(FeatureName.State.TV);
-			onFeatureInitialized.onInitialized(this, ResultCode.OK);
-		}
-		catch (FeatureNotFoundException e)
+		if (Environment.getInstance().getFeatureManager().hasFeature(FeatureName.Component.WATCHLIST))
 		{
-			Log.e(TAG, e.getMessage(), e);
-			onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
+			_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
+			        FeatureName.Component.WATCHLIST);
 		}
+
+		_featureStateTV = (FeatureStateTV) Environment.getInstance().getFeatureState(FeatureName.State.TV);
+		onFeatureInitialized.onInitialized(this, ResultCode.OK);
 	}
 
 	@Override
@@ -109,7 +101,7 @@ public class FeatureStateProgramInfo extends FeatureState
 		_channelId = params.getString(ARGS_CHANNEL_ID);
 		_programId = params.getString(ARGS_PROGRAM_ID);
 
-		Program program = _epgData.getProgram(_channelId, _programId);
+		Program program = _epgData.getProgramById(_channelId, _programId);
 
 		// Show detailed program info
 		_programInfo = new EpgProgramInfo(getActivity(), viewGroup);
@@ -171,7 +163,7 @@ public class FeatureStateProgramInfo extends FeatureState
 			{
 				case R.string.play:
 				{
-					Program program = _epgData.getProgram(_channelId, _programId);
+					Program program = _epgData.getProgramById(_channelId, _programId);
 					Bundle bundle = new Bundle();
 					bundle.putString("PROGRAM", program.getId());
 					bundle.putString("CHANNEL", program.getChannel().getChannelId());
@@ -188,7 +180,7 @@ public class FeatureStateProgramInfo extends FeatureState
 
 				case R.string.addToWatchlist:
 				{
-					Program program = _epgData.getProgram(_channelId, _programId);
+					Program program = _epgData.getProgramById(_channelId, _programId);
 
 					Log.d(TAG, ".onClick: btn watchlist clicked on channel = " + _channelId + ", programID "
 					        + _programId);
@@ -201,7 +193,7 @@ public class FeatureStateProgramInfo extends FeatureState
 
 				case R.string.removeFromWatchlist:
 				{
-					Program program = _epgData.getProgram(_channelId, _programId);
+					Program program = _epgData.getProgramById(_channelId, _programId);
 
 					Log.d(TAG, ".onClick: btn watchlist clicked on channel = " + _channelId + ", programID "
 					        + _programId);

@@ -57,12 +57,12 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	private ThumbnailsView _myChannelsGrid;
 	private int _lockedItemPosition;
 
-	public FeatureStateChannels()
+	public FeatureStateChannels() throws FeatureNotFoundException
 	{
-		_dependencies.Components.add(FeatureName.Component.PLAYER);
-		_dependencies.Schedulers.add(FeatureName.Scheduler.EPG);
-		_dependencies.Components.add(FeatureName.Component.CHANNELS);
-		_dependencies.States.add(FeatureName.State.MENU);
+		require(FeatureName.Component.PLAYER);
+		require(FeatureName.Scheduler.EPG);
+		require(FeatureName.Component.CHANNELS);
+		require(FeatureName.State.MENU);
 	}
 
 	private enum StatusBarState
@@ -80,30 +80,22 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		Log.i(TAG, ".initialize");
-		try
-		{
-			FeatureEPG featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(
-			        FeatureName.Scheduler.EPG);
-			_epgData = featureEPG.getEpgData();
-			_featureChannels = (FeatureChannels) Environment.getInstance().getFeatureComponent(
-			        FeatureName.Component.CHANNELS);
-			_featureChannels.setUseFavorites(true);
+		FeatureEPG featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(
+		        FeatureName.Scheduler.EPG);
+		_epgData = featureEPG.getEpgData();
+		_featureChannels = (FeatureChannels) Environment.getInstance().getFeatureComponent(
+		        FeatureName.Component.CHANNELS);
+		_featureChannels.setUseFavorites(true);
 
-			_featurePlayer = (FeaturePlayer) Environment.getInstance()
-			        .getFeatureComponent(FeatureName.Component.PLAYER);
+		_featurePlayer = (FeaturePlayer) Environment.getInstance()
+		        .getFeatureComponent(FeatureName.Component.PLAYER);
 
-			// insert in Menu
-			FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
-			        FeatureName.State.MENU);
-			featureStateMenu.addMenuItemState(this);
+		// insert in Menu
+		FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
+		        FeatureName.State.MENU);
+		featureStateMenu.addMenuItemState(this);
 
-			onFeatureInitialized.onInitialized(this, ResultCode.OK);
-		}
-		catch (FeatureNotFoundException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
-			onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
-		}
+		onFeatureInitialized.onInitialized(this, ResultCode.OK);
 	}
 
 	@Override
@@ -198,14 +190,11 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 				_allChannelsGrid.addThumbItem(channel);
 		}
 
-		// Add all favorite channels if they ever changed
-		if (_featureChannels.isEverChanged())
+		// Add all active channels
+		for (Channel channel : _featureChannels.getActiveChannels())
 		{
-			for (Channel channel : _featureChannels.getFavoriteChannels())
-			{
-				Log.i(TAG, "Add channel " + channel);
-				_myChannelsGrid.addThumbItem(channel);
-			}
+			Log.i(TAG, "Add channel " + channel);
+			_myChannelsGrid.addThumbItem(channel);
 		}
 
 		_allChannelsGrid.setOnItemClickListener(new OnItemClickListener()

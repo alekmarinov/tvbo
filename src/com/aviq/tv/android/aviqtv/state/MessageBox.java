@@ -35,7 +35,7 @@ public class MessageBox extends FeatureState
 {
 	private static final String TAG = MessageBox.class.getSimpleName();
 
-	public static final int ON_BUTTON_PRESSED = EventMessenger.ID();
+	public static final int ON_BUTTON_PRESSED = EventMessenger.ID("ON_BUTTON_PRESSED");
 
 	private View _rootView;
 	private ContextButtonGroup _contextButtonGroup;

@@ -20,7 +20,6 @@ import android.widget.ProgressBar;
 import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.Prefs;
-import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureName.State;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
@@ -34,6 +33,7 @@ import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 public class FeatureStateLoading extends FeatureState
 {
 	public static final String TAG = FeatureStateLoading.class.getSimpleName();
+
 	public enum Param
 	{
 		/**
@@ -51,35 +51,31 @@ public class FeatureStateLoading extends FeatureState
 	private ViewGroup _rootView;
 	private Prefs _userPrefs;
 
-	public FeatureStateLoading()
+	public FeatureStateLoading() throws FeatureNotFoundException
 	{
-		_dependencies.Components.add(FeatureName.Component.PLAYER);
+		require(FeatureName.Component.PLAYER);
 
-		Environment.getInstance().getEventMessenger().register(this, Environment.ON_LOADING);
-		Environment.getInstance().getEventMessenger().register(this, Environment.ON_LOADED);
+		Environment.getInstance().getEventMessenger().register(this, Environment.ON_INITIALIZE);
+		subscribe(Environment.getInstance().getEventMessenger(), Environment.ON_LOADING);
+		subscribe(Environment.getInstance().getEventMessenger(), Environment.ON_LOADED);
+		subscribe(Environment.getInstance().getEventMessenger(), Environment.ON_FEATURE_INIT_ERROR);
 	}
 
 	@Override
-    public void initialize(OnFeatureInitialized onInitialized)
+	public void initialize(OnFeatureInitialized onInitialized)
 	{
-        try
-        {
-        	FeaturePlayer featurePlayer = (FeaturePlayer)Environment.getInstance().getFeatureComponent(FeatureName.Component.PLAYER);
-			subscribe(featurePlayer, FeaturePlayer.ON_PLAY_STARTED);
-			subscribe(featurePlayer, FeaturePlayer.ON_PLAY_TIMEOUT);
+		FeaturePlayer featurePlayer = (FeaturePlayer) Environment.getInstance().getFeatureComponent(
+		        FeatureName.Component.PLAYER);
+		subscribe(featurePlayer, FeaturePlayer.ON_PLAY_STARTED);
+		subscribe(featurePlayer, FeaturePlayer.ON_PLAY_TIMEOUT);
 
-			_userPrefs = Environment.getInstance().getUserPrefs();
-			if (_userPrefs.has(FeaturePlayer.UserParam.LAST_URL))
-			{
-				featurePlayer.play(_userPrefs.getString(FeaturePlayer.UserParam.LAST_URL));
-			}
+		_userPrefs = Environment.getInstance().getUserPrefs();
+		if (_userPrefs.has(FeaturePlayer.UserParam.LAST_URL))
+		{
+			featurePlayer.play(_userPrefs.getString(FeaturePlayer.UserParam.LAST_URL));
+		}
 
-			super.initialize(onInitialized);
-        }
-        catch (FeatureNotFoundException e)
-        {
-        	onInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
-        }
+		super.initialize(onInitialized);
 	}
 
 	@Override
@@ -88,7 +84,7 @@ public class FeatureStateLoading extends FeatureState
 		Log.i(TAG, ".onCreateView");
 		_rootView = (ViewGroup) inflater.inflate(R.layout.state_loading, container, false);
 		_progressBar = (ProgressBar) _rootView.findViewById(R.id.load_progress);
-		updateLoadingInfo(null, 0, 0);
+		updateLoadingInfo(null, 0);
 		return _rootView;
 	}
 
@@ -96,12 +92,22 @@ public class FeatureStateLoading extends FeatureState
 	public void onEvent(int msgId, Bundle bundle)
 	{
 		Log.i(TAG, ".onEvent: msgId = " + msgId);
-		if (msgId == Environment.ON_LOADING)
+		if (msgId == Environment.ON_INITIALIZE)
 		{
-			float totalProgress = bundle.getFloat("totalProgress");
-			float featureProgress = bundle.getFloat("featureProgress");
+			try
+			{
+				Environment.getInstance().getStateManager().setStateMain(this, null);
+			}
+			catch (StateException e)
+			{
+				Log.e(TAG, e.getMessage(), e);
+			}
+		}
+		else if (msgId == Environment.ON_LOADING)
+		{
+			float progress = bundle.getFloat("progress");
 			String featureName = bundle.getString("featureName");
-			updateLoadingInfo(featureName, totalProgress, featureProgress);
+			updateLoadingInfo(featureName, progress);
 		}
 		else if (msgId == Environment.ON_LOADED)
 		{
@@ -122,11 +128,11 @@ public class FeatureStateLoading extends FeatureState
 		return FeatureName.State.LOADING;
 	}
 
-	private void updateLoadingInfo(String featureName, float totalProgress, float featureProgress)
+	private void updateLoadingInfo(String featureName, float progress)
 	{
-		int progress = (int) (100 * totalProgress);
-		Log.d(TAG, featureName + " load progress " + (int) (100 * featureProgress) + "%, total " + progress + "%");
-		_progressBar.setProgress(progress);
+		int nProgress = (int) (100 * progress);
+		Log.d(TAG, featureName + " load progress " + nProgress + "%");
+		_progressBar.setProgress(nProgress);
 	}
 
 	private void showHomeState()
@@ -138,10 +144,6 @@ public class FeatureStateLoading extends FeatureState
 		{
 			FeatureState featureState = Environment.getInstance().getFeatureState(homeFeatureState);
 			Environment.getInstance().getStateManager().setStateMain(featureState, null);
-		}
-		catch (FeatureNotFoundException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
 		}
 		catch (StateException e)
 		{

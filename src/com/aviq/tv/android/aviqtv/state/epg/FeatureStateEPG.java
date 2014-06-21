@@ -37,10 +37,7 @@ import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
 import com.aviq.tv.android.sdk.core.state.StateException;
 import com.aviq.tv.android.sdk.feature.epg.Channel;
-import com.aviq.tv.android.sdk.feature.epg.EpgData;
-import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
 import com.aviq.tv.android.sdk.feature.epg.Program;
-import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 
 /**
  * EPG state feature
@@ -49,8 +46,6 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 {
 	public static final String TAG = FeatureStateEPG.class.getSimpleName();
 
-	private FeatureEPG _featureEPG;
-	private FeaturePlayer _featurePlayer;
 	private EpgGrid _epgGrid;
 	private EpgHeaderView _gridHeader;
 	private EpgListView _gridList;
@@ -59,39 +54,27 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 	private View _videoPlaceHolder;
 	private View _rootView;
 	private ImageView _gridTimebar;
+	private ViewGroup _gridLoadingProgressContainer;
 
-	private EpgData _epgData;
-
-	public FeatureStateEPG()
+	public FeatureStateEPG() throws FeatureNotFoundException
 	{
-		_dependencies.Schedulers.add(FeatureName.Scheduler.EPG);
-		_dependencies.Components.add(FeatureName.Component.PLAYER);
-		_dependencies.States.add(FeatureName.State.MENU);
-		_dependencies.States.add(FeatureName.State.PROGRAM_INFO);
-		_dependencies.States.add(FeatureName.State.MESSAGE_BOX);
+		require(FeatureName.Scheduler.EPG);
+		require(FeatureName.Component.PLAYER);
+		require(FeatureName.State.MENU);
+		require(FeatureName.State.PROGRAM_INFO);
+		require(FeatureName.State.MESSAGE_BOX);
 	}
 
 	@Override
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		Log.i(TAG, ".initialize");
-		try
-		{
-			_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
-			_featurePlayer = (FeaturePlayer) Environment.getInstance()
-			        .getFeatureComponent(FeatureName.Component.PLAYER);
 
-			FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
-			        FeatureName.State.MENU);
-			featureStateMenu.addMenuItemState(this);
+		FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
+		        FeatureName.State.MENU);
+		featureStateMenu.addMenuItemState(this);
 
-			onFeatureInitialized.onInitialized(this, ResultCode.OK);
-		}
-		catch (FeatureNotFoundException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
-			onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
-		}
+		onFeatureInitialized.onInitialized(this, ResultCode.OK);
 	}
 
 	@Override
@@ -120,19 +103,20 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		Log.i(TAG, ".onCreateView");
 
 		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_epg, container, false);
+		_rootView = viewGroup;
 		_dateTimeView = (TextView) viewGroup.findViewById(R.id.datetime);
 		_gridHeader = (EpgHeaderView) viewGroup.findViewById(R.id.time_list);
 		_gridList = (EpgListView) viewGroup.findViewById(R.id.gridList);
 		_gridTimebar = (ImageView) viewGroup.findViewById(R.id.timebar);
+		_gridLoadingProgressContainer = (ViewGroup) viewGroup.findViewById(R.id.loading_progress_container);
 
 		ViewGroup programInfoContainer = (ViewGroup) viewGroup.findViewById(R.id.infoarea_program);
 		_programInfo = new EpgProgramInfo(getActivity(), programInfoContainer);
 		_videoPlaceHolder = viewGroup.findViewById(R.id.videoview_placeholder);
 
-		_rootView = viewGroup;
 
 		// Hide player while view is relayouting and show it by the global layout listener
-		_featurePlayer.hide();
+		_feature.Component.PLAYER.hide();
 
 		initEpgGridOnGlobalLayout();
 
@@ -177,27 +161,31 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 			{
 				_gridHeader.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
-				View container = _rootView.findViewById(R.id.infoarea_program);
+				getEventMessenger().postDelayed(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						initEpgGrid();
+						_gridLoadingProgressContainer.setVisibility(View.INVISIBLE);
+						View container = _rootView.findViewById(R.id.infoarea_program);
 
-				int x = (int)(_rootView.getX() + container.getX() + _videoPlaceHolder.getX());
-				int y = (int)(_rootView.getY() + container.getY() + _videoPlaceHolder.getY());
-				int w = _videoPlaceHolder.getWidth();
-				int h = _videoPlaceHolder.getHeight();
-				_featurePlayer.setPositionAndSize(x, y, w, h);
-
-				// This method relies on the width of the _gridHeader widget. In
-				// onResume() it is still zero, therefore, we get it from the
-				// OnGlobalLayoutListener.
-				initEpgGrid();
+						int x = (int)(_rootView.getX() + container.getX() + _videoPlaceHolder.getX());
+						int y = (int)(_rootView.getY() + container.getY() + _videoPlaceHolder.getY());
+						int w = _videoPlaceHolder.getWidth();
+						int h = _videoPlaceHolder.getHeight();
+						_feature.Component.PLAYER.setPositionAndSize(x, y, w, h);
+					}
+				}, 300);
 			}
 		});
 	}
 
 	private void initEpgGrid()
 	{
-		_epgData = _featureEPG.getEpgData();
+		Log.i(TAG, ".initEpgGrid");
 		_epgGrid = new EpgGrid(getActivity());
-		_epgGrid.setDataProvider(_epgData);
+		_epgGrid.setDataProvider(_feature.Scheduler.EPG.getEpgData());
 
 		setEpgGridHeaderAbsMinTime();
 		setEpgGridHeaderAbsMaxTime();
@@ -209,7 +197,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 		_epgGrid.setEpgListView(_gridList);
 
 		// FIXME: get current channel
-		Channel channel = _epgData.getChannel(0);
+		Channel channel = _feature.Scheduler.EPG.getEpgData().getChannel(0);
 		_epgGrid.setSelectedChannel(channel);
 		_epgGrid.setOnEpgGridItemSelection(_onEpgGridItemSelectionListener);
 		_epgGrid.prepareEpg();
@@ -219,7 +207,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 	{
 		Calendar now = Calendar.getInstance();
 
-		int hoursBack = (int) Math.abs((now.getTimeInMillis() - _epgData.getMinEpgStartTime().getTimeInMillis())
+		int hoursBack = (int) Math.abs((now.getTimeInMillis() - _feature.Scheduler.EPG.getEpgData().getMinEpgStartTime().getTimeInMillis())
 		        / (1000 * 60 * 60));
 		Calendar absMin = Calendar.getInstance();
 		absMin.add(Calendar.HOUR_OF_DAY, -hoursBack);
@@ -230,7 +218,7 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 	{
 		Calendar now = Calendar.getInstance();
 
-		int hoursAhead = (int) Math.abs((now.getTimeInMillis() - _epgData.getMaxEpgStopTime().getTimeInMillis())
+		int hoursAhead = (int) Math.abs((now.getTimeInMillis() - _feature.Scheduler.EPG.getEpgData().getMaxEpgStopTime().getTimeInMillis())
 		        / (1000 * 60 * 60));
 		Calendar absMax = Calendar.getInstance();
 		absMax.add(Calendar.HOUR_OF_DAY, hoursAhead);
@@ -249,10 +237,6 @@ public class FeatureStateEPG extends FeatureState implements IStateMenuItem
 			featureParams.putString(FeatureStateProgramInfo.ARGS_PROGRAM_ID, programId);
 
 			Environment.getInstance().getStateManager().setStateOverlay(programInfo, featureParams);
-		}
-		catch (FeatureNotFoundException e)
-		{
-			Log.e(TAG, e.getMessage(), e);
 		}
 		catch (StateException e)
 		{

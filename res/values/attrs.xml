@@ -21,6 +21,7 @@
     <attr name="listitem_size" format="dimension" />
     <attr name="selectionIndex" format="integer" />
     
+    <!-- ZapperListView -->
     <declare-styleable name="ZapperListView">
         <attr name="selectedPosition" />
         <attr name="visibleItems" />
