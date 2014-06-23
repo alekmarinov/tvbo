@@ -4,7 +4,7 @@
         <feature class="com.aviq.tv.android.sdk.feature.rcu.FeatureRCUSDMC" />
         <feature class="com.aviq.tv.android.sdk.feature.channels.FeatureChannels" />
         <feature class="com.aviq.tv.android.sdk.feature.player.FeaturePlayer" />
-        <feature class="com.aviq.tv.android.sdk.feature.player.FeatureStreamerRayV" />
+        <feature class="com.aviq.tv.android.sdk.feature.player.zattoo.FeatureStreamerZattoo" />
         <feature class="com.aviq.tv.android.sdk.feature.httpserver.FeatureHttpServer" />
         <feature class="com.aviq.tv.android.sdk.feature.system.FeatureSystem" />
         <feature class="com.aviq.tv.android.sdk.feature.system.FeatureNethogs" />
@@ -17,7 +17,7 @@
         <feature class="com.aviq.tv.android.sdk.feature.rpc.FeatureLuaRPC" />
         <feature class="com.aviq.tv.android.sdk.core.feature.easteregg.FeatureEasterEgg" />
         <feature class="com.aviq.tv.android.sdk.feature.crashlog.FeatureCrashLog" />
-        <feature class="com.aviq.tv.android.sdk.feature.epg.rayv.FeatureEPGRayV" />
+        <feature class="com.aviq.tv.android.sdk.feature.epg.zattoo.FeatureEPGZattoo" />
         <feature class="com.aviq.tv.android.sdk.feature.language.FeatureLanguage" />
         <feature class="com.aviq.tv.android.sdk.feature.upgrade.FeatureUpgrade" />
         <feature class="com.aviq.tv.android.sdk.feature.internet.FeatureInternet" />
