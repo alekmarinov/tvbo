@@ -70,4 +70,10 @@
     <string name="msg_title_error">Грешка</string>
     <string name="error_permission_network_config">Няма права за конфигурация на мрежата</string>
 
+    <!-- FIXME: Network Wizard -->
+    <string name="network_connecting">СВЪРЗВАНЕ С ИНТЕРНЕТ</string>
+    <string name="network_error">ПРОБЛЕМ С ИНТЕРНЕТ ВРЪЗКАТА</string>
+    <string name="network_retry_button">Отново</string>
+    <string name="network_settings_button">Настройки</string>
+
 </resources>

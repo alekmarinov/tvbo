@@ -1,0 +1,56 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/update_error_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/wizards_background" >
+
+    <View
+        android:id="@+id/center1"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:layout_centerInParent="true"
+        android:focusable="false"
+        android:background="@android:color/transparent" />
+
+    <TextView
+        android:id="@+id/network_error_text"
+        style="@style/WizardText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/center1"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="30dp"
+        android:focusable="false"
+        android:text="@string/network_error" />
+
+    <Button
+        android:id="@+id/retry_button"
+        style="@style/WizardButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/center1"
+        android:layout_marginRight="20dp"
+        android:layout_toLeftOf="@id/center1"
+        android:background="@drawable/button_retry_selector"
+        android:nextFocusRight="@+id/settings_button"
+        android:focusableInTouchMode="false"
+        android:focusable="true"
+        android:text="@string/network_retry_button" >
+    </Button>
+
+    <Button
+        android:id="@+id/settings_button"
+        style="@style/WizardButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/center1"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@id/center1"
+        android:background="@drawable/button_settings_selector"
+        android:nextFocusLeft="@+id/retry_button"
+        android:focusableInTouchMode="false"
+        android:focusable="true"
+        android:text="@string/network_settings_button" />
+
+</RelativeLayout>

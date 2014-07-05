@@ -58,4 +58,7 @@
     <dimen name="editfield_height">74dp</dimen>
     
 	<dimen name="textfield_size">28sp</dimen>
+
+    <!-- FIXME: Network Wizard -->
+    <dimen name="wizard_text_size_normal">36sp</dimen>
 </resources>

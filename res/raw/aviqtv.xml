@@ -4,7 +4,7 @@
         <feature class="com.aviq.tv.android.sdk.feature.rcu.FeatureRCUSDMC" />
         <feature class="com.aviq.tv.android.sdk.feature.channels.FeatureChannels" />
         <feature class="com.aviq.tv.android.sdk.feature.player.FeaturePlayer" />
-        <feature class="com.aviq.tv.android.sdk.feature.player.zattoo.FeatureStreamerZattoo" />
+        <feature class="com.aviq.tv.android.sdk.feature.player.FeatureStreamer" />
         <feature class="com.aviq.tv.android.sdk.feature.httpserver.FeatureHttpServer" />
         <feature class="com.aviq.tv.android.sdk.feature.system.FeatureSystem" />
         <feature class="com.aviq.tv.android.sdk.feature.system.FeatureNethogs" />
@@ -17,7 +17,7 @@
         <feature class="com.aviq.tv.android.sdk.feature.rpc.FeatureLuaRPC" />
         <feature class="com.aviq.tv.android.sdk.core.feature.easteregg.FeatureEasterEgg" />
         <feature class="com.aviq.tv.android.sdk.feature.crashlog.FeatureCrashLog" />
-        <feature class="com.aviq.tv.android.sdk.feature.epg.zattoo.FeatureEPGZattoo" />
+        <feature class="com.aviq.tv.android.sdk.feature.epg.bulsat.FeatureEPGBulsat" />
         <feature class="com.aviq.tv.android.sdk.feature.language.FeatureLanguage" />
         <feature class="com.aviq.tv.android.sdk.feature.upgrade.FeatureUpgrade" />
         <feature class="com.aviq.tv.android.sdk.feature.internet.FeatureInternet" />
@@ -28,6 +28,8 @@
         <feature class="com.aviq.tv.android.aviqtv.state.tv.FeatureStateTV" />
         <feature class="com.aviq.tv.android.aviqtv.state.epg.FeatureStateEPG" />
         <feature class="com.aviq.tv.android.aviqtv.state.MessageBox" />
+        <feature class="com.aviq.tv.android.aviqtv.state.wizard.FeatureStateNetworkWizard" />
+        <feature class="com.aviq.tv.android.aviqtv.state.wizard.FeatureStateNetworkError" />
         <feature class="com.aviq.tv.android.aviqtv.state.programinfo.FeatureStateProgramInfo" />
         <feature class="com.aviq.tv.android.aviqtv.state.channels.FeatureStateChannels" />
         <feature class="com.aviq.tv.android.aviqtv.state.webtv.FeatureStateWebTV" />
@@ -37,6 +39,7 @@
     </features>
 
     <use>
+        <state name="NETWORK_WIZARD" />
         <state name="EPG" />
         <state name="CHANNELS" />
         <state name="TV" />

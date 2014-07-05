@@ -95,4 +95,14 @@
         <item name="android:paddingLeft">30dp</item>
     </style>
 
+    <!-- FIXME: Network Wizard -->
+    <style name="WizardButton">
+        <item name="android:textColor">@color/wizard_text_normal</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+    <style name="WizardText">
+        <item name="android:textColor">@color/wizard_text_normal</item>
+        <item name="android:textSize">@dimen/wizard_text_size_normal</item>
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+    </style>
 </resources>
