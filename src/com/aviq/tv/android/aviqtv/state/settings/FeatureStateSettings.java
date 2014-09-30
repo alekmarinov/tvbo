@@ -30,7 +30,6 @@ import com.aviq.tv.android.aviqtv.state.StatusBar;
 import com.aviq.tv.android.aviqtv.state.ThumbnailsView;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.sdk.core.Environment;
-import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
@@ -74,7 +73,7 @@ public class FeatureStateSettings extends FeatureState implements IStateMenuItem
 		_featurePlayer = (FeaturePlayer) Environment.getInstance()
 		        .getFeatureComponent(FeatureName.Component.PLAYER);
 
-		onFeatureInitialized.onInitialized(this, ResultCode.OK);
+		super.initialize(onFeatureInitialized);
 	}
 
 	@Override

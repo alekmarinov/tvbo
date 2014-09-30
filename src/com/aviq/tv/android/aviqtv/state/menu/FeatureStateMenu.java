@@ -30,10 +30,12 @@ import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.Key;
 import com.aviq.tv.android.sdk.core.Log;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
+import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.BaseState;
 import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
 import com.aviq.tv.android.sdk.core.state.StateException;
+import com.aviq.tv.android.sdk.feature.rcu.FeatureRCU;
 
 /**
  * Menu state implementation
@@ -44,11 +46,16 @@ public class FeatureStateMenu extends FeatureState
 	private List<IStateMenuItem> _menuItemStates = new ArrayList<IStateMenuItem>();
 	private ViewGroup _menuContainer;
 
+	public FeatureStateMenu() throws FeatureNotFoundException
+	{
+		require(FeatureName.Component.RCU);
+	}
+
 	@Override
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		Log.i(TAG, ".initialize");
-		Environment.getInstance().getEventMessenger().register(this, Environment.ON_KEY_PRESSED);
+		_feature.Component.RCU.getEventMessenger().register(this, FeatureRCU.ON_KEY_PRESSED);
 		super.initialize(onFeatureInitialized);
 	}
 
@@ -105,7 +112,7 @@ public class FeatureStateMenu extends FeatureState
 	public void onEvent(int msgId, Bundle bundle)
 	{
 		Log.i(TAG, ".onEvent: msgId = " + msgId);
-		if (Environment.ON_KEY_PRESSED == msgId)
+		if (FeatureRCU.ON_KEY_PRESSED == msgId)
 		{
 			// Don't reopen the MENU if already shown.
 			if (isShown())

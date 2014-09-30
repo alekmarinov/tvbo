@@ -34,7 +34,6 @@ import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.aviqtv.state.programinfo.FeatureStateProgramInfo;
 import com.aviq.tv.android.aviqtv.state.tv.FeatureStateTV;
 import com.aviq.tv.android.sdk.core.Environment;
-import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
@@ -98,7 +97,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 
 		_watchlist.getEventMessenger().register(this, FeatureWatchlist.ON_PROGRAM_NOTIFY);
 
-		onFeatureInitialized.onInitialized(this, ResultCode.OK);
+		super.initialize(onFeatureInitialized);
 	}
 
 	@Override

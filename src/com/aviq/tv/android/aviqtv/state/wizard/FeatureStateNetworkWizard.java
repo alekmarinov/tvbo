@@ -21,6 +21,7 @@ import com.aviq.tv.android.sdk.core.EventMessenger;
 import com.aviq.tv.android.sdk.core.EventReceiver;
 import com.aviq.tv.android.sdk.core.Log;
 import com.aviq.tv.android.sdk.core.ResultCode;
+import com.aviq.tv.android.sdk.core.feature.FeatureError;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
@@ -44,9 +45,7 @@ public class FeatureStateNetworkWizard extends FeatureState
 		 * The timeout in ms to connect to internet before displaying connecting
 		 * notification
 		 */
-		DISPLAY_CONNECTING_TIMEOUT(10000),
-
-		INTERNET_CHECK_URL("http://www.google.com");
+		DISPLAY_CONNECTING_TIMEOUT(10000);
 
 		Param(int value)
 		{
@@ -102,13 +101,14 @@ public class FeatureStateNetworkWizard extends FeatureState
 
 			// checking internet connection may exceed the allowed init timeout
 			env.getFeatureManager().stopInitTimeout();
-			_feature.Scheduler.INTERNET.startCheckUrl(getPrefs().getString(Param.INTERNET_CHECK_URL));
+
+			// checks internet
 			checkInternet();
 		}
 		catch (FeatureNotFoundException e)
 		{
 			Log.e(TAG, e.getMessage(), e);
-			onFeatureInitialized.onInitialized(this, ResultCode.GENERAL_FAILURE);
+			onFeatureInitialized.onInitialized(new FeatureError(this, ResultCode.GENERAL_FAILURE));
 		}
 	}
 
@@ -127,12 +127,12 @@ public class FeatureStateNetworkWizard extends FeatureState
 		_feature.Scheduler.INTERNET.checkInternet(new OnResultReceived()
 		{
 			@Override
-			public void onReceiveResult(int resultCode, Bundle resultData)
+			public void onReceiveResult(FeatureError error)
 			{
-				Log.i(TAG, ".checkInternet.onReceiveResult: resultCode = " + resultCode);
+				Log.i(TAG, ".checkInternet.onReceiveResult: resultCode = " + error.getErrorCode());
 				getEventMessenger().removeCallbacks(_showOverlayDelayed);
 				close();
-				if (resultCode != ResultCode.OK)
+				if (error.isError())
 				{
 					// switch to network error state
 					try
@@ -157,8 +157,7 @@ public class FeatureStateNetworkWizard extends FeatureState
 					catch (StateException e)
 					{
 						Log.e(TAG, e.getMessage(), e);
-						_onFeatureInitialized.onInitialized(FeatureStateNetworkWizard.this,
-						        ResultCode.GENERAL_FAILURE);
+						_onFeatureInitialized.onInitialized(error);
 					}
 				}
 				else

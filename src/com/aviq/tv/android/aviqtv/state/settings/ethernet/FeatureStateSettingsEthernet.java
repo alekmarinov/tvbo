@@ -29,7 +29,6 @@ import com.aviq.tv.android.aviqtv.state.settings.FeatureStateSettings;
 import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.Key;
-import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
@@ -82,7 +81,7 @@ public class FeatureStateSettingsEthernet extends FeatureState implements IState
 		        FeatureName.Component.ETHERNET);
 		_featureStateSettings.addSettingState(this);
 
-		onFeatureInitialized.onInitialized(this, ResultCode.OK);
+		super.initialize(onFeatureInitialized);
 	}
 
 	@Override

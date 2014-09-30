@@ -3,11 +3,10 @@
     <features>
         <feature class="com.aviq.tv.android.sdk.feature.rcu.FeatureRCUSDMC" />
         <feature class="com.aviq.tv.android.sdk.feature.channels.FeatureChannels" />
+        <feature class="com.aviq.tv.android.sdk.feature.system.FeatureDevice" />
         <feature class="com.aviq.tv.android.sdk.feature.player.FeaturePlayer" />
-        <feature class="com.aviq.tv.android.sdk.feature.player.FeatureStreamer" />
         <feature class="com.aviq.tv.android.sdk.feature.httpserver.FeatureHttpServer" />
         <feature class="com.aviq.tv.android.sdk.feature.system.FeatureSystem" />
-        <feature class="com.aviq.tv.android.sdk.feature.system.FeatureNethogs" />
         <feature class="com.aviq.tv.android.sdk.feature.system.FeatureTimeZone" />
         <feature class="com.aviq.tv.android.sdk.feature.system.FeatureStandBy" />
         <feature class="com.aviq.tv.android.sdk.feature.register.FeatureRegister" />
@@ -15,7 +14,8 @@
         <feature class="com.aviq.tv.android.sdk.feature.network.FeatureEthernet" />
         <feature class="com.aviq.tv.android.sdk.feature.webtv.FeatureWebTV" />
         <feature class="com.aviq.tv.android.sdk.feature.rpc.FeatureLuaRPC" />
-        <feature class="com.aviq.tv.android.sdk.core.feature.easteregg.FeatureEasterEgg" />
+        <feature class="com.aviq.tv.android.sdk.feature.easteregg.FeatureEasterEgg" />
+        <feature class="com.aviq.tv.android.sdk.feature.eventcollector.FeatureEventCollector" />
         <feature class="com.aviq.tv.android.sdk.feature.crashlog.FeatureCrashLog" />
         <feature class="com.aviq.tv.android.sdk.feature.epg.bulsat.FeatureEPGBulsat" />
         <feature class="com.aviq.tv.android.sdk.feature.language.FeatureLanguage" />
@@ -48,33 +48,85 @@
         </state>
         <state name="MESSAGE_BOX" />
         
+		<component name="RCU">
+		    <hooks>
+				<on event="ON_KEY_PRESSED">
+				    <trigger name="ON_TRACK" target="scheduler EVENT_COLLECTOR">
+		                <param name="event" value="rcu"/>
+		                <param name="source" value="device"/>
+		            	<param name="key" value="{KEY}"/>
+					</trigger>
+				</on>
+		    </hooks>
+		</component>
+	
+		<component name="DEVICE">
+			<string name="CUSTOMER" >bulsatcom</string>
+            <string name="BRAND" >bulsatcom</string>
+		    <hooks>
+				<on event="ON_STATUS">
+		            <trigger name="ON_TRACK" target="scheduler EVENT_COLLECTOR">
+		                <param name="event" value="status"/>
+		                <param name="source" value="device"/>
+		            	<param name="cpuidle" value="{cpuidle}"/>
+		            	<param name="memfree" value="{memfree}"/>
+		            	<param name="hddfree" value="{hddfree}"/>
+		            	<param name="uplink" value="{uplink}"/>
+		            	<param name="downlink" value="{downlink}"/>
+		            	<param name="network" value="{network}"/>
+		            	<param name="channel" value="{channel}"/>
+		            	<param name="section" value="{section}"/>
+					</trigger>
+				</on>
+		    </hooks>
+		</component>
+        
         <scheduler name="EPG">
-            <string name="EPG_SERVER">http://bg.aviq.com:9090</string>
+            <string name="EPG_SERVER">http://epg.aviq.bg</string>
         </scheduler>
         <component name="TIMEZONE" >
             <string name="TIMEZONE" >Europe/Sofia</string>
         </component>
         <component name="RCU" />
+        <scheduler name="EVENT_COLLECTOR">
+            <string name="EVENTS_SERVER_URL">http://nas.aviq.bg/log/</string>
+            <string name="EVENTS_SERVER_USERNAME" >alek</string>
+            <string name="EVENTS_SERVER_PASSWORD" >aviqa2</string>
+        </scheduler>
         <component name="CRASHLOG">
-			<string name="REMOTE_SERVER_USERNAME" >vtxStb</string>
-			<string name="REMOTE_SERVER_PASSWORD" >FuXi0pMNa4tN5CsRRiZk95</string>
-			<string name="CRASHLOG_CUSTOMER" >aviq</string>
-			<string name="CRASHLOG_BRAND" >aviqtv</string>            
+			<string name="CRASHLOG_SERVER_URL" >http://nas.aviq.bg/logcat/</string>
+			<string name="CRASHLOG_SERVER_USERNAME" >alek</string>
+			<string name="CRASHLOG_SERVER_PASSWORD" >aviqa2</string>
+			<hooks>
+				<on event="ON_CRASH_ERROR">
+					<trigger name="ON_TRACK" target="scheduler EVENT_COLLECTOR">
+						<param name="IMMEDIATE" value="{IMMEDIATE}"/>
+						<param name="event" value="error"/>
+						<param name="source" value="crashlog"/>
+						<param name="severity" value="{SEVERITY}"/>
+						<param name="tag" value="{TAG}"/>
+						<param name="message" value="{MESSAGE}"/>
+						<param name="logcat" value="{LOGCAT_URL}"/>
+						<param name="traceback" value="{TRACEBACK}"/>
+						<param name="filename" value="{FILENAME}"/>
+						<param name="method" value="{METHOD}"/>
+						<param name="line_number" value="{LINE_NUMBER}"/>
+						<param name="feature" value="{FEATURE}"/>
+						<param name="feature_params" value="{PARAMS}"/>
+						<param name="author" value="{AUTHOR}"/>
+					</trigger>
+				</on>
+			</hooks>
 		</component>
         <component name="EASTER_EGG" />
         <component name="RPC" />
         <component name="SYSTEM" />
-        <component name="NETHOGS">
-            <string name="NETWORK_INTERFACE">eth0</string>
-        </component>
-        <component name="STREAMER" />
         <component name="CHANNELS" >
             <boolean name="AUTOPLAY" value="true" />
         </component>
         <scheduler name="INTERNET" />
         <component name="REGISTER" >
-            <string name="ABMP_SERVER" >http://services.aviq.com:978</string>
-            <string name="BRAND" >aviqtv</string>
+        	<string name="ABMP_SERVER" >http://google.com</string>
         </component>
     </use>
 </aviqtv>

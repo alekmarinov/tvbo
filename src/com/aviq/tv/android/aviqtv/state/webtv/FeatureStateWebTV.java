@@ -28,7 +28,6 @@ import com.aviq.tv.android.aviqtv.state.ThumbnailsView;
 import com.aviq.tv.android.aviqtv.state.epg.EpgProgramInfo;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.sdk.core.Environment;
-import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
@@ -83,7 +82,7 @@ public class FeatureStateWebTV extends FeatureState implements IStateMenuItem
 		_featureWebTV = (FeatureWebTV) Environment.getInstance().getFeatureComponent(FeatureName.Component.WEBTV);
 		_featureChannels = (FeatureChannels) Environment.getInstance().getFeatureComponent(
 		        FeatureName.Component.CHANNELS);
-		onFeatureInitialized.onInitialized(this, ResultCode.OK);
+		super.initialize(onFeatureInitialized);
 	}
 
 	@Override

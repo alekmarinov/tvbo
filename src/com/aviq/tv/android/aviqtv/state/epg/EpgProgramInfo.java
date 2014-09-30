@@ -19,6 +19,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageLoader.ImageListener;
 import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.sdk.core.Environment;
+import com.aviq.tv.android.sdk.core.feature.FeatureError;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
 import com.aviq.tv.android.sdk.feature.epg.FeatureEPG.IOnProgramDetails;
@@ -161,28 +162,27 @@ public class EpgProgramInfo
 			_featureEPG.getProgramDetails(channelId, program, new IOnProgramDetails()
 			{
 				@Override
-				public void onProgramDetails(Program program)
+				public void onProgramDetails(FeatureError error, Program program)
 				{
+					if (!error.isError())
+					{
 					_secondaryTitle.setText(program.getDetailAttribute(ProgramAttribute.SUBTITLE));
 					if (_summary != null)
 						_summary.setText(program.getDetailAttribute(ProgramAttribute.SUMMARY));
 
 					if (_detailsFlipper != null)
 						fillProgramDescription(program.getDetailAttribute(ProgramAttribute.DESCRIPTION));
-				}
+					}
+					else
+					{
+						Log.e(TAG, ".onProgramDetails: " + error);
 
-				@Override
-				public void onError(int resultCode)
-				{
-					Log.e(TAG, ".updateBrief: error loading program details for channel = " + channelId
-					        + ", program = " + program.getId() + ", " + program.getTitle());
-
-					_secondaryTitle.setText(null);
-
-					if (_summary != null)
-						_summary.setText(null);
-					if (_detailsFlipper != null)
-						fillProgramDescription(null);
+						_secondaryTitle.setText(null);
+						if (_summary != null)
+							_summary.setText(null);
+						if (_detailsFlipper != null)
+							fillProgramDescription(null);
+					}
 				}
 			});
 		}
@@ -225,8 +225,10 @@ public class EpgProgramInfo
 		_featureEPG.getProgramDetails(channelId, program, new IOnProgramDetails()
 		{
 			@Override
-			public void onProgramDetails(Program program)
+			public void onProgramDetails(FeatureError error, Program program)
 			{
+				if (!error.isError())
+				{
 				_secondaryTitle.setText(program.getDetailAttribute(ProgramAttribute.SUBTITLE));
 
 				if (_summary != null)
@@ -234,27 +236,25 @@ public class EpgProgramInfo
 
 				if (_detailsFlipper != null)
 					fillProgramDescription(program.getDetailAttribute(ProgramAttribute.DESCRIPTION));
-			}
+				}
+				else
+				{
+					Log.e(TAG, ".onProgramDetails: " + error);
 
-			@Override
-			public void onError(int resultCode)
-			{
-				Log.e(TAG, ".updateDetails: error loading program details for channel = " + channelId + ", program = "
-				        + program.getId() + ", " + program.getTitle());
+					_secondaryTitle.setText(null);
 
-				_secondaryTitle.setText(null);
+					if (_summary != null)
+						_summary.setText(null);
 
-				if (_summary != null)
-					_summary.setText(null);
-
-				if (_detailsFlipper != null)
-					fillProgramDescription(null);
+					if (_detailsFlipper != null)
+						fillProgramDescription(null);
+				}
 			}
 		});
 
 		// Update image
 
-		String imageUrl = program.getDetailAttribute(ProgramAttribute.IMAGE_URL);
+		String imageUrl = program.getDetailAttribute(ProgramAttribute.IMAGE);
 		if (imageUrl != null)
 		{
 			ImageLoader imageLoader = Environment.getInstance().getImageLoader();

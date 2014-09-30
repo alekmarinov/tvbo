@@ -24,7 +24,6 @@ import com.aviq.tv.android.aviqtv.state.epg.EpgProgramInfo;
 import com.aviq.tv.android.aviqtv.state.tv.FeatureStateTV;
 import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
-import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
@@ -77,7 +76,7 @@ public class FeatureStateProgramInfo extends FeatureState
 		}
 
 		_featureStateTV = (FeatureStateTV) Environment.getInstance().getFeatureState(FeatureName.State.TV);
-		onFeatureInitialized.onInitialized(this, ResultCode.OK);
+		super.initialize(onFeatureInitialized);
 	}
 
 	@Override

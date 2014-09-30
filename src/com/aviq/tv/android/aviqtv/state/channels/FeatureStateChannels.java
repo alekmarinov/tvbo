@@ -30,7 +30,6 @@ import com.aviq.tv.android.aviqtv.state.ThumbnailsView.ThumbItemCreater;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
-import com.aviq.tv.android.sdk.core.ResultCode;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
@@ -95,7 +94,7 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 		        FeatureName.State.MENU);
 		featureStateMenu.addMenuItemState(this);
 
-		onFeatureInitialized.onInitialized(this, ResultCode.OK);
+		super.initialize(onFeatureInitialized);
 	}
 
 	@Override
