@@ -28,8 +28,8 @@ import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.StateException;
-import com.aviq.tv.android.sdk.feature.epg.EpgData;
 import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
+import com.aviq.tv.android.sdk.feature.epg.IEpgDataProvider;
 import com.aviq.tv.android.sdk.feature.epg.Program;
 import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 import com.aviq.tv.android.sdk.feature.watchlist.FeatureWatchlist;
@@ -50,7 +50,7 @@ public class FeatureStateProgramInfo extends FeatureState
 	private FeatureWatchlist _watchlist;
 	private EpgProgramInfo _programInfo;
 	private ContextButtonGroup _contextButtonGroup;
-	private EpgData _epgData;
+	private IEpgDataProvider _epgData;
 	private String _channelId;
 	private String _programId;
 

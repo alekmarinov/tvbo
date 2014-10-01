@@ -36,8 +36,8 @@ import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
 import com.aviq.tv.android.sdk.feature.channels.FeatureChannels;
 import com.aviq.tv.android.sdk.feature.epg.Channel;
-import com.aviq.tv.android.sdk.feature.epg.EpgData;
 import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
+import com.aviq.tv.android.sdk.feature.epg.IEpgDataProvider;
 import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 
 /**
@@ -50,7 +50,7 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	private ViewGroup _viewGroup;
 	private FeaturePlayer _featurePlayer;
 	private FeatureChannels _featureChannels;
-	private EpgData _epgData;
+	private IEpgDataProvider _epgData;
 	private boolean _isReorderMode = false;
 	private ThumbnailsView _allChannelsGrid;
 	private ThumbnailsView _myChannelsGrid;

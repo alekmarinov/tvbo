@@ -61,8 +61,9 @@
 		</component>
 	
 		<component name="DEVICE">
-			<string name="CUSTOMER" >bulsatcom</string>
-            <string name="BRAND" >bulsatcom</string>
+			<string name="MAC" >00:11:22:33:44:55</string>
+			<string name="CUSTOMER" >aviq</string>
+            <string name="BRAND" >aviqtv</string>
 		    <hooks>
 				<on event="ON_STATUS">
 		            <trigger name="ON_TRACK" target="scheduler EVENT_COLLECTOR">
@@ -82,7 +83,10 @@
 		</component>
         
         <scheduler name="EPG">
-            <string name="EPG_SERVER">http://epg.aviq.bg</string>
+            <string name="EPG_SERVER">http://bg.aviq.com:9090</string>
+            <string name="EPG_CHANNELS_URL">${SERVER}/v${VERSION}/channels/smartxmedia</string>
+            <string name="EPG_PROGRAMS_URL">${SERVER}/v${VERSION}/programs/smartxmedia/${CHANNEL}</string>
+            <string name="EPG_PROGRAM_DETAILS_URL">${SERVER}/v${VERSION}/programs/smartxmedia/${CHANNEL}/${ID}</string>
         </scheduler>
         <component name="TIMEZONE" >
             <string name="TIMEZONE" >Europe/Sofia</string>

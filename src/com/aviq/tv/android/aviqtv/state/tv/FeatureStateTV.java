@@ -45,8 +45,8 @@ import com.aviq.tv.android.sdk.core.state.BaseState;
 import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
 import com.aviq.tv.android.sdk.core.state.StateException;
 import com.aviq.tv.android.sdk.feature.epg.Channel;
-import com.aviq.tv.android.sdk.feature.epg.EpgData;
 import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
+import com.aviq.tv.android.sdk.feature.epg.IEpgDataProvider;
 import com.aviq.tv.android.sdk.feature.epg.Program;
 import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 
@@ -85,7 +85,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	private ImageView _channelLogoImageView;
 	private ViewGroup _channelInfoContainer;
 	private FeatureEPG _featureEPG;
-	private EpgData _epgData;
+	private IEpgDataProvider _epgData;
 	private FeaturePlayer _featurePlayer;
 	private ProgramBarUpdater _programBarUpdater = new ProgramBarUpdater();
 	private int _updateProgramBarDelay;
@@ -108,8 +108,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	{
 		Log.i(TAG, ".initialize");
 		_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
-		_featurePlayer = (FeaturePlayer) Environment.getInstance()
-		        .getFeatureComponent(FeatureName.Component.PLAYER);
+		_featurePlayer = (FeaturePlayer) Environment.getInstance().getFeatureComponent(FeatureName.Component.PLAYER);
 		_updateProgramBarDelay = getPrefs().getInt(Param.UPDATE_PROGRAM_BAR_DELAY);
 
 		FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
@@ -240,10 +239,17 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			{
 				String channelId = Channel.getChannelId();
 				_programBar.ChannelTitle.setText(Channel.getTitle());
-				int programIndex = _epgData.getProgramIndex(channelId, When);
-				previousProgram = _epgData.getProgramByIndex(channelId, programIndex - 1);
-				currentProgram = _epgData.getProgramByIndex(channelId, programIndex);
-				nextProgram = _epgData.getProgramByIndex(channelId, programIndex + 1);
+
+				currentProgram = _epgData.getProgram(channelId, When);
+				if (currentProgram != null)
+				{
+					Calendar progTime = currentProgram.getStartTime().getInstance();
+					progTime.add(Calendar.MINUTE, -1);
+					previousProgram = _epgData.getProgram(channelId, progTime);
+					progTime = currentProgram.getStopTime().getInstance();
+					progTime.add(Calendar.MINUTE, 1);
+					nextProgram = _epgData.getProgram(channelId, progTime);
+				}
 			}
 
 			_programBar.setPrograms(When, previousProgram, currentProgram, nextProgram);
@@ -445,13 +451,13 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 				{
 					BaseState menuState = Environment.getInstance().getFeatureState(FeatureName.State.MENU);
 					try
-                    {
-	                    Environment.getInstance().getStateManager().setStateOverlay(menuState, null);
-                    }
-                    catch (StateException e)
-                    {
-                    	Log.e(TAG, e.getMessage(), e);
-                    }
+					{
+						Environment.getInstance().getStateManager().setStateOverlay(menuState, null);
+					}
+					catch (StateException e)
+					{
+						Log.e(TAG, e.getMessage(), e);
+					}
 				}
 
 				return true;
@@ -468,8 +474,8 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	private OnScrollChangedListener _zapperListViewOnScrollListener = new OnScrollChangedListener()
 	{
 		@Override
-        public void onScrollChanged(int x, int y, int oldx, int oldy)
-        {
+		public void onScrollChanged(int x, int y, int oldx, int oldy)
+		{
 			if (!isTouchEnabled)
 				return;
 
@@ -480,9 +486,11 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 				int yMin = indexY - selectItemHeight;
 				int yMax = indexY + selectItemHeight;
 
-				//TODO remove log
-				//Log.e(TAG, "-----: x = " + x + ", y = " + y + ", oldx = " + oldx + ", oldy = " + oldy);
-				//Log.e(TAG, "-----: yMin = " + yMin + ", yMax = " + yMax + ", isSnappingScroll = " + _isSnappingScroll);
+				// TODO remove log
+				// Log.e(TAG, "-----: x = " + x + ", y = " + y + ", oldx = " +
+				// oldx + ", oldy = " + oldy);
+				// Log.e(TAG, "-----: yMin = " + yMin + ", yMax = " + yMax +
+				// ", isSnappingScroll = " + _isSnappingScroll);
 
 				// Update the OSD
 
@@ -499,21 +507,26 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 				onSelectChannelIndex(index, _zapperListView.getSelectBitmapX(), _zapperListView.getSelectBitmapY());
 
 				_zapperListView.removeCallbacks(_zapperListViewSelectRunnable);
-				_zapperListView.postDelayed(_zapperListViewSelectRunnable, 100); // TODO value to be tested
+				_zapperListView.postDelayed(_zapperListViewSelectRunnable, 100); // TODO
+																				 // value
+																				 // to
+																				 // be
+																				 // tested
 			}
-        }
+		}
 
 		@Override
-        public void onScrollStarted(int x, int y)
-        {
-        }
+		public void onScrollStarted(int x, int y)
+		{
+		}
 
 		@Override
-        public void onScrollEnded(int x, int y)
-        {
+		public void onScrollEnded(int x, int y)
+		{
 			_isSnappingScroll = false;
-        }
+		}
 	};
+
 	private class ZapperListViewSelectRunnable implements Runnable
 	{
 		@Override
@@ -523,8 +536,8 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 			float channelY = _zapperListView.getSelectBitmapY() - _channelInfoContainer.getY()
 			        - _zapperListView.getItemHeight() - 50; // TODO don't know
-															// what this 50
-															// comes from
+			                                                // what this 50
+			                                                // comes from
 
 			_zapperListView.smoothScrollTo(_zapperListView.getSelectBitmapX(), (int) channelY);
 		}
