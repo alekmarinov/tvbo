@@ -3,6 +3,7 @@
     <features>
         <feature class="com.aviq.tv.android.sdk.feature.rcu.FeatureRCUSDMC" />
         <feature class="com.aviq.tv.android.sdk.feature.channels.FeatureChannels" />
+        <feature class="com.aviq.tv.android.sdk.feature.player.FeatureTimeshift" />
         <feature class="com.aviq.tv.android.sdk.feature.system.FeatureDevice" />
         <feature class="com.aviq.tv.android.sdk.feature.player.FeaturePlayer" />
         <feature class="com.aviq.tv.android.sdk.feature.httpserver.FeatureHttpServer" />
@@ -21,6 +22,7 @@
         <feature class="com.aviq.tv.android.sdk.feature.language.FeatureLanguage" />
         <feature class="com.aviq.tv.android.sdk.feature.upgrade.FeatureUpgrade" />
         <feature class="com.aviq.tv.android.sdk.feature.internet.FeatureInternet" />
+        <feature class="com.aviq.tv.android.sdk.feature.watchlist.FeatureWatchlist" />
 
         <feature class="com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu" />
         <feature class="com.aviq.tv.android.aviqtv.state.keyboard.FeatureStateKeyboard" />
@@ -34,6 +36,7 @@
         <feature class="com.aviq.tv.android.aviqtv.state.channels.FeatureStateChannels" />
         <feature class="com.aviq.tv.android.aviqtv.state.webtv.FeatureStateWebTV" />
         <feature class="com.aviq.tv.android.aviqtv.state.webtv.FeatureStateWebTVVideo" />
+        <feature class="com.aviq.tv.android.aviqtv.state.watchlist.FeatureStateWatchlist" />        
         <feature class="com.aviq.tv.android.aviqtv.state.settings.FeatureStateSettings" />
         <feature class="com.aviq.tv.android.aviqtv.state.settings.ethernet.FeatureStateSettingsEthernet" />
     </features>
@@ -47,7 +50,11 @@
             <string name="HOME_FEATURE_STATE" >TV</string>
         </state>
         <state name="MESSAGE_BOX" />
-        
+        <state name="WEBTV"/>
+        <state name="WATCHLIST"/>
+        <state name="SETTINGS"/>
+        <component name="TIMESHIFT"/>
+
 		<component name="RCU">
 		    <hooks>
 				<on event="ON_KEY_PRESSED">
@@ -61,7 +68,6 @@
 		</component>
 	
 		<component name="DEVICE">
-			<string name="MAC" >00:11:22:33:44:55</string>
 			<string name="CUSTOMER" >aviq</string>
             <string name="BRAND" >aviqtv</string>
 		    <hooks>
@@ -123,11 +129,24 @@
 			</hooks>
 		</component>
         <component name="EASTER_EGG" />
-        <component name="RPC" />
+        <component name="RPC">
+            <int name="PORT" value="5768"/>
+		</component>
         <component name="SYSTEM" />
-        <component name="CHANNELS" >
+        <component name="CHANNELS">
             <boolean name="AUTOPLAY" value="true" />
-        </component>
+		    <hooks>
+		    	<on event="ON_SWITCH_CHANNEL">
+		            <trigger name="ON_TRACK" target="scheduler EVENT_COLLECTOR">
+		                <param name="event" value="switchchannel"/>
+		                <param name="source" value="device"/>
+		            	<param name="from" value="{FROM_CHANNEL}"/>
+		            	<param name="to" value="{TO_CHANNEL}"/>
+		            	<param name="duration" value="{SWITCH_DURATION}"/>
+		            </trigger>
+		    	</on>
+		    </hooks>
+		</component>
         <scheduler name="INTERNET" />
         <component name="REGISTER" >
         	<string name="ABMP_SERVER" >http://google.com</string>

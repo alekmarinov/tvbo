@@ -47,6 +47,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        
+        <service android:name="com.aviq.tv.android.sdk.feature.internet.DownloadService" />
+        <service android:name="com.aviq.tv.android.sdk.feature.internet.UploadService" />
     </application>
 
 </manifest>
