@@ -7,7 +7,6 @@
         <feature class="com.aviq.tv.android.sdk.feature.system.FeatureDevice" />
         <feature class="com.aviq.tv.android.sdk.feature.player.FeaturePlayer" />
         <feature class="com.aviq.tv.android.sdk.feature.httpserver.FeatureHttpServer" />
-        <feature class="com.aviq.tv.android.sdk.feature.system.FeatureSystem" />
         <feature class="com.aviq.tv.android.sdk.feature.system.FeatureTimeZone" />
         <feature class="com.aviq.tv.android.sdk.feature.system.FeatureStandBy" />
         <feature class="com.aviq.tv.android.sdk.feature.register.FeatureRegister" />
@@ -89,22 +88,19 @@
 		</component>
         
         <scheduler name="EPG">
-            <string name="EPG_SERVER">http://bg.aviq.com:9090</string>
-            <string name="EPG_CHANNELS_URL">${SERVER}/v${VERSION}/channels/smartxmedia</string>
-            <string name="EPG_PROGRAMS_URL">${SERVER}/v${VERSION}/programs/smartxmedia/${CHANNEL}</string>
-            <string name="EPG_PROGRAM_DETAILS_URL">${SERVER}/v${VERSION}/programs/smartxmedia/${CHANNEL}/${ID}</string>
+            <string name="EPG_SERVER">http://gw.iptv.bulsat.com</string>
         </scheduler>
         <component name="TIMEZONE" >
             <string name="TIMEZONE" >Europe/Sofia</string>
         </component>
         <component name="RCU" />
         <scheduler name="EVENT_COLLECTOR">
-            <string name="EVENTS_SERVER_URL">http://nas.aviq.bg/log/</string>
+            <string name="EVENTS_SERVER_URL">http://storage.intelibo.com/log/</string>
             <string name="EVENTS_SERVER_USERNAME" >alek</string>
             <string name="EVENTS_SERVER_PASSWORD" >aviqa2</string>
         </scheduler>
         <component name="CRASHLOG">
-			<string name="CRASHLOG_SERVER_URL" >http://nas.aviq.bg/logcat/</string>
+			<string name="CRASHLOG_SERVER_URL" >http://storage.intelibo.com/logcat/aviqtv/</string>
 			<string name="CRASHLOG_SERVER_USERNAME" >alek</string>
 			<string name="CRASHLOG_SERVER_PASSWORD" >aviqa2</string>
 			<hooks>
@@ -132,7 +128,6 @@
         <component name="RPC">
             <int name="PORT" value="5768"/>
 		</component>
-        <component name="SYSTEM" />
         <component name="CHANNELS">
             <boolean name="AUTOPLAY" value="true" />
 		    <hooks>
@@ -148,8 +143,5 @@
 		    </hooks>
 		</component>
         <scheduler name="INTERNET" />
-        <component name="REGISTER" >
-        	<string name="ABMP_SERVER" >http://google.com</string>
-        </component>
     </use>
 </aviqtv>

@@ -58,6 +58,7 @@ public class FeatureStateWebTV extends FeatureState implements IStateMenuItem
 		require(FeatureName.Component.PLAYER);
 		require(FeatureName.Component.CHANNELS);
 		require(FeatureName.Component.WEBTV);
+		require(FeatureName.State.WEBTV_VIDEO);
 		require(FeatureName.State.PROGRAM_INFO);
 		require(FeatureName.State.MENU);
 	}
