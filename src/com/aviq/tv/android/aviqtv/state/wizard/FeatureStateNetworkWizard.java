@@ -129,7 +129,7 @@ public class FeatureStateNetworkWizard extends FeatureState
 			@Override
 			public void onReceiveResult(FeatureError error)
 			{
-				Log.i(TAG, ".checkInternet.onReceiveResult: resultCode = " + error.getErrorCode());
+				Log.i(TAG, ".checkInternet.onReceiveResult: resultCode = " + error.getCode());
 				getEventMessenger().removeCallbacks(_showOverlayDelayed);
 				close();
 				if (error.isError())
