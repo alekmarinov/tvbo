@@ -69,8 +69,8 @@
 		</component>
 	
 		<component name="DEVICE">
-			<string name="CUSTOMER" >aviq</string>
-            <string name="BRAND" >aviqtv</string>
+			<string name="CUSTOMER" >tvbo</string>
+            <string name="BRAND" >intelibo</string>
 		    <hooks>
 				<on event="ON_STATUS">
 		            <trigger name="ON_TRACK" target="scheduler EVENT_COLLECTOR">
@@ -102,7 +102,7 @@
             <string name="EVENTS_SERVER_PASSWORD" >aviqa2</string>
         </scheduler>
         <component name="CRASHLOG">
-			<string name="CRASHLOG_SERVER_URL" >http://storage.intelibo.com/logcat/aviqtv/</string>
+			<string name="CRASHLOG_SERVER_URL" >http://storage.intelibo.com/logcat/tvbo/</string>
 			<string name="CRASHLOG_SERVER_USERNAME" >alek</string>
 			<string name="CRASHLOG_SERVER_PASSWORD" >aviqa2</string>
 			<hooks>

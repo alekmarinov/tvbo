@@ -27,6 +27,7 @@ import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
+import com.aviq.tv.android.sdk.feature.player.FeaturePlayer.MediaType;
 
 /**
  * EPG state feature
@@ -92,7 +93,7 @@ public class FeatureStateWebTVVideo extends FeatureState
 		_feature.Component.PLAYER.stop();
 
 		_mediaController = _feature.Component.PLAYER.createMediaController(false);
-		_feature.Component.PLAYER.play(url);
+		_feature.Component.PLAYER.play(url, MediaType.VIDEO);
 
 //		_videoView = _feature.Component.PLAYER.getVideoView();
 //

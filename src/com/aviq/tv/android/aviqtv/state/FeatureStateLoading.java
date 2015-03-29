@@ -26,6 +26,7 @@ import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.StateException;
 import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
+import com.aviq.tv.android.sdk.feature.player.FeaturePlayer.MediaType;
 
 /**
  * Loading feature state
@@ -72,7 +73,7 @@ public class FeatureStateLoading extends FeatureState
 		_userPrefs = Environment.getInstance().getUserPrefs();
 		if (_userPrefs.has(FeaturePlayer.UserParam.LAST_URL))
 		{
-			featurePlayer.play(_userPrefs.getString(FeaturePlayer.UserParam.LAST_URL));
+			featurePlayer.play(_userPrefs.getString(FeaturePlayer.UserParam.LAST_URL), MediaType.TV);
 		}
 
 		super.initialize(onInitialized);
