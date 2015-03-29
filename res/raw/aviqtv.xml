@@ -35,8 +35,6 @@
         <feature class="com.aviq.tv.android.aviqtv.state.wizard.FeatureStateNetworkError" />
         <feature class="com.aviq.tv.android.aviqtv.state.programinfo.FeatureStateProgramInfo" />
         <feature class="com.aviq.tv.android.aviqtv.state.channels.FeatureStateChannels" />
-        <feature class="com.aviq.tv.android.aviqtv.state.webtv.FeatureStateWebTV" />
-        <feature class="com.aviq.tv.android.aviqtv.state.webtv.FeatureStateWebTVVideo" />
         <feature class="com.aviq.tv.android.aviqtv.state.watchlist.FeatureStateWatchlist" />        
         <feature class="com.aviq.tv.android.aviqtv.state.settings.FeatureStateSettings" />
         <feature class="com.aviq.tv.android.aviqtv.state.settings.ethernet.FeatureStateSettingsEthernet" />
@@ -51,9 +49,7 @@
             <string name="HOME_FEATURE_STATE" >TV</string>
         </state>
         <state name="MESSAGE_BOX" />
-        <state name="WEBTV"/>
         <state name="WATCHLIST"/>
-        <state name="SETTINGS"/>
         <component name="TIMESHIFT"/>
 
 		<component name="RCU">
@@ -89,9 +85,15 @@
 		    </hooks>
 		</component>
         
+
         <scheduler name="EPG">
             <string name="EPG_SERVER">http://gw.iptv.bulsat.com</string>
-        </scheduler>
+            <int name="UPDATE_INTERVAL" value="3600000"/>
+            <int name="PROGRAM_RANGE_MIN_DAYS" value="3"/>
+            <int name="PROGRAM_RANGE_MAX_DAYS" value="3"/>
+            <boolean name="USE_LOCAL_CACHE" value="false"/>
+		</scheduler>
+
         <component name="TIMEZONE" >
             <string name="TIMEZONE" >Europe/Sofia</string>
         </component>

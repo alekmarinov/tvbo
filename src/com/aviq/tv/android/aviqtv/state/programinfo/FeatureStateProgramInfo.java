@@ -66,8 +66,7 @@ public class FeatureStateProgramInfo extends FeatureState
 	{
 		Log.i(TAG, ".initialize");
 		_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
-		_featurePlayer = (FeaturePlayer) Environment.getInstance()
-		        .getFeatureComponent(FeatureName.Component.PLAYER);
+		_featurePlayer = (FeaturePlayer) Environment.getInstance().getFeatureComponent(FeatureName.Component.PLAYER);
 
 		if (Environment.getInstance().getFeatureManager().hasFeature(FeatureName.Component.WATCHLIST))
 		{
@@ -165,7 +164,10 @@ public class FeatureStateProgramInfo extends FeatureState
 					Program program = _epgData.getProgramById(_channelId, _programId);
 					Bundle bundle = new Bundle();
 					bundle.putString("PROGRAM", program.getId());
-					bundle.putString("CHANNEL", program.getChannel().getChannelId());
+					bundle.putInt(FeatureStateTV.Extras.CHANNEL_INDEX.name(), program.getChannel().getIndex());
+					bundle.putLong(FeatureStateTV.Extras.PLAY_TIME.name(),
+					        program.getStartTime().getTimeInMillis() / 1000);
+					bundle.putLong(FeatureStateTV.Extras.PLAY_DURATION.name(), program.getLengthMillis() / 1000);
 					try
 					{
 						Environment.getInstance().getStateManager().setStateMain(_featureStateTV, bundle);

@@ -65,11 +65,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	private static final int ON_OSD_AUTOHIDE = EventMessenger.ID("ON_OSD_AUTOHIDE");
 	private static final int ON_NUM_TIMEOUT = EventMessenger.ID("ON_NUM_TIMEOUT");
 	private DateFormat TIME_FORMAT;
-	// private DateFormat DAY_FORMAT;
-	// private DateFormat MONTH_FORMAT;
-	// private DateFormat WEEKDAY_FORMAT;
 	private TVStateManager _tvStateManager;
-	private TextView _clock;
 	private int _channelNumber = 0;
 	private SparseIntArray _channelNumberToIndex;
 	private int _lastChannelIndex;
@@ -94,9 +90,9 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		NUM_AUTOHIDE(3),
 
 		/**
-		 * Delay in seconds to auto hide volume bar
+		 * Delay in seconds to auto hide OSD
 		 */
-		OSD_AUTOHIDE_VOLUME(4),
+		OSD_AUTOHIDE(8),
 
 		/**
 		 * Number of seconds to seek forward in timeshift
@@ -129,22 +125,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		}
 	}
 
-	// private ViewGroup _viewGroup;
-	// private ZapperList _zapperList;
-	// private TextView _clockTextView;
-	// private TextView _channelNoTextView;
-	// private ImageView _channelLogoImageView;
-	// private ViewGroup _channelInfoContainer;
-	// private FeatureEPG _featureEPG;
-	// private IEpgDataProvider _epgData;
-	// private FeaturePlayer _featurePlayer;
-	// // private ProgramBarUpdater _programBarUpdater = new
-	// ProgramBarUpdater();
-	// private int _updateProgramBarDelay;
-	// // private ProgramBar _programBar;
-	// private Rect _displayTopTouchZone;
-	// private boolean _isSnappingScroll = false;
-
 	public FeatureStateTV() throws FeatureNotFoundException
 	{
 		require(FeatureName.Scheduler.EPG);
@@ -157,7 +137,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		require(FeatureName.Component.RCU);
 		require(FeatureName.Component.VOLUME);
 		require(FeatureName.State.ERROR);
-		// require(FeatureName.State.FAVOURITE_CHANNELS);
 		require(FeatureName.State.MESSAGE_BOX);
 	}
 
@@ -169,37 +148,19 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		subscribe(this, ON_OSD_AUTOHIDE);
 		subscribe(this, ON_NUM_TIMEOUT);
 
-		// subscribe(_feature.Component.PLAYER, FeaturePlayer.ON_PLAY_PAUSE);
-		// subscribe(_feature.Component.PLAYER, FeaturePlayer.ON_PLAY_ERROR);
-		// subscribe(_feature.Component.TIMESHIFT, FeatureTimeshift.ON_SEEK);
-		// subscribe(Environment.getInstance().getEventMessenger(),
-		// Environment.ON_RESUME);
+		subscribe(_feature.Component.PLAYER, FeaturePlayer.ON_PLAY_PAUSE);
+		subscribe(_feature.Component.PLAYER, FeaturePlayer.ON_PLAY_ERROR);
+		subscribe(_feature.Component.TIMESHIFT, FeatureTimeshift.ON_SEEK);
+		subscribe(Environment.getInstance().getEventMessenger(), Environment.ON_RESUME);
 
 		_feature.Component.RCU.getEventMessenger().register(this, FeatureRCU.ON_KEY_PRESSED);
-
-		// _featureEPG = (FeatureEPG)
-		// Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
-		// _featurePlayer = (FeaturePlayer)
-		// Environment.getInstance().getFeatureComponent(FeatureName.Component.PLAYER);
-		// _updateProgramBarDelay =
-		// getPrefs().getInt(Param.UPDATE_PROGRAM_BAR_DELAY);
 
 		FeatureStateMenu featureStateMenu = (FeatureStateMenu) Environment.getInstance().getFeatureState(
 		        FeatureName.State.MENU);
 		featureStateMenu.addMenuItemState(this);
 
 		TIME_FORMAT = new SimpleDateFormat("HH:mm", _feature.Component.LANGUAGE.getLocale());
-		// DAY_FORMAT = new SimpleDateFormat("EEE d",
-		// _feature.Component.LANGUAGE.getLocale());
-		// MONTH_FORMAT = new SimpleDateFormat("MMMM",
-		// _feature.Component.LANGUAGE.getLocale());
-		// WEEKDAY_FORMAT = new SimpleDateFormat("EEEE",
-		// _feature.Component.LANGUAGE.getLocale());
 		TIME_FORMAT.setTimeZone(_feature.Component.TIMEZONE.getTimeZone());
-		// DAY_FORMAT.setTimeZone(_feature.Component.TIMEZONE.getTimeZone());
-		// MONTH_FORMAT.setTimeZone(_feature.Component.TIMEZONE.getTimeZone());
-		// WEEKDAY_FORMAT.setTimeZone(_feature.Component.TIMEZONE.getTimeZone());
-
 		_lastChannelIndex = _feature.Component.CHANNELS.getLastChannelIndex();
 
 		super.initialize(onFeatureInitialized);
@@ -214,54 +175,11 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		// Log.i(TAG, ".onCreateView");
-		// _viewGroup = (ViewGroup) inflater.inflate(R.layout.state_tv,
-		// container, false);
-		//
-		// _clockTextView = (TextView) _viewGroup.findViewById(R.id.clock);
-		// _tvStateManager = new TVStateManager(_viewGroup);
-		// _zapperList = (ZapperList)
-		// _viewGroup.findViewById(R.id.tv_channel_bar);
-		// _channelNoTextView = (TextView)
-		// _viewGroup.findViewById(R.id.channel_no);
-		// _channelLogoImageView = (ImageView)
-		// _viewGroup.findViewById(R.id.channel_logo);
-		// // _programBar = new ProgramBar((ViewGroup)
-		// // _viewGroup.findViewById(R.id.tv_program_bar));
-		// _channelInfoContainer = (ViewGroup)
-		// _viewGroup.findViewById(R.id.channel_info_container);
-		// _epgData = _featureEPG.getEpgData();
-		//
-		// int channelIndex = 0;
-		// updateChannelBarChannels(channelIndex);
-		//
-		// // Set player at full screen
-		// _featurePlayer.setFullScreen();
-		//
-		// // Prepare the video view touch zones and set up the touch listener
-		// prepareVideoViewTouchGestures();
-		//
-		// Bundle params = getArguments();
-		// if (params != null)
-		// {
-		// String channelId = params.getString("CHANNEL");
-		// if (channelId != null)
-		// {
-		// // Switching channel requested
-		// _feature.Component.CHANNELS.play(channelId);
-		// }
-		// }
-		// return _viewGroup;
-
 		Log.i(TAG, ".onCreateView");
 
 		ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.state_tv, container, false);
-		_clock = (TextView) viewGroup.findViewById(R.id.clock);
 
 		_tvStateManager = new TVStateManager(viewGroup);
-		// ((FeatureStateMenu)
-		// _feature.State.MENU).setCurrentMenuItem(FeatureStateMenu.MENU_ITEM.TV);
-		_tvStateManager.setState(TVStateEnum.HIDDEN);
 
 		Bundle params = getArguments();
 		if (params == null)
@@ -271,7 +189,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		}
 		else
 		{
-
 			int channelIndex = params.getInt(Extras.CHANNEL_INDEX.name(), _lastChannelIndex);
 			if (channelIndex != -1)
 			{
@@ -288,21 +205,13 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		return viewGroup;
 	}
 
-	// @Override
-	// protected void onShow(boolean isViewUncovered)
-	// {
-	// super.onShow(isViewUncovered);
-	// int index = _zapperList.getPosition();
-	// onSelectChannelIndex(_zapperList.getPosition());
-	// }
-
 	@Override
 	public void onShow(boolean isViewUncovered)
 	{
 		super.onShow(isViewUncovered);
 		Log.i(TAG, ".onShow: isViewUncovered = " + isViewUncovered);
 
-		_tvStateManager.setState(TVStateEnum.HIDDEN);
+		_tvStateManager.setState(TVStateEnum.SPOOLER);
 
 		_feature.Component.PLAYER.setFullScreen();
 		if (!isViewUncovered)
@@ -314,7 +223,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		}
 
 		if (!_feature.Component.PLAYER.isPlaying())
-			; // playChannel(_lastChannelIndex);
+			playChannel(_lastChannelIndex);
 	}
 
 	@Override
@@ -322,7 +231,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	{
 		if (!isViewCovered)
 		{
-			_feature.Component.PLAYER.hide();// .setPositionAndSize(0, 0, 1,1);
+			_feature.Component.PLAYER.hide();
 		}
 	}
 
@@ -330,14 +239,8 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	public boolean onKeyDown(AVKeyEvent keyEvent)
 	{
 		Log.i(TAG, ".onKeyDown: key = " + keyEvent.Code);
-		switch (keyEvent.Code)
-		{
-			case VOLUME_UP:
-			case VOLUME_DOWN:
-				// FIXME: place volume handling at a base class of all States
-				// display global volume bar
-				return true;
-		}
+		// FIXME: place volume handling at a base class of all States
+		// display global volume bar
 
 		if (isShown())
 		{
@@ -376,7 +279,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 				{
 					// restart last played channel
 					if (!_feature.Component.PLAYER.isPlaying())
-						; // playChannel(_lastChannelIndex);
+						playChannel(_lastChannelIndex);
 
 					FeatureState overlayState = (FeatureState) Environment.getInstance().getStateManager()
 					        .getOverlayState();
@@ -418,257 +321,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		playChannel(index, System.currentTimeMillis() / 1000, 0);
 	}
 
-	// private void onSelectChannelIndex(int channelIndex)
-	// {
-	// if (channelIndex < 0)
-	// return;
-	//
-	// // Update selected channel number and logo
-	// int globalIndex =
-	// _feature.Component.CHANNELS.getActiveChannels().get(channelIndex).getIndex();
-	// _channelNoTextView.setText(String.valueOf(channelIndex + 1));
-	// _channelLogoImageView.setImageBitmap(_epgData.getChannelLogoBitmap(globalIndex));
-	//
-	// // Update program bar
-	// updateProgramBar(_epgData.getChannel(globalIndex),
-	// Calendar.getInstance());
-	// }
-	//
-	// private void updateChannelBarChannels(int channelIndex)
-	// {
-	// _zapperList.setAdapter(new ChannelAdapter(getActivity(),
-	// R.layout.tv_channel_item, getChannels(),
-	// _feature.Scheduler.EPG), channelIndex);
-	// }
-	//
-	// private List<Channel> getChannels()
-	// {
-	// return _feature.Component.CHANNELS.getActiveChannels();
-	// }
-	//
-	// private void onSwitchChannelIndex(int channelIndex)
-	// {
-	// _feature.Component.CHANNELS.play(channelIndex);
-	// }
-	//
-	// private void updateClock()
-	// {
-	// _clockTextView.setText(CLOCK_FORMAT.format(Calendar.getInstance().getTime()));
-	// }
-
-	// private Runnable _onStartProgramBarUpdate = new Runnable()
-	// {
-	// @Override
-	// public void run()
-	// {
-	// subscribe(FeatureStateTV.this, ON_TIMER);
-	// _programBarUpdater.run();
-	// getEventMessenger().trigger(ON_TIMER, 1000);
-	// }
-	// };
-
-	// private void updateProgramBar(Channel channel, Calendar when)
-	// {
-	// if (isSubscribed(FeatureStateTV.this, ON_TIMER))
-	// unsubscribe(FeatureStateTV.this, ON_TIMER);
-	// _programBarUpdater.Channel = channel;
-	// _programBarUpdater.When = when;
-	// Environment.getInstance().getEventMessenger().removeCallbacks(_onStartProgramBarUpdate);
-	// Environment.getInstance().getEventMessenger().postDelayed(_onStartProgramBarUpdate,
-	// _updateProgramBarDelay);
-	// }
-
-	// private class ProgramBarUpdater implements Runnable
-	// {
-	// private Channel Channel;
-	// private Calendar When;
-	//
-	// @Override
-	// public void run()
-	// {
-	// // start timer
-	//
-	// Program previousProgram = null;
-	// Program currentProgram = null;
-	// Program nextProgram = null;
-	//
-	// if (Channel != null)
-	// {
-	// String channelId = Channel.getChannelId();
-	// _programBar.ChannelTitle.setText(Channel.getTitle());
-	//
-	// currentProgram = _epgData.getProgram(channelId, When);
-	// if (currentProgram != null)
-	// {
-	// Calendar progTime = currentProgram.getStartTime().getInstance();
-	// progTime.add(Calendar.MINUTE, -1);
-	// previousProgram = _epgData.getProgram(channelId, progTime);
-	// progTime = currentProgram.getStopTime().getInstance();
-	// progTime.add(Calendar.MINUTE, 1);
-	// nextProgram = _epgData.getProgram(channelId, progTime);
-	// }
-	// }
-	//
-	// _programBar.setPrograms(When, previousProgram, currentProgram,
-	// nextProgram);
-	// }
-	// }
-	//
-	// private class ProgramBar
-	// {
-	// private final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm",
-	// Locale.US);
-	// private TextView ChannelTitle;
-	// private TextView PreviousProgramTime;
-	// private TextView PreviousProgramTitle;
-	// private ImageView ProgramImage;
-	// private TextView CurrentProgramTime;
-	// private TextView CurrentProgramTitle;
-	// private TextView NextProgramTime;
-	// private TextView NextProgramTitle;
-	// private TextView ProgressStartTime;
-	// private TextView ProgressEndTime;
-	// private ProgressBar ProgramProgress;
-	//
-	// private ProgramBar(ViewGroup parent)
-	// {
-	// ChannelTitle = (TextView) _viewGroup.findViewById(R.id.channel_title);
-	// PreviousProgramTime = (TextView)
-	// _viewGroup.findViewById(R.id.previous_program_time);
-	// PreviousProgramTitle = (TextView)
-	// _viewGroup.findViewById(R.id.previous_program_title);
-	// ProgramImage = (ImageView) _viewGroup.findViewById(R.id.program_image);
-	// CurrentProgramTime = (TextView)
-	// _viewGroup.findViewById(R.id.current_program_time);
-	// CurrentProgramTitle = (TextView)
-	// _viewGroup.findViewById(R.id.current_program_title);
-	// NextProgramTime = (TextView)
-	// _viewGroup.findViewById(R.id.next_program_time);
-	// NextProgramTitle = (TextView)
-	// _viewGroup.findViewById(R.id.next_program_title);
-	// ProgressStartTime = (TextView)
-	// _viewGroup.findViewById(R.id.program_start);
-	// ProgressEndTime = (TextView) _viewGroup.findViewById(R.id.program_end);
-	// ProgramProgress = (ProgressBar)
-	// _viewGroup.findViewById(R.id.program_progress);
-	// }
-	//
-	// private void setPrograms(Calendar When, Program previousProgram, Program
-	// currentProgram, Program nextProgram)
-	// {
-	// // update programs info
-	// setPreviousProgram(previousProgram);
-	// setCurrentProgram(currentProgram);
-	// setNextProgram(nextProgram);
-	//
-	// // update progress bar
-	// if (currentProgram != null)
-	// {
-	// try
-	// {
-	// Calendar startTime = currentProgram.getStartTime();
-	// Calendar endTime = currentProgram.getStopTime();
-	//
-	// long elapsed = When.getTimeInMillis() - startTime.getTimeInMillis();
-	// long total = endTime.getTimeInMillis() - startTime.getTimeInMillis();
-	// ProgramProgress.setProgress((int) (100.0f * elapsed / total));
-	//
-	// ProgressStartTime.setText(parseDateTimeToHourMins(currentProgram.getStartTime()));
-	// ProgressEndTime.setText(parseDateTimeToHourMins(currentProgram.getStopTime()));
-	// }
-	// catch (ParseException e)
-	// {
-	// Log.w(TAG, e.getMessage());
-	// }
-	// }
-	// else
-	// {
-	// ProgramProgress.setProgress(0);
-	// }
-	// }
-	//
-	// private void setPreviousProgram(Program program)
-	// {
-	// setProgramToView(program, PreviousProgramTime, PreviousProgramTitle);
-	// }
-	//
-	// private void setCurrentProgram(Program program)
-	// {
-	// setProgramToView(program, CurrentProgramTime, CurrentProgramTitle);
-	// }
-	//
-	// private void setNextProgram(Program program)
-	// {
-	// setProgramToView(program, NextProgramTime, NextProgramTitle);
-	// }
-	//
-	// private void setProgramToView(Program program, TextView programTime,
-	// TextView programTitle)
-	// {
-	// if (program == null)
-	// {
-	// programTime.setText(null);
-	// programTitle.setText(null);
-	// }
-	// else
-	// {
-	// try
-	// {
-	// programTime.setText(parseDateTimeToHourMins(program.getStartTime()));
-	// }
-	// catch (ParseException e)
-	// {
-	// Log.w(TAG, e.getMessage());
-	// programTime.setText(null);
-	// }
-	// programTitle.setText(program.getTitle());
-	// }
-	// }
-	//
-	// private String parseDateTimeToHourMins(Calendar dateTime) throws
-	// ParseException
-	// {
-	// return TIME_FORMAT.format(dateTime.getTime());
-	// }
-	// }
-
-	// @Override
-	// public void onEvent(int msgId, Bundle bundle)
-	// {
-	// // Log.i(TAG, ".onEvent: msgId = " + msgId);
-	// if (msgId == ON_TIMER)
-	// {
-	// // Log.i(TAG, ".onEvent: Updating on timer event");
-	// _programBarUpdater.run();
-	// updateClock();
-	// getEventMessenger().trigger(ON_TIMER, 1000);
-	// }
-	// }
-	//
-	// @Override
-	// public boolean onKeyDown(AVKeyEvent event)
-	// {
-	// switch (event.Code)
-	// {
-	// case OK:
-	// // Switch TV channel
-	// onSwitchChannelIndex(_zapperList.getPosition());
-	// return true;
-	// case UP:
-	// case DOWN:
-	// _zapperList.onKeyDown(event.Event.getKeyCode(), event.Event);
-	// onSelectChannelIndex(_zapperList.getPosition());
-	// return true;
-	// case BACK:
-	// if (isShown())
-	// hide();
-	// else
-	// show();
-	// return true;
-	// }
-	// return false;
-	// }
-
 	// IMenuItemState implementation
 
 	@Override
@@ -682,75 +334,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	{
 		return Environment.getInstance().getResources().getString(R.string.menu_tv);
 	}
-
-	// private void prepareVideoViewTouchGestures()
-	// {
-	// Display display =
-	// Environment.getInstance().getWindowManager().getDefaultDisplay();
-	// Point size = new Point();
-	// display.getSize(size);
-	// int deviceScreenWidth = size.x;
-	// int deviceScreenHeight = size.y;
-	//
-	// _displayTopTouchZone = new Rect(0, 0, deviceScreenWidth, (int) (0.20 *
-	// deviceScreenHeight));
-	//
-	// _featurePlayer.getView().setOnTouchListener(_videoViewOnTouchListener);
-	// }
-	//
-	// private OnTouchListener _videoViewOnTouchListener = new OnTouchListener()
-	// {
-	// @Override
-	// public boolean onTouch(View v, MotionEvent event)
-	// {
-	// Log.v(TAG, ".onTouch: event = " + event.getAction());
-	//
-	// if (event.getAction() == MotionEvent.ACTION_DOWN)
-	// {
-	// return true;
-	// }
-	// else if (event.getAction() == MotionEvent.ACTION_UP)
-	// {
-	// int x = (int) event.getRawX();
-	// int y = (int) event.getRawY();
-	//
-	// if (_displayTopTouchZone.contains(x, y))
-	// {
-	// BaseState menuState =
-	// Environment.getInstance().getFeatureState(FeatureName.State.MENU);
-	// try
-	// {
-	// Environment.getInstance().getStateManager().setStateOverlay(menuState,
-	// null);
-	// }
-	// catch (StateException e)
-	// {
-	// Log.e(TAG, e.getMessage(), e);
-	// }
-	// }
-	//
-	// return true;
-	// }
-	//
-	// return false;
-	// }
-	// };
-
-	// private void playChannel(int index, long playTime, final long
-	// playDuration)
-	// {
-	// _feature.Component.CHANNELS.play(index, playTime, playDuration);
-	// _lastChannelIndex = index;
-	// }
-	//
-	// private void playChannel(int index)
-	// {
-	// playChannel(index, System.currentTimeMillis() / 1000, 0);
-	// }
-
-	// TODO This disables the scrolling functionality specific to the touch
-	// mode. It messes up the standard functionality.
-	private boolean isTouchEnabled = false;
 
 	private static class ChannelAdapter extends ArrayAdapter<Channel>
 	{
@@ -808,7 +391,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 	public static enum TVStateEnum
 	{
-		HIDDEN, VOLUME, SPOOLER, CHANNELS
+		HIDDEN, SPOOLER, CHANNELS
 	}
 
 	private class TVStateManager
@@ -816,7 +399,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		private TVStateEnum _currentStateEnum;
 		private BaseTVState _currentState;
 		private final BaseTVState _tvStateHidden;
-		private final BaseTVState _tvStateVolume;
 		private final BaseTVState _tvStateSpooler;
 		private final BaseTVState _tvStateChannels;
 		private final ViewGroup _root;
@@ -830,7 +412,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			_programViewChannels = new ProgramView((ViewGroup) _root.findViewById(R.id.tv_program_bar));
 			_programViewSpooler = new ProgramView((ViewGroup) _root.findViewById(R.id.tv_program_bar));
 			_tvStateHidden = createState(TVStateEnum.HIDDEN);
-			_tvStateVolume = createState(TVStateEnum.VOLUME);
 			_tvStateSpooler = createState(TVStateEnum.SPOOLER);
 			_tvStateChannels = createState(TVStateEnum.CHANNELS);
 		}
@@ -844,9 +425,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			{
 				case HIDDEN:
 					_currentState = _tvStateHidden;
-				break;
-				case VOLUME:
-					_currentState = _tvStateVolume;
 				break;
 				case SPOOLER:
 					_currentState = _tvStateSpooler;
@@ -865,8 +443,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			{
 				case HIDDEN:
 					return _tvStateHidden;
-				case VOLUME:
-					return _tvStateVolume;
 				case SPOOLER:
 					return _tvStateSpooler;
 				case CHANNELS:
@@ -898,8 +474,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			{
 				case HIDDEN:
 					return new TVStateHidden(_root);
-				case VOLUME:
-					return new TVStateVolume(_root);
 				case SPOOLER:
 					return new TVStateSpooler(_root, _programViewSpooler);
 				case CHANNELS:
@@ -920,13 +494,9 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		protected ProgramView _programView;
 		protected ViewGroup _rootView;
 		private final TextView _numView;
-		protected TextView _tempView;
-		protected ImageView _imgWeatherView;
 		private int _maxChannelNo = -1;
 		protected final ChannelSwitcher _channelSwitcher = new ChannelSwitcher();
 		protected final ChannelSeeker _channelSeeker = new ChannelSeeker();
-
-		protected final ChannelNumberHider _channelNumberHider = new ChannelNumberHider();
 
 		private class ChannelSwitcher implements Runnable
 		{
@@ -951,26 +521,9 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			}
 		}
 
-		private class ChannelNumberHider implements Runnable
-		{
-			@Override
-			public void run()
-			{
-				_numView.setText(null);
-				_numView.setVisibility(View.INVISIBLE);
-			}
-		}
-
 		private void switchChannelIndex(int channelIndex)
 		{
-			ChannelBulsat channel = (ChannelBulsat) _feature.Component.CHANNELS.getActiveChannels().get(channelIndex);
 			Log.i(TAG, ".switchChannelIndex: channelIndex = " + channelIndex);
-
-			// Remember from which channel list we started the channel
-			// TVStateChannels stateChannels = (TVStateChannels)
-			// _tvStateManager.getState(TVStateEnum.CHANNELS);
-			// Environment.getInstance().getUserPrefs().put(UserParam.IS_LAST_FAVORITES,
-			// stateChannels.isFavorites());
 			playChannel(channelIndex);
 		}
 
@@ -1040,8 +593,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		 */
 		private int getMaxChannelNumber()
 		{
-			TVStateChannels stateChannels = (TVStateChannels) _tvStateManager.getState(TVStateEnum.CHANNELS);
-
 			if (_maxChannelNo < 0)
 			{
 				// compute maximum channel number in all channels
@@ -1077,7 +628,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		 */
 		protected int getChannelIndexByNumber(int channelNo)
 		{
-			TVStateChannels stateChannels = (TVStateChannels) _tvStateManager.getState(TVStateEnum.CHANNELS);
 			if (_channelNumberToIndex == null)
 			{
 				_channelNumberToIndex = new SparseIntArray(200);
@@ -1147,10 +697,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		private final TextView _channelNoTextView;
 		private final ImageView _channelLogoImageView;
 		protected ImageView _selectedChannelShaddow;
-//		private final ImageView _tvSpooler;
-//		private final ImageView _play;
-//		private final ImageView _pause;
-//		private TextView _replayOrRecord;
 
 		TVStateSpooler(ViewGroup rootView, ProgramView programView)
 		{
@@ -1160,10 +706,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			_channelNoTextView = (TextView) _selectedChannelView.findViewById(R.id.channel_no);
 			_channelLogoImageView = (ImageView) _selectedChannelView.findViewById(R.id.channel_logo);
 			_selectedChannelShaddow = (ImageView) _programSpoolContainerView.findViewById(R.id.channel_indicator);
-//			_tvSpooler = (ImageView) _rootView.findViewById(R.id.tv_spooler);
-//			_play = (ImageView) _rootView.findViewById(R.id.ic_play);
-//			_pause = (ImageView) _rootView.findViewById(R.id.ic_pause);
-//			_replayOrRecord = (TextView) _programSpoolContainerView.findViewById(R.id.replay);
 		}
 
 		@Override
@@ -1187,15 +729,10 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 					_programView.TimeshiftCursor.setImageLevel(0);
 					restartOSDTimeout();
 				}
-				updatePlayPause();
 			}
 			else if (msgId == FeatureTimeshift.ON_SEEK)
 			{
 				updateReplay();
-
-				// ON_SEEK is sent also on timeshift duration change
-				// we must disable pause in case timeshift buffer is set to 0
-				updatePlayPause();
 			}
 		}
 
@@ -1208,19 +745,21 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			switch (keyEvent.Code)
 			{
 				case DOWN:
-					seekRel(getPrefs().getInt(Param.SEEK_LONG_BACKWARD));
+					showChannels();
+					_tvStateManager.onKeyDown(keyEvent);
 					return true;
 				case UP:
-					seekRel(getPrefs().getInt(Param.SEEK_LONG_FORWARD));
+					showChannels();
+					_tvStateManager.onKeyDown(keyEvent);
 					return true;
 				case LEFT:
 				{
-					seekRel(getPrefs().getInt(Param.SEEK_SHORT_BACKWARD));
+					seekRel(getPrefs().getInt(Param.SEEK_LONG_BACKWARD));
 					return true;
 				}
 				case RIGHT:
 				{
-					seekRel(getPrefs().getInt(Param.SEEK_SHORT_FORWARD));
+					seekRel(getPrefs().getInt(Param.SEEK_LONG_FORWARD));
 					return true;
 				}
 				case OK:
@@ -1240,7 +779,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		protected void restartOSDTimeout()
 		{
 			stopOSDTimeout();
-			getEventMessenger().trigger(ON_OSD_AUTOHIDE, getPrefs().getInt(Param.OSD_AUTOHIDE_VOLUME) * 1000);
+			getEventMessenger().trigger(ON_OSD_AUTOHIDE, getPrefs().getInt(Param.OSD_AUTOHIDE) * 1000);
 		}
 
 		private void seekRel(int secs)
@@ -1271,15 +810,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 				dateStr = Calendars.makeString(dateCal);
 
 			Log.d(TAG, ".updateReply: since " + dateStr);
-//			String replyText = getResources().getString(R.string.replay, dateStr);
-//			_replayOrRecord.setText(replyText);
-
-//			long delta = _feature.Component.TIMEZONE.getCurrentTime().getTimeInMillis() - 1000
-//			        * _feature.Component.TIMESHIFT.getPlayingTime();
-//			if (delta > 1000 * getPrefs().getInt(Param.SEEK_SHORT_FORWARD) / 2)
-//				_replayOrRecord.setVisibility(View.VISIBLE);
-//			else
-//				_replayOrRecord.setVisibility(View.INVISIBLE);
 		}
 
 		@Override
@@ -1288,15 +818,11 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			_programSpoolContainerView.setVisibility(isVisible ? View.VISIBLE : View.INVISIBLE);
 			_selectedChannelView.setVisibility(isVisible ? View.VISIBLE : View.INVISIBLE);
 			_selectedChannelShaddow.setVisibility(View.INVISIBLE);
-//			_tvSpooler.setVisibility(View.INVISIBLE);
-//			_play.setVisibility(View.INVISIBLE);
-//			_pause.setVisibility(View.INVISIBLE);
 			if (isVisible)
 			{
 				int channelIndex = _lastChannelIndex;
 				ChannelBulsat channel = (ChannelBulsat) _feature.Component.CHANNELS.getActiveChannels().get(
 				        channelIndex);
-				TVStateChannels tvStateChannels = (TVStateChannels) _tvStateManager.getState(TVStateEnum.CHANNELS);
 
 				_channelNoTextView.setText(channel.getChannelNo() + "");
 
@@ -1310,7 +836,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 				restartOSDTimeout();
 				updateReplay();
-				updatePlayPause();
 				updateProgramBar();
 			}
 		}
@@ -1319,43 +844,13 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		{
 			_programView.update(_lastChannelIndex);
 		}
-
-		protected void updatePlayPause()
-		{
-//			if (_feature.Component.PLAYER.isPaused())
-//			{
-//				_play.setImageLevel(0);
-//				_pause.setImageLevel(1);
-//			}
-//			else
-//			{
-//				_play.setImageLevel(1);
-//				_pause.setImageLevel(0);
-//			}
-
-//			if (_feature.Component.TIMESHIFT.getTimeshiftDuration() > 0)
-//			{
-//				_tvSpooler.setVisibility(View.VISIBLE);
-//				_play.setVisibility(View.VISIBLE);
-//				_pause.setVisibility(View.VISIBLE);
-//			}
-//			else
-//			{
-//				_tvSpooler.setVisibility(View.INVISIBLE);
-//				_play.setVisibility(View.INVISIBLE);
-//				_pause.setVisibility(View.INVISIBLE);
-//			}
-		}
 	}
 
 	private class TVStateHidden extends BaseTVState
 	{
-		protected final TextView _numView;
-
 		TVStateHidden(ViewGroup rootView)
 		{
 			super(rootView, null);
-			_numView = (TextView) _rootView.findViewById(R.id.rcu_channel_selection);
 		}
 
 		@Override
@@ -1379,54 +874,10 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		{
 			if (super.onKeyDown(keyEvent))
 				return true;
-			TVStateChannels stateChannels = (TVStateChannels) _tvStateManager.getState(TVStateEnum.CHANNELS);
 			switch (keyEvent.Code)
 			{
-				case LEFT:
-					_feature.Component.VOLUME.lower();
-					_tvStateManager.setState(TVStateEnum.VOLUME);
-					restartOSDTimeout();
-				break;
-				case RIGHT:
-					_feature.Component.VOLUME.raise();
-					_tvStateManager.setState(TVStateEnum.VOLUME);
-					restartOSDTimeout();
-				break;
-
 				case UP:
 				case DOWN:
-					// switches to next channel immediately
-					// List<Channel> channels = stateChannels.getChannels();
-					// int lastChannelIndex =
-					// stateChannels.getLastChannelIndex();
-					// // computes next channel index
-					// int channelIndex = Key.UP.equals(keyEvent.Code) ?
-					// lastChannelIndex + 1 : lastChannelIndex - 1;
-					// if (channelIndex < 0)
-					// channelIndex = channels.size() - 1;
-					// else if (channelIndex > channels.size() - 1)
-					// channelIndex = 0;
-					//
-					// Log.i(TAG, "Switching to channelIndex = " + channelIndex
-					// + ", lastChannelIndex = "
-					// + lastChannelIndex);
-					//
-					// if (channelIndex >= 0 && channelIndex < channels.size())
-					// {
-					// ChannelBulsat channel = (ChannelBulsat)
-					// channels.get(channelIndex);
-					// //
-					// _feature.Component.CHANNELS.setLastChannelId(channel.getChannelId());
-					// _lastChannelIndex = channel.getIndex();
-					// _channelSwitcher._channelIndex = channel.getIndex();
-					// getEventMessenger().removeCallbacks(_channelSwitcher);
-					// getEventMessenger().postDelayed(_channelSwitcher, 50);
-					// _numView.setVisibility(View.VISIBLE);
-					// _numView.setText(String.valueOf(channel.getChannelNo()));
-					// getEventMessenger().removeCallbacks(_channelNumberHider);
-					// getEventMessenger().postDelayed(_channelNumberHider,
-					// getPrefs().getInt(Param.NUM_AUTOHIDE) * 1000);
-					// }
 					showChannels();
 					keyEvent.Event.startTracking();
 					if (!Key.UP.equals(keyEvent.Code) || !Key.DOWN.equals(keyEvent.Code))
@@ -1434,7 +885,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 				break;
 
 				case OK:
-					showChannels();
+					_tvStateManager.setState(TVStateEnum.SPOOLER);
 					keyEvent.Event.startTracking();
 					if (!Key.OK.equals(keyEvent.Code))
 						return _tvStateManager.onKeyDown(keyEvent);
@@ -1458,40 +909,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		}
 	}
 
-	private class TVStateVolume extends TVStateHidden
-	{
-		// private final TextView _volumeDayOfMonth;
-		// private final TextView _volumeTimeOfDay;
-		// private final ProgressBar _volumeProgress;
-		// private final View _volumeContainer;
-
-		TVStateVolume(ViewGroup rootView)
-		{
-			super(rootView);
-			// _volumeDayOfMonth = (TextView)
-			// _rootView.findViewById(R.id.vol_day_of_month);
-			// _volumeTimeOfDay = (TextView)
-			// _rootView.findViewById(R.id.vol_time_of_day);
-			// _volumeProgress = (ProgressBar)
-			// _rootView.findViewById(R.id.volume_bar);
-			// _volumeContainer = _rootView.findViewById(R.id.volume_container);
-		}
-
-		@Override
-		void setVisible(boolean isVisible)
-		{
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		void restartOSDTimeout()
-		{
-			// TODO Auto-generated method stub
-
-		}
-	}
-
 	private class TVStateChannels extends BaseTVState
 	{
 		protected ZapperList _zapperList;
@@ -1500,9 +917,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		protected TextView _channelNoTextView;
 		protected ImageView _channelLogoImageView;
 		protected ImageView _selectedChannelShaddow;
-
-		// private final ImageView _play;
-		// private final ImageView _pause;
 
 		TVStateChannels(ViewGroup rootView, ProgramView programView)
 		{
@@ -1514,16 +928,10 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			_channelLogoImageView = (ImageView) _selectedChannelView.findViewById(R.id.channel_logo);
 
 			_selectedChannelShaddow = (ImageView) _programContainerView.findViewById(R.id.channel_indicator);
-			// _play = (ImageView)
-			// _programContainerView.findViewById(R.id.ic_play);
-			// _pause = (ImageView)
-			// _programContainerView.findViewById(R.id.ic_pause);
 
 			int channelIndex = _lastChannelIndex;
 			if (channelIndex < 0)
 				channelIndex = 0;
-
-			ChannelBulsat channel = (ChannelBulsat) _feature.Component.CHANNELS.getActiveChannels().get(channelIndex);
 
 			updateChannelBarChannels(channelIndex);
 			updateChannel(channelIndex);
@@ -1537,8 +945,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			_selectedChannelView.setVisibility(isVisible ? View.VISIBLE : View.INVISIBLE);
 			_selectedChannelShaddow.setVisibility(isVisible ? View.VISIBLE : View.INVISIBLE);
 			_programContainerView.setVisibility(isVisible ? View.VISIBLE : View.INVISIBLE);
-			// _play.setVisibility(View.INVISIBLE);
-			// _pause.setVisibility(View.INVISIBLE);
 
 			if (isVisible)
 			{
@@ -1606,7 +1012,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 				case UP:
 				case DOWN:
 					// move up or down to the channel bar
-					// _zapperList.onKeyDown(keyEvent);
 					_zapperList.onKeyDown(keyEvent.Event.getKeyCode(), keyEvent.Event);
 					selectChannelIndex(_zapperList.getPosition());
 					return true;
@@ -1671,7 +1076,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			{
 				if (channelIndex != _zapperList.getPosition())
 					_zapperList.setPosition(channelIndex, false);
-				ChannelBulsat channel = updateChannel(channelIndex);
+				updateChannel(channelIndex);
 			}
 		}
 
@@ -1726,7 +1131,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			}
 			Channel channel = getChannels().get(channelIndex);
 			_programView.update(channel.getIndex());
-			// updatePlayPause((ChannelBulsat) channel);
 		}
 
 	}
@@ -1745,16 +1149,8 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		private final TextView ProgramTimeEnd;
 		private final TextView ChannelTitle;
 
-		// private final TextView TimeOfDay;
-
-		// private final TextView DayOfMonth;
-
 		ProgramView(ViewGroup viewGroup)
 		{
-			// TimeOfDay = (TextView) viewGroup.findViewById(R.id.clock);
-			// DayOfMonth = (TextView)
-			// viewGroup.findViewById(R.id.day_of_month);
-
 			viewGroup = (ViewGroup) viewGroup.findViewById(R.id.tv_program_bar);
 			ChannelTitle = (TextView) viewGroup.findViewById(R.id.channel_title);
 			ProgramTimeStart = (TextView) viewGroup.findViewById(R.id.program_start);
@@ -1815,8 +1211,6 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			}
 
 			// updates current playing time
-			// TimeOfDay.setText(TIME_FORMAT.format(currentTime.getTime()));
-			// DayOfMonth.setText(formatDayOfMonth(currentTime.getTime()));
 
 			Channel channel = _feature.Component.CHANNELS.getActiveChannels().get(channelIndex);
 			ChannelTitle.setText(channel.getTitle());
@@ -1943,5 +1337,4 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			}
 		}
 	}
-
 }

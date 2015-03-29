@@ -17,7 +17,7 @@
         android:textSize="20sp" />
 
     <!-- Channel Bar -->
-	<!-- 
+    <!--
     <com.aviq.tv.android.aviqtv.state.tv.ZapperListView
         xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.aviqtv"
         android:id="@+id/tv_channel_bar"
@@ -36,19 +36,19 @@
         aviqtv:topMargin="20dip"
         aviqtv:visibleItems="9" >
     </com.aviq.tv.android.aviqtv.state.tv.ZapperListView>
- -->
- 
-  <com.aviq.tv.android.aviqtv.state.tv.ZapperList
+    -->
+
+    <com.aviq.tv.android.aviqtv.state.tv.ZapperList
         xmlns:app="http://schemas.android.com/apk/res/com.aviq.tv.android.aviqtv"
         xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.aviqtv"
         android:id="@+id/tv_channel_bar"
         android:layout_width="@dimen/channel_bar_width"
         android:layout_height="match_parent"
-        android:layout_marginLeft="56dp"
-        android:paddingTop="20dp"
         android:layout_alignParentLeft="true"
+        android:layout_marginLeft="56dp"
         android:background="@drawable/tv_channel_bar"
         android:fadeScrollbars="false"
+        android:paddingTop="20dp"
         android:scrollbars="none"
         android:visibility="invisible"
         aviqtv:bottomInflated="7"
@@ -86,5 +86,19 @@
         android:layout_marginLeft="35dip"
         android:layout_marginTop="@dimen/program_bar_channel_top_offset"
         layout="@layout/programbar_channel" />
+
+    <TextView
+        android:id="@+id/rcu_channel_selection"
+        android:layout_width="140dp"
+        android:layout_height="120dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="45dp"
+        android:singleLine="true"
+        android:textColor="#0000ff"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
 </RelativeLayout>
