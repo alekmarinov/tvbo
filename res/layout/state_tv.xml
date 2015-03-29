@@ -1,8 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_alignParentBottom="true"
-    android:layout_centerHorizontal="true" >
+    android:layout_alignParentBottom="true" >
 
     <TextView
         android:id="@+id/clock"
@@ -18,7 +17,7 @@
         android:textSize="20sp" />
 
     <!-- Channel Bar -->
-
+	<!-- 
     <com.aviq.tv.android.aviqtv.state.tv.ZapperListView
         xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.aviqtv"
         android:id="@+id/tv_channel_bar"
@@ -37,28 +36,55 @@
         aviqtv:topMargin="20dip"
         aviqtv:visibleItems="9" >
     </com.aviq.tv.android.aviqtv.state.tv.ZapperListView>
-
-    <!-- Program Bar -->
-
-
-    <!-- channel details -->
-
-    <include android:id="@+id/channel_info_container"
-        android:layout_width="@dimen/program_bar_channel_width"
-        android:layout_height="@dimen/program_bar_height"
-        android:layout_alignParentTop="true"
+ -->
+ 
+  <com.aviq.tv.android.aviqtv.state.tv.ZapperList
+        xmlns:app="http://schemas.android.com/apk/res/com.aviq.tv.android.aviqtv"
+        xmlns:aviqtv="http://schemas.android.com/apk/res/com.aviq.tv.android.aviqtv"
+        android:id="@+id/tv_channel_bar"
+        android:layout_width="@dimen/channel_bar_width"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="56dp"
+        android:paddingTop="20dp"
         android:layout_alignParentLeft="true"
-        android:layout_marginTop="@dimen/program_bar_top_offset"
-        android:layout_marginLeft="35dip"
-        layout="@layout/programbar_channel" />
+        android:background="@drawable/tv_channel_bar"
+        android:fadeScrollbars="false"
+        android:scrollbars="none"
+        android:visibility="invisible"
+        aviqtv:bottomInflated="7"
+        aviqtv:hideSelected="true"
+        aviqtv:itemsHeight="@dimen/channel_item_height"
+        aviqtv:selectedDelay="800"
+        aviqtv:selectedVisiblePosition="6"
+        aviqtv:topInflated="7"
+        aviqtv:visibleItems="9" >
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </com.aviq.tv.android.aviqtv.state.tv.ZapperList>
+    <!-- Program Bar -->
 
     <include
         android:id="@+id/tv_program_bar"
         android:layout_width="@dimen/program_bar_width"
         android:layout_height="@dimen/program_bar_height"
-        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:layout_marginTop="@dimen/program_bar_top_offset"
         layout="@layout/programbar_main" />
+
+    <include
+        android:id="@+id/channel_info_container"
+        android:layout_width="@dimen/program_bar_channel_width"
+        android:layout_height="@dimen/program_bar_height"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="35dip"
+        android:layout_marginTop="@dimen/program_bar_channel_top_offset"
+        layout="@layout/programbar_channel" />
 
 </RelativeLayout>

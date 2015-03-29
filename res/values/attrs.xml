@@ -32,6 +32,17 @@
         <attr name="itemTextSize" />
     </declare-styleable>
     
+     <declare-styleable name="ZapperList">
+        <attr name="selectedVisiblePosition" />
+        <attr name="visibleItems" />
+        <attr name="selectedDelay" />
+        <attr name="itemsHeight" />
+        <attr name="hideSelected" />
+        <attr name="topInflated" />
+        <attr name="bottomInflated" />
+        <attr name="itemsOffset" />
+    </declare-styleable>
+    
     <declare-styleable name="TimeBasedRelativeLayout">
         <attr name="pixelsPerOneHour" format="dimension" />
         <attr name="viewHeight" format="dimension" />

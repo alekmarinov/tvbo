@@ -75,5 +75,8 @@
     <string name="network_error">ПРОБЛЕМ С ИНТЕРНЕТ ВРЪЗКАТА</string>
     <string name="network_retry_button">Отново</string>
     <string name="network_settings_button">Настройки</string>
+    
+    <!-- EPG -->
+    <string name="no_epg_info">НЯМА ИНФОРМАЦИЯ</string>
 
 </resources>

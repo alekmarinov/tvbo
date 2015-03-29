@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/program_bar_width"
-    android:layout_height="@dimen/program_bar_height"
-    android:background="@drawable/tv_program_bar_main" >
+    android:layout_height="@dimen/program_bar_height" >
 
     <!-- Channel title -->
 
-    <ImageView android:id="@+id/programbar_left_border"
+    <ImageView
+        android:id="@+id/channel_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/tv_program_bar_channel_indicator" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/tv_program_bar_main" />
+
+    <ImageView
+        android:id="@+id/programbar_left_border"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="@dimen/program_bar_channel_width"
-        android:src="@drawable/tv_program_bar_border" 
-        android:visibility="gone"/>
+        android:src="@drawable/tv_program_bar_border"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/channel_title"
@@ -160,6 +173,24 @@
             android:singleLine="true"
             android:text="11:05" />
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/curr_program_progress_with_cursor"
+        android:layout_width="578dip"
+        android:layout_height="13dip"
+        android:layout_below="@+id/program_image_and_current_programs"
+        android:layout_marginLeft="289dip"
+        android:layout_marginTop="23dip" 
+        android:focusable="false" >
+
+        <ImageView
+            android:id="@+id/timeshift_cursor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/timeshift_cursor" />
+    </RelativeLayout>
 
     <include
         android:id="@+id/program_navigator"

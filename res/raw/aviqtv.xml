@@ -5,6 +5,7 @@
         <feature class="com.aviq.tv.android.sdk.feature.channels.FeatureChannels" />
         <feature class="com.aviq.tv.android.sdk.feature.player.FeatureTimeshift" />
         <feature class="com.aviq.tv.android.sdk.feature.system.FeatureDevice" />
+        <feature class="com.aviq.tv.android.sdk.feature.volume.FeatureVolume" />
         <feature class="com.aviq.tv.android.sdk.feature.player.FeaturePlayer" />
         <feature class="com.aviq.tv.android.sdk.feature.httpserver.FeatureHttpServer" />
         <feature class="com.aviq.tv.android.sdk.feature.system.FeatureTimeZone" />
@@ -28,6 +29,7 @@
         <feature class="com.aviq.tv.android.aviqtv.state.FeatureStateLoading" />
         <feature class="com.aviq.tv.android.aviqtv.state.tv.FeatureStateTV" />
         <feature class="com.aviq.tv.android.aviqtv.state.epg.FeatureStateEPG" />
+		<feature class="com.aviq.tv.android.aviqtv.state.FeatureStateError" />
         <feature class="com.aviq.tv.android.aviqtv.state.MessageBox" />
         <feature class="com.aviq.tv.android.aviqtv.state.wizard.FeatureStateNetworkWizard" />
         <feature class="com.aviq.tv.android.aviqtv.state.wizard.FeatureStateNetworkError" />
