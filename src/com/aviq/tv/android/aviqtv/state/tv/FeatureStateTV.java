@@ -38,9 +38,11 @@ import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.EventMessenger;
 import com.aviq.tv.android.sdk.core.Key;
+import com.aviq.tv.android.sdk.core.feature.FeatureError;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
+import com.aviq.tv.android.sdk.core.service.ServiceController.OnResultReceived;
 import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
 import com.aviq.tv.android.sdk.core.state.StateException;
 import com.aviq.tv.android.sdk.feature.epg.Channel;
@@ -68,7 +70,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	private TVStateManager _tvStateManager;
 	private int _channelNumber = 0;
 	private SparseIntArray _channelNumberToIndex;
-	private int _lastChannelIndex;
+	private String _lastChannelId;
 
 	public enum Extras
 	{
@@ -127,7 +129,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 	public FeatureStateTV() throws FeatureNotFoundException
 	{
-		require(FeatureName.Scheduler.EPG);
+		require(FeatureName.Component.EPG);
 		require(FeatureName.Component.CHANNELS);
 		require(FeatureName.Component.PLAYER);
 		require(FeatureName.Component.LANGUAGE);
@@ -161,7 +163,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 
 		TIME_FORMAT = new SimpleDateFormat("HH:mm", _feature.Component.LANGUAGE.getLocale());
 		TIME_FORMAT.setTimeZone(_feature.Component.TIMEZONE.getTimeZone());
-		_lastChannelIndex = _feature.Component.CHANNELS.getLastChannelIndex();
+		_lastChannelId = _feature.Component.CHANNELS.getLastChannelId();
 
 		super.initialize(onFeatureInitialized);
 	}
@@ -185,20 +187,22 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		if (params == null)
 		{
 			if (!_feature.Component.PLAYER.isPlaying())
-				playChannel(_lastChannelIndex);
+			{
+				playLastChannel();
+			}
 		}
 		else
 		{
-			int channelIndex = params.getInt(Extras.CHANNEL_INDEX.name(), _lastChannelIndex);
-			if (channelIndex != -1)
+			int channelIndex = params.getInt(Extras.CHANNEL_INDEX.name(), -1);
+			if (channelIndex == -1)
+			{
+				playLastChannel();
+			}
+			else
 			{
 				long playTime = params.getLong(Extras.PLAY_TIME.name(), 0);
 				long playDuration = params.getLong(Extras.PLAY_DURATION.name(), 0);
 				playChannel(channelIndex, playTime, playDuration);
-			}
-			else
-			{
-				Log.w(TAG, "Last channel is undefined");
 			}
 		}
 
@@ -223,7 +227,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		}
 
 		if (!_feature.Component.PLAYER.isPlaying())
-			playChannel(_lastChannelIndex);
+			playLastChannel();
 	}
 
 	@Override
@@ -279,7 +283,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 				{
 					// restart last played channel
 					if (!_feature.Component.PLAYER.isPlaying())
-						playChannel(_lastChannelIndex);
+						playLastChannel();
 
 					FeatureState overlayState = (FeatureState) Environment.getInstance().getStateManager()
 					        .getOverlayState();
@@ -298,7 +302,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 						@Override
 						public void run()
 						{
-							playChannel(_lastChannelIndex);
+							playLastChannel();
 						}
 					}, 1000);
 				}
@@ -313,12 +317,39 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 	private void playChannel(int index, long playTime, final long playDuration)
 	{
 		_feature.Component.CHANNELS.play(index, playTime, playDuration);
-		_lastChannelIndex = index;
+
+		// FIXME: set last channel index
+		// _lastChannelIndex = index;
 	}
 
 	private void playChannel(int index)
 	{
 		playChannel(index, System.currentTimeMillis() / 1000, 0);
+	}
+
+	private void playLastChannel()
+	{
+		if (_lastChannelId == null)
+			playChannel(0);
+		else
+		{
+			_feature.Component.EPG.getChannelById(_lastChannelId, new OnResultReceived()
+			{
+				@Override
+				public void onReceiveResult(FeatureError error, Object object)
+				{
+					if (!error.isError())
+					{
+						Channel channel = (Channel) object;
+						playChannel(channel.getIndex());
+					}
+					else
+					{
+						Log.e(TAG, error.getMessage(), error);
+					}
+				}
+			});
+		}
 	}
 
 	// IMenuItemState implementation
@@ -376,8 +407,22 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			{
 				Channel channel = _channels.get(position);
 				holder.stationNo.setText(String.valueOf(((ChannelBulsat) channel).getChannelNo()));
-				Bitmap bmp = _featureEPG.getEpgData().getChannelLogoBitmap(channel.getIndex());
-				holder.stationLogo.setImageBitmap(bmp);
+				final ImageView stationLogo = holder.stationLogo;
+				_featureEPG.getChannelLogoBitmap(channel, Channel.LOGO_NORMAL, new OnResultReceived()
+				{
+					@Override
+					public void onReceiveResult(FeatureError error, Object object)
+					{
+						if (!error.isError())
+						{
+							stationLogo.setImageBitmap((Bitmap) object);
+						}
+						else
+						{
+							Log.e(TAG, error.getMessage(), error);
+						}
+					}
+				});
 			}
 			return row;
 		}
@@ -538,25 +583,27 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		{
 			if (msgId == ON_NUM_TIMEOUT)
 			{
-				int channelIndex = getChannelIndexByNumber(_channelNumber);
-				Log.i(TAG, ".ON_NUM_TIMEOUT: _channelNumber = " + _channelNumber + ", channelIndex = " + channelIndex);
-
-				TVStateChannels stateChannels = (TVStateChannels) _tvStateManager.getState(TVStateEnum.CHANNELS);
-
-				List<Channel> channels = stateChannels.getChannels();
-				if (channelIndex >= 0 && channelIndex < channels.size())
-				{
-					Channel channel = channels.get(channelIndex);
-					_channelSwitcher._channelIndex = channel.getIndex();
-					getEventMessenger().removeCallbacks(_channelSwitcher);
-					getEventMessenger().postDelayed(_channelSwitcher, 50);
-
-					showChannels();
-					stateChannels.selectChannelIndex(channelIndex);
-				}
-				_numView.setVisibility(View.INVISIBLE);
-				_numView.setText(null);
-				_channelNumber = 0;
+				// FIXME: implement this
+				/*
+				 * int channelIndex = getChannelIndexByNumber(_channelNumber);
+				 * Log.i(TAG, ".ON_NUM_TIMEOUT: _channelNumber = " +
+				 * _channelNumber + ", channelIndex = " + channelIndex);
+				 * TVStateChannels stateChannels = (TVStateChannels)
+				 * _tvStateManager.getState(TVStateEnum.CHANNELS);
+				 * List<Channel> channels = stateChannels.getChannels();
+				 * if (channelIndex >= 0 && channelIndex < channels.size())
+				 * {
+				 * Channel channel = channels.get(channelIndex);
+				 * _channelSwitcher._channelIndex = channel.getIndex();
+				 * getEventMessenger().removeCallbacks(_channelSwitcher);
+				 * getEventMessenger().postDelayed(_channelSwitcher, 50);
+				 * showChannels();
+				 * stateChannels.selectChannelIndex(channelIndex);
+				 * }
+				 * _numView.setVisibility(View.INVISIBLE);
+				 * _numView.setText(null);
+				 * _channelNumber = 0;
+				 */
 			}
 			else if (msgId == ON_OSD_AUTOHIDE)
 			{
@@ -573,7 +620,9 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		{
 			if (keyEvent.Event.getKeyCode() >= KeyEvent.KEYCODE_0 && keyEvent.Event.getKeyCode() <= KeyEvent.KEYCODE_9)
 			{
-				onDigitPressed(keyEvent.Event.getKeyCode() - KeyEvent.KEYCODE_0);
+				// FIXME: implement this
+				// onDigitPressed(keyEvent.Event.getKeyCode() -
+				// KeyEvent.KEYCODE_0);
 				return true;
 			}
 			else if (Key.BACK.equals(keyEvent.Code))
@@ -597,13 +646,16 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			{
 				// compute maximum channel number in all channels
 				_maxChannelNo = 0;
-				List<Channel> channels = _feature.Component.CHANNELS.getActiveChannels();
-				for (int i = 0; i < channels.size(); i++)
-				{
-					ChannelBulsat channel = (ChannelBulsat) channels.get(i);
-					if (channel.getChannelNo() > _maxChannelNo)
-						_maxChannelNo = channel.getChannelNo();
-				}
+				// List<Channel> channels =
+				// _feature.Component.CHANNELS.getActiveChannels();
+				// for (int i = 0; i < channels.size(); i++)
+				// {
+				// ChannelBulsat channel = (ChannelBulsat) channels.get(i);
+				// if (channel.getChannelNo() > _maxChannelNo)
+				// _maxChannelNo = channel.getChannelNo();
+				// }
+				// FIXME: find last channel number
+				_maxChannelNo = 999;
 			}
 			return _maxChannelNo;
 		}
@@ -626,68 +678,73 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		 * @return channel index in the array of active channels
 		 *         corresponding to the specified number
 		 */
-		protected int getChannelIndexByNumber(int channelNo)
-		{
-			if (_channelNumberToIndex == null)
-			{
-				_channelNumberToIndex = new SparseIntArray(200);
-
-				List<Channel> activeChannels = _feature.Component.CHANNELS.getActiveChannels();
-				for (int i = 0; i < activeChannels.size(); i++)
-				{
-					ChannelBulsat bchannel = (ChannelBulsat) activeChannels.get(i);
-					_channelNumberToIndex.put(bchannel.getChannelNo(), bchannel.getIndex() + 1);
-				}
-			}
-			Log.d(TAG, ".getChannelIndexByNumber: " + channelNo + " -> " + (_channelNumberToIndex.get(channelNo) - 1));
-			return _channelNumberToIndex.get(channelNo) - 1;
-		}
-
-		protected void onDigitPressed(int digit)
-		{
-			Log.i(TAG, ".onDigitPressed: digit = " + digit + ", old _channelNumber = " + _channelNumber);
-			_channelNumber = _channelNumber * 10 + digit;
-			_numView.setText(String.valueOf(_channelNumber));
-			getEventMessenger().removeMessages(ON_NUM_TIMEOUT);
-			int maxChannelNumber = getMaxChannelNumber();
-			showChannels();
-
-			TVStateChannels stateChannels = (TVStateChannels) _tvStateManager.getState(TVStateEnum.CHANNELS);
-
-			int index = -1;
-			if (_channelNumber < 10)
-			{
-				index = getChannelIndexByNumber(_channelNumber * 100 + 1);
-			}
-			else if (_channelNumber < 100)
-			{
-				if (digit == 0)
-					index = getChannelIndexByNumber(_channelNumber * 10 + 1);
-				else
-					index = getChannelIndexByNumber(_channelNumber * 10);
-			}
-
-			if (index != -1)
-				stateChannels.selectChannelIndex(index);
-
-			if (_channelNumber > 100 || _channelNumber * 10 > maxChannelNumber)
-			{
-				Log.i(TAG, ".onDigitPressed: " + digit + " -> " + _channelNumber + ", trigger ON_NUM_TIMEOUT");
-				// switch to selected channel number
-				getEventMessenger().trigger(ON_NUM_TIMEOUT);
-			}
-			else
-			{
-				Log.i(TAG, ".onDigitPressed: " + digit + " -> " + _channelNumber + ", trigger ON_NUM_TIMEOUT delayed");
-				if (_channelNumber > 0)
-				{
-					_numView.setVisibility(View.VISIBLE);
-					getEventMessenger().trigger(ON_NUM_TIMEOUT, getPrefs().getInt(Param.NUM_AUTOHIDE) * 1000);
-				}
-				else
-					_numView.setVisibility(View.INVISIBLE);
-			}
-		}
+		// FIXME: implement this
+		/*
+		 * protected int getChannelIndexByNumber(int channelNo)
+		 * {
+		 * if (_channelNumberToIndex == null)
+		 * {
+		 * _channelNumberToIndex = new SparseIntArray(200);
+		 * List<Channel> activeChannels =
+		 * _feature.Component.CHANNELS.getActiveChannels();
+		 * for (int i = 0; i < activeChannels.size(); i++)
+		 * {
+		 * ChannelBulsat bchannel = (ChannelBulsat) activeChannels.get(i);
+		 * _channelNumberToIndex.put(bchannel.getChannelNo(),
+		 * bchannel.getIndex() + 1);
+		 * }
+		 * }
+		 * Log.d(TAG, ".getChannelIndexByNumber: " + channelNo + " -> " +
+		 * (_channelNumberToIndex.get(channelNo) - 1));
+		 * return _channelNumberToIndex.get(channelNo) - 1;
+		 * }
+		 * protected void onDigitPressed(int digit)
+		 * {
+		 * Log.i(TAG, ".onDigitPressed: digit = " + digit +
+		 * ", old _channelNumber = " + _channelNumber);
+		 * _channelNumber = _channelNumber * 10 + digit;
+		 * _numView.setText(String.valueOf(_channelNumber));
+		 * getEventMessenger().removeMessages(ON_NUM_TIMEOUT);
+		 * int maxChannelNumber = getMaxChannelNumber();
+		 * showChannels();
+		 * TVStateChannels stateChannels = (TVStateChannels)
+		 * _tvStateManager.getState(TVStateEnum.CHANNELS);
+		 * int index = -1;
+		 * if (_channelNumber < 10)
+		 * {
+		 * index = getChannelIndexByNumber(_channelNumber * 100 + 1);
+		 * }
+		 * else if (_channelNumber < 100)
+		 * {
+		 * if (digit == 0)
+		 * index = getChannelIndexByNumber(_channelNumber * 10 + 1);
+		 * else
+		 * index = getChannelIndexByNumber(_channelNumber * 10);
+		 * }
+		 * if (index != -1)
+		 * stateChannels.selectChannelIndex(index);
+		 * if (_channelNumber > 100 || _channelNumber * 10 > maxChannelNumber)
+		 * {
+		 * Log.i(TAG, ".onDigitPressed: " + digit + " -> " + _channelNumber +
+		 * ", trigger ON_NUM_TIMEOUT");
+		 * // switch to selected channel number
+		 * getEventMessenger().trigger(ON_NUM_TIMEOUT);
+		 * }
+		 * else
+		 * {
+		 * Log.i(TAG, ".onDigitPressed: " + digit + " -> " + _channelNumber +
+		 * ", trigger ON_NUM_TIMEOUT delayed");
+		 * if (_channelNumber > 0)
+		 * {
+		 * _numView.setVisibility(View.VISIBLE);
+		 * getEventMessenger().trigger(ON_NUM_TIMEOUT,
+		 * getPrefs().getInt(Param.NUM_AUTOHIDE) * 1000);
+		 * }
+		 * else
+		 * _numView.setVisibility(View.INVISIBLE);
+		 * }
+		 * }
+		 */
 	}
 
 	private class TVStateSpooler extends BaseTVState
@@ -786,14 +843,29 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		{
 			if (_feature.Component.TIMESHIFT.getTimeshiftDuration() == 0)
 				return;
-			long playTime = _feature.Component.TIMESHIFT.seekRel(secs);
+			final long playTime = _feature.Component.TIMESHIFT.seekRel(secs);
 
-			_channelSeeker._playTime = playTime;
-			_channelSeeker._channelIndex = _lastChannelIndex;
-			getEventMessenger().removeCallbacks(_channelSeeker);
-			getEventMessenger().postDelayed(_channelSeeker, 200);
-			updateProgramBar();
-			restartOSDTimeout();
+			_feature.Component.EPG.getChannelById(_lastChannelId, new OnResultReceived()
+			{
+				@Override
+				public void onReceiveResult(FeatureError error, Object object)
+				{
+					if (!error.isError())
+					{
+						Channel channel = (Channel)object;
+						_channelSeeker._playTime = playTime;
+						_channelSeeker._channelIndex = channel.getIndex();
+						getEventMessenger().removeCallbacks(_channelSeeker);
+						getEventMessenger().postDelayed(_channelSeeker, 200);
+						updateProgramBar();
+						restartOSDTimeout();
+					}
+					else
+					{
+						Log.e(TAG, error.getMessage(), error);
+					}
+				}
+			});
 		}
 
 		private void updateReplay()
@@ -820,29 +892,39 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			_selectedChannelShaddow.setVisibility(View.INVISIBLE);
 			if (isVisible)
 			{
-				int channelIndex = _lastChannelIndex;
-				ChannelBulsat channel = (ChannelBulsat) _feature.Component.CHANNELS.getActiveChannels().get(
-				        channelIndex);
+				_feature.Component.EPG.getChannelById(_lastChannelId, new OnResultReceived()
+				{
+					@Override
+					public void onReceiveResult(FeatureError error, Object object)
+					{
+						if (!error.isError())
+						{
+							ChannelBulsat channel = (ChannelBulsat)object;
+							_channelNoTextView.setText(channel.getChannelNo() + "");
+							_channelLogoImageView.setImageBitmap(_feature.Scheduler.EPG.getEpgData().getChannelLogoBitmap(
+							        channel.getIndex(), IEpgDataProvider.ChannelLogoType.SELECTED));
+							updateProgramBar();
+							if (_feature.Component.PLAYER.isPaused())
+								_programView.TimeshiftCursor.setImageLevel(1);
+							else
+								_programView.TimeshiftCursor.setImageLevel(0);
 
-				_channelNoTextView.setText(channel.getChannelNo() + "");
-
-				_channelLogoImageView.setImageBitmap(_feature.Scheduler.EPG.getEpgData().getChannelLogoBitmap(
-				        channel.getIndex(), IEpgDataProvider.ChannelLogoType.SELECTED));
-				updateProgramBar();
-				if (_feature.Component.PLAYER.isPaused())
-					_programView.TimeshiftCursor.setImageLevel(1);
-				else
-					_programView.TimeshiftCursor.setImageLevel(0);
-
-				restartOSDTimeout();
-				updateReplay();
-				updateProgramBar();
+							restartOSDTimeout();
+							updateReplay();
+							updateProgramBar();
+						}
+						else
+						{
+							Log.e(TAG, error.getMessage(), error);
+						}
+					}
+				});
 			}
 		}
 
 		private void updateProgramBar()
 		{
-			_programView.update(_lastChannelIndex);
+			_programView.update(_lastChannelId);
 		}
 	}
 
@@ -1111,7 +1193,7 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 		void updateChannelBarChannels(int channelIndex)
 		{
 			_zapperList.setAdapter(new ChannelAdapter(getActivity(), R.layout.tv_channel_item, getChannels(),
-			        _feature.Scheduler.EPG), channelIndex);
+			        _feature.Component.EPG), channelIndex);
 		}
 
 		private void updateProgramBar()
@@ -1170,125 +1252,139 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 				TimeshiftCursor.setImageLevel(0);
 		}
 
-		private void updatePrograms(String channelId, Program currProgram)
+		private void updatePrograms(Program prevProgram, Program currProgram, Program nextProgram)
 		{
-			Program prevProgram = null;
-			Program nextProgram = null;
-			if (currProgram != null)
-			{
-				prevProgram = _feature.Scheduler.EPG.getEpgData().getProgramByOffset(channelId,
-				        currProgram.getStartTime(), -1);
-				nextProgram = _feature.Scheduler.EPG.getEpgData().getProgramByOffset(channelId,
-				        currProgram.getStartTime(), 1);
-			}
-
-			setPreviousProgram(channelId, prevProgram);
-			setCurrentProgram(channelId, currProgram);
-			setNextProgram(channelId, nextProgram);
+			setPreviousProgram(prevProgram);
+			setCurrentProgram(currProgram);
+			setNextProgram(nextProgram);
 		}
 
-		void update(int channelIndex)
+		void update(final String channelId)
 		{
-			Log.i(TAG, "ProgramView.update: channelIndex = " + channelIndex + ", lastChannelIndex = "
-			        + _lastChannelIndex);
-			int nChannels = _feature.Component.CHANNELS.getActiveChannels().size();
-			if (channelIndex < 0 || channelIndex >= nChannels)
+			Log.i(TAG, "ProgramView.update: channelId = " + channelId);
+
+			_feature.Component.EPG.getChannelById(channelId, new OnResultReceived()
 			{
-				Log.w(TAG, "Current channel index " + channelIndex + " is out of range active channels [0:" + nChannels
-				        + "]");
-				return;
-			}
-
-			Calendar currentTime = _feature.Component.TIMEZONE.getCurrentTime();
-			Calendar playTime = _feature.Component.TIMEZONE.getCurrentTime();
-
-			FeatureTimeshift timeshift = _feature.Component.TIMESHIFT;
-			boolean inTimeshift = (channelIndex == _lastChannelIndex);
-			if (inTimeshift)
-			{
-				// shift in time the current playing channel
-				playTime.setTimeInMillis(1000 * timeshift.getPlayingTime());
-			}
-
-			// updates current playing time
-
-			Channel channel = _feature.Component.CHANNELS.getActiveChannels().get(channelIndex);
-			ChannelTitle.setText(channel.getTitle());
-
-			String channelId = channel.getChannelId();
-			Program currProgram = _feature.Scheduler.EPG.getEpgData().getProgram(channelId, playTime);
-
-			// hide cursor now and show it later if necessary
-			TimeshiftCursor.setVisibility(View.INVISIBLE);
-
-			if (currProgram == null)
-			{
-				ProgramProgress.setVisibility(View.INVISIBLE);
-				ProgramTimeStart.setVisibility(View.INVISIBLE);
-				ProgramTimeEnd.setVisibility(View.INVISIBLE);
-				updatePrograms(channelId, currProgram);
-				return;
-			}
-			else
-			{
-				ProgramProgress.setVisibility(View.VISIBLE);
-				ProgramTimeStart.setVisibility(View.VISIBLE);
-				ProgramTimeStart.setText(parseDateTimeToHourMins(currProgram.getStartTime()));
-				ProgramTimeEnd.setVisibility(View.VISIBLE);
-				ProgramTimeEnd.setText(parseDateTimeToHourMins(currProgram.getStopTime()));
-			}
-
-			updatePrograms(channelId, currProgram);
-
-			if (inTimeshift)
-			{
-				// update timeshift progress
-				Calendar timeshiftStartCalendar = _feature.Component.TIMEZONE.getCurrentTime();
-				long timeshiftStart = timeshift.currentTime() - timeshift.getTimeshiftDuration();
-				timeshiftStartCalendar.setTimeInMillis(1000 * timeshiftStart);
-
-				// show as a secondary progress the empty buffer
-				// check if beginning of the buffer is inside current program
-				if (currProgram.getStartTime().before(timeshiftStartCalendar)
-				        && currProgram.getStopTime().after(timeshiftStartCalendar))
+				@Override
+				public void onReceiveResult(FeatureError error, Object object)
 				{
-					// show as a secondary progress the empty buffer from
-					// program start to timeshift start
-					float timeshiftStartFragment = getProgressInProgram(currProgram, timeshiftStart);
-					ProgramProgress.setSecondaryProgress((int) (1000 * timeshiftStartFragment));
-				}
-				// is whole current program outside of the buffer
-				else if (timeshiftStartCalendar.after(currProgram.getStopTime())
-				        || currProgram.getStartTime().after(currentTime))
-				{
-					// show as a secondary progress the whole area
-					ProgramProgress.setSecondaryProgress(1000);
-				}
-				else
-				{
-					// no empty buffer visible
-					ProgramProgress.setSecondaryProgress(0);
-				}
+					if (!error.isError())
+					{
+						Channel channel = (Channel)object;
+						final Calendar currentTime = _feature.Component.TIMEZONE.getCurrentTime();
+						final Calendar playTime = _feature.Component.TIMEZONE.getCurrentTime();
 
-				// show timeshift buffer fragment
-				float currentTimeFragment = getProgressInProgram(currProgram, currentTime.getTimeInMillis() / 1000);
-				ProgramProgress.setProgress((int) (1000 * currentTimeFragment));
+						final FeatureTimeshift timeshift = _feature.Component.TIMESHIFT;
+						final boolean inTimeshift = (channelId == _lastChannelId);
+						if (inTimeshift)
+						{
+							// shift in time the current playing channel
+							playTime.setTimeInMillis(1000 * timeshift.getPlayingTime());
+						}
 
-				float cursorFragment = getProgressInProgram(currProgram, playTime.getTimeInMillis() / 1000);
-				int progressBarWidth = ProgramProgress.getWidth();
-				int offset = (int) (progressBarWidth * cursorFragment) - TimeshiftCursor.getWidth() / 2;
-				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) TimeshiftCursor.getLayoutParams();
-				params.setMargins(offset, 0, 0, 0);
-				TimeshiftCursor.setLayoutParams(params);
-				// show cursor
-				TimeshiftCursor.setVisibility(View.VISIBLE);
-			}
-			else
-			{
-				ProgramProgress.setSecondaryProgress(0);
-				float currentTimeFragment = getProgressInProgram(currProgram, currentTime.getTimeInMillis() / 1000);
-				ProgramProgress.setProgress((int) (1000 * currentTimeFragment));
-			}
+						// updates current playing time
+						ChannelTitle.setText(channel.getTitle());
+
+						_feature.Component.EPG.getPrograms(channel, playTime, -1, 3, new OnResultReceived()
+						{
+							@Override
+							public void onReceiveResult(FeatureError error, Object object)
+							{
+								@SuppressWarnings("unchecked")
+								List<Program> programs = (List<Program>) object;
+								Program currProgram = null, prevProgram = null, nextProgram = null;
+								if (programs != null)
+									if (programs.size() > 0)
+										prevProgram = programs.get(0);
+									else if (programs.size() > 1)
+										currProgram = programs.get(1);
+									else if (programs.size() > 2)
+										nextProgram = programs.get(2);
+
+								updatePrograms(prevProgram, currProgram, nextProgram);
+
+								if (currProgram == null)
+								{
+									ProgramProgress.setVisibility(View.INVISIBLE);
+									ProgramTimeStart.setVisibility(View.INVISIBLE);
+									ProgramTimeEnd.setVisibility(View.INVISIBLE);
+									return;
+								}
+								else
+								{
+									ProgramProgress.setVisibility(View.VISIBLE);
+									ProgramTimeStart.setVisibility(View.VISIBLE);
+									ProgramTimeStart.setText(parseDateTimeToHourMins(currProgram.getStartTime()));
+									ProgramTimeEnd.setVisibility(View.VISIBLE);
+									ProgramTimeEnd.setText(parseDateTimeToHourMins(currProgram.getStopTime()));
+								}
+
+								if (inTimeshift)
+								{
+									// update timeshift progress
+									Calendar timeshiftStartCalendar = _feature.Component.TIMEZONE.getCurrentTime();
+									long timeshiftStart = timeshift.currentTime() - timeshift.getTimeshiftDuration();
+									timeshiftStartCalendar.setTimeInMillis(1000 * timeshiftStart);
+
+									// show as a secondary progress the empty buffer
+									// check if beginning of the buffer is inside current
+									// program
+									if (currProgram.getStartTime().before(timeshiftStartCalendar)
+									        && currProgram.getStopTime().after(timeshiftStartCalendar))
+									{
+										// show as a secondary progress the empty buffer
+										// from
+										// program start to timeshift start
+										float timeshiftStartFragment = getProgressInProgram(currProgram, timeshiftStart);
+										ProgramProgress.setSecondaryProgress((int) (1000 * timeshiftStartFragment));
+									}
+									// is whole current program outside of the buffer
+									else if (timeshiftStartCalendar.after(currProgram.getStopTime())
+									        || currProgram.getStartTime().after(currentTime))
+									{
+										// show as a secondary progress the whole area
+										ProgramProgress.setSecondaryProgress(1000);
+									}
+									else
+									{
+										// no empty buffer visible
+										ProgramProgress.setSecondaryProgress(0);
+									}
+
+									// show timeshift buffer fragment
+									float currentTimeFragment = getProgressInProgram(currProgram,
+									        currentTime.getTimeInMillis() / 1000);
+									ProgramProgress.setProgress((int) (1000 * currentTimeFragment));
+
+									float cursorFragment = getProgressInProgram(currProgram, playTime.getTimeInMillis() / 1000);
+									int progressBarWidth = ProgramProgress.getWidth();
+									int offset = (int) (progressBarWidth * cursorFragment) - TimeshiftCursor.getWidth() / 2;
+									RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) TimeshiftCursor
+									        .getLayoutParams();
+									params.setMargins(offset, 0, 0, 0);
+									TimeshiftCursor.setLayoutParams(params);
+									// show cursor
+									TimeshiftCursor.setVisibility(View.VISIBLE);
+								}
+								else
+								{
+									ProgramProgress.setSecondaryProgress(0);
+									float currentTimeFragment = getProgressInProgram(currProgram,
+									        currentTime.getTimeInMillis() / 1000);
+									ProgramProgress.setProgress((int) (1000 * currentTimeFragment));
+								}
+							}
+						});
+
+						// hide cursor now and show it later if necessary
+						TimeshiftCursor.setVisibility(View.INVISIBLE);
+					}
+					else
+					{
+						Log.e(TAG, error.getMessage(), error);
+					}
+				}
+			});
 		}
 
 		private float getProgressInProgram(Program program, long timestamp)
@@ -1308,22 +1404,22 @@ public class FeatureStateTV extends FeatureState implements IStateMenuItem
 			return TIME_FORMAT.format(dateTime.getTime());
 		}
 
-		private void setPreviousProgram(String channelId, Program program)
+		private void setPreviousProgram(Program program)
 		{
-			setProgramToView(channelId, program, prevProgramTime, prevProgramTitle);
+			setProgramToView(program, prevProgramTime, prevProgramTitle);
 		}
 
-		private void setCurrentProgram(String channelId, Program program)
+		private void setCurrentProgram(Program program)
 		{
-			setProgramToView(channelId, program, currProgramTime, currProgramTitle);
+			setProgramToView(program, currProgramTime, currProgramTitle);
 		}
 
-		private void setNextProgram(String channelId, Program program)
+		private void setNextProgram(Program program)
 		{
-			setProgramToView(channelId, program, nextProgramTime, nextProgramTitle);
+			setProgramToView(program, nextProgramTime, nextProgramTitle);
 		}
 
-		private void setProgramToView(String channelId, Program program, TextView programTime, TextView programTitle)
+		private void setProgramToView(Program program, TextView programTime, TextView programTitle)
 		{
 			if (program == null)
 			{

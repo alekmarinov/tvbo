@@ -21,8 +21,8 @@ import com.aviq.tv.android.aviqtv.R;
 import com.aviq.tv.android.sdk.core.Environment;
 import com.aviq.tv.android.sdk.core.feature.FeatureError;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
-import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
-import com.aviq.tv.android.sdk.feature.epg.FeatureEPG.IOnProgramDetails;
+import com.aviq.tv.android.sdk.feature.epg.FeatureEPGCompat;
+import com.aviq.tv.android.sdk.feature.epg.FeatureEPGCompat.IOnProgramDetails;
 import com.aviq.tv.android.sdk.feature.epg.Program;
 import com.aviq.tv.android.sdk.feature.epg.ProgramAttribute;
 
@@ -52,7 +52,7 @@ public class EpgProgramInfo
 	private SimpleDateFormat _timeFormat;
 	private String _timeRangeTemplate;
 	private String _pagerTemplate;
-	private FeatureEPG _featureEPG;
+	private FeatureEPGCompat _featureEPG;
 
 	private Context _context;
 	private ViewFlipper _detailsFlipper;
@@ -86,7 +86,7 @@ public class EpgProgramInfo
 		_timeRangeTemplate = context.getString(R.string.programInfoTimeRange);
 		_pagerTemplate = context.getString(R.string.programInfoPager);
 
-		_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
+		_featureEPG = (FeatureEPGCompat) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
 	}
 
 	public void updatePrimaryTitle(String title)

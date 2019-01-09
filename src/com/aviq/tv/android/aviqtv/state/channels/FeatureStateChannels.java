@@ -10,6 +10,8 @@
 
 package com.aviq.tv.android.aviqtv.state.channels;
 
+import java.util.List;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -30,13 +32,15 @@ import com.aviq.tv.android.aviqtv.state.ThumbnailsView.ThumbItemCreater;
 import com.aviq.tv.android.aviqtv.state.menu.FeatureStateMenu;
 import com.aviq.tv.android.sdk.core.AVKeyEvent;
 import com.aviq.tv.android.sdk.core.Environment;
+import com.aviq.tv.android.sdk.core.feature.FeatureError;
 import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
+import com.aviq.tv.android.sdk.core.service.ServiceController.OnResultReceived;
 import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
 import com.aviq.tv.android.sdk.feature.channels.FeatureChannels;
 import com.aviq.tv.android.sdk.feature.epg.Channel;
-import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
+import com.aviq.tv.android.sdk.feature.epg.FeatureEPGCompat;
 import com.aviq.tv.android.sdk.feature.epg.IEpgDataProvider;
 import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 
@@ -79,7 +83,7 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		Log.i(TAG, ".initialize");
-		FeatureEPG featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(
+		FeatureEPGCompat featureEPG = (FeatureEPGCompat) Environment.getInstance().getFeatureScheduler(
 		        FeatureName.Scheduler.EPG);
 		_epgData = featureEPG.getEpgData();
 		_featureChannels = (FeatureChannels) Environment.getInstance().getFeatureComponent(
@@ -190,60 +194,25 @@ public class FeatureStateChannels extends FeatureState implements IStateMenuItem
 		}
 
 		// Add all active channels
-		for (Channel channel : _featureChannels.getActiveChannels())
+		_featureChannels.getActiveChannels(new OnResultReceived()
 		{
-			Log.i(TAG, "Add channel " + channel);
-			_myChannelsGrid.addThumbItem(channel);
-		}
+			@Override
+			public void onReceiveResult(FeatureError error, Object object)
+			{
+				List<Channel> channels = (List<Channel>)object;
+				for (Channel channel : channels)
+				{
+					Log.i(TAG, "Add channel " + channel);
+					_myChannelsGrid.addThumbItem(channel);
+				}
+			}
+		});
 
 		_allChannelsGrid.setOnItemClickListener(new OnItemClickListener()
 		{
 			@Override
 			public void onItemClick(AdapterView<?> adapter, final View view, final int position, long id)
 			{
-//				LayoutInflater inflator = (LayoutInflater)Environment.getInstance().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//				View flyerView = _thumbnailCreater.createView(null,  0, inflator);
-//				ImageView flyerThumbView = (ImageView) flyerView.findViewById(R.id.thumbnail);
-//				TextView flyerTitleView = (TextView) flyerView.findViewById(R.id.title);
-//				ImageView thumbView = (ImageView) view.findViewById(R.id.thumbnail);
-//				TextView titleView = (TextView) view.findViewById(R.id.title);
-//				flyerTitleView.setText(titleView.getText());
-//				flyerThumbView.setImageDrawable(thumbView.getDrawable());
-//				flyerThumbView.setX(view.getX());
-//				flyerThumbView.setY(view.getY());
-//				_viewGroup.addView(flyerThumbView);
-//
-//				flyerThumbView.animate().setDuration(1000).translationX(600).translationY(300).setListener(new AnimatorListener()
-//				{
-//					@Override
-//					public void onAnimationStart(Animator animation)
-//					{
-//					}
-//
-//					@Override
-//					public void onAnimationRepeat(Animator animation)
-//					{
-//					}
-//
-//					@Override
-//					public void onAnimationEnd(Animator animation)
-//					{
-//						Log.i(TAG, ".onAnimationEnd");
-//						Channel channel = (Channel) view.getTag();
-//						_featureChannels.setChannelFavorite(channel, true);
-//						_allChannelsGrid.removeThumbAt(position);
-//						_myChannelsGrid.addThumbItem(channel);
-//						_myChannelsGrid.setSelection(_myChannelsGrid.getCount() - 1);
-//						_myChannelsGrid.smoothScrollBy(0, 99999);
-//					}
-//
-//					@Override
-//					public void onAnimationCancel(Animator animation)
-//					{
-//					}
-//				}).start();
-//
-
 				Log.i(TAG, ".onAnimationEnd");
 				Channel channel = (Channel) view.getTag();
 				_featureChannels.setChannelFavorite(channel, true);

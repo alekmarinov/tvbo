@@ -127,7 +127,7 @@ public class FeatureStateNetworkWizard extends FeatureState
 		_feature.Scheduler.INTERNET.checkInternet(new OnResultReceived()
 		{
 			@Override
-			public void onReceiveResult(FeatureError error)
+			public void onReceiveResult(FeatureError error, Object object)
 			{
 				Log.i(TAG, ".checkInternet.onReceiveResult: resultCode = " + error.getCode());
 				getEventMessenger().removeCallbacks(_showOverlayDelayed);

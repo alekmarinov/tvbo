@@ -28,7 +28,7 @@ import com.aviq.tv.android.sdk.core.feature.FeatureName;
 import com.aviq.tv.android.sdk.core.feature.FeatureNotFoundException;
 import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.StateException;
-import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
+import com.aviq.tv.android.sdk.feature.epg.FeatureEPGCompat;
 import com.aviq.tv.android.sdk.feature.epg.IEpgDataProvider;
 import com.aviq.tv.android.sdk.feature.epg.Program;
 import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
@@ -44,7 +44,7 @@ public class FeatureStateProgramInfo extends FeatureState
 	public static final String ARGS_CHANNEL_ID = "channelId";
 	public static final String ARGS_PROGRAM_ID = "programId";
 
-	private FeatureEPG _featureEPG;
+	private FeatureEPGCompat _featureEPG;
 	private FeaturePlayer _featurePlayer;
 	private FeatureStateTV _featureStateTV;
 	private FeatureWatchlist _watchlist;
@@ -65,7 +65,7 @@ public class FeatureStateProgramInfo extends FeatureState
 	public void initialize(final OnFeatureInitialized onFeatureInitialized)
 	{
 		Log.i(TAG, ".initialize");
-		_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
+		_featureEPG = (FeatureEPGCompat) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
 		_featurePlayer = (FeaturePlayer) Environment.getInstance().getFeatureComponent(FeatureName.Component.PLAYER);
 
 		if (Environment.getInstance().getFeatureManager().hasFeature(FeatureName.Component.WATCHLIST))

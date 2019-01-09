@@ -40,7 +40,7 @@ import com.aviq.tv.android.sdk.core.feature.FeatureState;
 import com.aviq.tv.android.sdk.core.state.IStateMenuItem;
 import com.aviq.tv.android.sdk.core.state.StateException;
 import com.aviq.tv.android.sdk.core.state.StateManager.MessageParams;
-import com.aviq.tv.android.sdk.feature.epg.FeatureEPG;
+import com.aviq.tv.android.sdk.feature.epg.FeatureEPGCompat;
 import com.aviq.tv.android.sdk.feature.epg.Program;
 import com.aviq.tv.android.sdk.feature.player.FeaturePlayer;
 import com.aviq.tv.android.sdk.feature.watchlist.FeatureWatchlist;
@@ -57,7 +57,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 	private EpgProgramInfo _programInfo;
 	private ThumbnailsView _watchlistGrid;
 	private FeaturePlayer _featurePlayer;
-	private FeatureEPG _featureEPG;
+	private FeatureEPGCompat _featureEPG;
 	private FeatureStateTV _featureStateTV;
 
 	public FeatureStateWatchlist() throws FeatureNotFoundException
@@ -87,7 +87,7 @@ public class FeatureStateWatchlist extends FeatureState implements IStateMenuIte
 
 		_featurePlayer = (FeaturePlayer) Environment.getInstance()
 		        .getFeatureComponent(FeatureName.Component.PLAYER);
-		_featureEPG = (FeatureEPG) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
+		_featureEPG = (FeatureEPGCompat) Environment.getInstance().getFeatureScheduler(FeatureName.Scheduler.EPG);
 		_watchlist = (FeatureWatchlist) Environment.getInstance().getFeatureComponent(
 		        FeatureName.Component.WATCHLIST);
 		_featureStateTV = (FeatureStateTV)Environment.getInstance().getFeatureState(FeatureName.State.TV);
