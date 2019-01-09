@@ -1,6 +1,7 @@
 /.classpath
 /.project
-/.settings/org.eclipse.jdt.core.prefs
+/.settings
 /bin
 /gen
 /lint.xml
+/res/raw/eclipse.xml
